@@ -120,6 +120,23 @@ Relevant business memory:
 {memory_context}
 """
 
+FRAUD_REASONING_PROMPT = """
+Explain a fraud-risk assessment in clear compliance-friendly language.
+Use:
+- rule score: {rule_score}
+- anomaly score: {anomaly_score}
+- device score: {device_score}
+- identity score: {identity_score}
+- forensic score: {forensic_score}
+- observed reasons: {reasons}
+- supporting observations: {observations}
+
+Keep it factual, concise, and explainable.
+
+Relevant fraud memory:
+{memory_context}
+"""
+
 
 class PromptManager:
     """Centralized prompt formatter for all Phase 7 assistant tasks."""
@@ -132,6 +149,7 @@ class PromptManager:
         "sms_draft": SMS_DRAFT_PROMPT,
         "rejection_explanation": REJECTION_EXPLANATION_PROMPT,
         "branch_report": BRANCH_REPORT_PROMPT,
+        "fraud_reasoning": FRAUD_REASONING_PROMPT,
     }
 
     @classmethod

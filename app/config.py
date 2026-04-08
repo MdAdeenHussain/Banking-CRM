@@ -49,6 +49,7 @@ class Config:
     AI_PROVIDER = os.getenv("AI_PROVIDER", "placeholder")
     AI_ROUTER_MODE = os.getenv("AI_ROUTER_MODE", "disabled")
     AI_MODEL_DIR = os.getenv("AI_MODEL_DIR", "model_store")
+    FRAUD_MODEL_DIR = os.getenv("FRAUD_MODEL_DIR", "model_store/fraud")
     AI_ALLOW_CLOUD = os.getenv("AI_ALLOW_CLOUD", "1") == "1"
     AI_PROVIDER_RETRIES = int(os.getenv("AI_PROVIDER_RETRIES", "2"))
     OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")

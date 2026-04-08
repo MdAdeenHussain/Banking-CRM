@@ -92,4 +92,115 @@
     </article>
   </div>
 </section>
+
+<section class="row g-3 mt-1">
+  <div class="col-12 col-md-6 col-xl-3">
+    <article class="neu-card p-3 min-h-180">
+      <h2 class="h6 mb-2">Pending Callbacks</h2>
+      <p class="kpi-value">{{ kpis.pending_callbacks|default(0) }}</p>
+      <p class="small mb-0">Callbacks due across the team.</p>
+    </article>
+  </div>
+  <div class="col-12 col-md-6 col-xl-3">
+    <article class="neu-card p-3 min-h-180">
+      <h2 class="h6 mb-2">Automation Success Rate</h2>
+      <p class="kpi-value">{{ kpis.automation_success_rate|default(0) }}%</p>
+      <p class="small mb-0">Scheduled + sent workflow communications.</p>
+    </article>
+  </div>
+  <div class="col-12 col-md-6 col-xl-3">
+    <article class="neu-card p-3 min-h-180">
+      <h2 class="h6 mb-2">Campaign ROI</h2>
+      <p class="kpi-value">{{ kpis.campaign_roi.overall_roi|default(0) }}%</p>
+      <p class="small mb-0">Overall paid acquisition return.</p>
+    </article>
+  </div>
+  <div class="col-12 col-md-6 col-xl-3">
+    <article class="neu-card p-3 min-h-180">
+      <h2 class="h6 mb-2">SLA Breaches</h2>
+      <p class="kpi-value">{{ kpis.sla_breaches.total_breaches|default(0) }}</p>
+      <p class="small mb-0">Escalation path: agent to owner.</p>
+    </article>
+  </div>
+</section>
+
+<section class="row g-3 mt-1">
+  <div class="col-12 col-md-6 col-xl-3">
+    <article class="neu-card p-3 min-h-180">
+      <h2 class="h6 mb-2">Fraud Score Distribution</h2>
+      <p class="small mb-1">High: {{ kpis.fraud_score_distribution.high|default(0) }}</p>
+      <p class="small mb-1">Medium: {{ kpis.fraud_score_distribution.medium|default(0) }}</p>
+      <p class="small mb-0">Low: {{ kpis.fraud_score_distribution.low|default(0) }}</p>
+    </article>
+  </div>
+  <div class="col-12 col-md-6 col-xl-3">
+    <article class="neu-card p-3 min-h-180">
+      <h2 class="h6 mb-2">High-Risk Leads</h2>
+      <p class="kpi-value">{{ kpis.high_risk_leads|default(0) }}</p>
+      <p class="small mb-0">Customer-linked high-risk fraud cases.</p>
+    </article>
+  </div>
+  <div class="col-12 col-md-6 col-xl-3">
+    <article class="neu-card p-3 min-h-180">
+      <h2 class="h6 mb-2">Suspicious Devices</h2>
+      <p class="kpi-value">{{ kpis.suspicious_devices|default(0) }}</p>
+      <p class="small mb-0">Fingerprints reused across multiple identities.</p>
+    </article>
+  </div>
+  <div class="col-12 col-md-6 col-xl-3">
+    <article class="neu-card p-3 min-h-180">
+      <h2 class="h6 mb-2">Repeated PAN Alerts</h2>
+      <p class="kpi-value">{{ kpis.repeated_pan_alerts|default(0) }}</p>
+      <p class="small mb-0">Duplicate PAN values across customer records.</p>
+    </article>
+  </div>
+</section>
+
+<section class="row g-3 mt-1">
+  <div class="col-12 col-xl-6">
+    <article class="neu-card p-3 min-h-240">
+      <h2 class="h6 mb-2">Fraud Heatmap</h2>
+      <ul class="small mb-0">
+        {% for item in kpis.fraud_heatmap|default([]) %}
+        <li>{{ item.label }}: {{ item.count }} flagged cases</li>
+        {% else %}
+        <li>No high-risk fraud heatmap data available yet.</li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+  <div class="col-12 col-xl-6">
+    <article class="neu-card p-3 min-h-240">
+      <h2 class="h6 mb-2">Recent Fraud Alerts</h2>
+      <ul class="small mb-0">
+        {% for alert in kpis.recent_fraud_alerts|default([]) %}
+        <li><strong>{{ alert.title }}</strong>: {{ alert.message }}</li>
+        {% else %}
+        <li>No fraud alerts have been triggered yet.</li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+</section>
+
+<section class="row g-3 mt-1">
+  <div class="col-12 col-xl-6">
+    <article class="neu-card p-3 min-h-240">
+      <h2 class="h6 mb-2">Meta Conversion Funnel</h2>
+      <ul class="small mb-0">
+        <li>PageView: {{ kpis.meta_conversion_funnel.PageView|default(0) }}</li>
+        <li>Lead: {{ kpis.meta_conversion_funnel.Lead|default(0) }}</li>
+        <li>SubmitApplication: {{ kpis.meta_conversion_funnel.SubmitApplication|default(0) }}</li>
+        <li>PurchaseEquivalent: {{ kpis.meta_conversion_funnel.PurchaseEquivalent|default(0) }}</li>
+      </ul>
+    </article>
+  </div>
+  <div class="col-12 col-xl-6">
+    <article class="neu-card p-3 min-h-240">
+      <h2 class="h6 mb-2">Stale Leads</h2>
+      <p class="kpi-value">{{ kpis.stale_leads|default(0) }}</p>
+      <p class="small mb-0">Leads with no meaningful movement in 3+ days.</p>
+    </article>
+  </div>
+</section>
 {% endblock %}

@@ -109,6 +109,17 @@ class DocumentService:
         db.session.commit()
 
         self._trigger_ocr_task(document.id)
+        self._trigger_workflow_event(
+            "doc_uploaded",
+            {
+                "document_id": document.id,
+                "customer_name": getattr(document.customer, "full_name", "Customer"),
+                "customer_email": getattr(document.customer, "email", None),
+                "customer_mobile": getattr(document.customer, "mobile", None),
+                "loan_type": getattr(getattr(document, "application", None), "loan_type", "loan"),
+                "document_type": document.document_type,
+            },
+        )
         return document
 
     def run_ocr_for_document(self, document_id: int) -> Document:
@@ -312,6 +323,18 @@ class DocumentService:
             ).first()
             if not application:
                 raise ValueError("Application not found for customer in current tenant.")
+
+    def _trigger_workflow_event(self, event_name: str, payload: dict[str, object]) -> None:
+        """Trigger automation workflow while keeping uploads resilient."""
+        try:
+            from app.automation_engine.workflow_engine import WorkflowEngine
+
+            WorkflowEngine(
+                tenant_id=self.tenant_id,
+                actor_user_id=self.actor_user_id,
+            ).trigger_event(event_name, payload)
+        except Exception:
+            current_app.logger.debug("Automation workflow event skipped: %s", event_name)
 
     def _persist_file(self, file: FileStorage, customer_id: int) -> tuple[str, str]:
         """Write file to private uploads storage with secure naming."""

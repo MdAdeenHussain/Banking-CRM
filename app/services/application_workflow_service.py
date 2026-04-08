@@ -12,6 +12,8 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
+from flask import current_app
+
 from app.extensions import db
 from app.models.application import Application
 from app.models.audit_log import AuditLog
@@ -129,6 +131,17 @@ class ApplicationWorkflowService:
             details=f"Submitted to lender={lender_name}",
         )
         db.session.commit()
+        self._trigger_workflow_event(
+            "application_submitted",
+            {
+                "application_id": application.id,
+                "customer_name": getattr(application.customer, "full_name", "Customer"),
+                "customer_email": getattr(application.customer, "email", None),
+                "customer_mobile": getattr(application.customer, "mobile", None),
+                "loan_type": application.loan_type,
+                "lender_name": lender_name,
+            },
+        )
         return application
 
     def approve(self, application_id: int, remarks: str | None = None) -> Application:
@@ -201,6 +214,18 @@ class ApplicationWorkflowService:
             details=details,
         )
         db.session.add(audit)
+
+    def _trigger_workflow_event(self, event_name: str, payload: dict[str, Any]) -> None:
+        """Trigger Phase 10 workflow automation safely."""
+        try:
+            from app.automation_engine.workflow_engine import WorkflowEngine
+
+            WorkflowEngine(
+                tenant_id=self.tenant_id,
+                actor_user_id=self.actor_user_id,
+            ).trigger_event(event_name, payload)
+        except Exception:
+            current_app.logger.debug("Automation workflow event skipped: %s", event_name)
 
 
 # ======================================

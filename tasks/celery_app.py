@@ -30,6 +30,7 @@ def make_celery() -> Celery:
             "tasks.notification_tasks",
             "tasks.ml_tasks",
             "app.documents.tasks",
+            "app.automation_engine.celery_tasks",
         ],
     )
 
@@ -46,6 +47,22 @@ def make_celery() -> Celery:
             "weekly-model-retraining": {
                 "task": "tasks.ml_tasks.weekly_model_retraining",
                 "schedule": crontab(hour=2, minute=0, day_of_week="sunday"),
+            },
+            "send-scheduled-reminders": {
+                "task": "app.automation_engine.celery_tasks.send_scheduled_reminder",
+                "schedule": crontab(minute="*/15"),
+            },
+            "send-callback-alerts": {
+                "task": "app.automation_engine.celery_tasks.send_callback_alert",
+                "schedule": crontab(minute="*/30"),
+            },
+            "daily-branch-summary": {
+                "task": "app.automation_engine.celery_tasks.daily_branch_summary",
+                "schedule": crontab(hour=18, minute=0),
+            },
+            "stale-lead-reengagement": {
+                "task": "app.automation_engine.celery_tasks.stale_lead_reengagement",
+                "schedule": crontab(hour=9, minute=0),
             },
         },
     )

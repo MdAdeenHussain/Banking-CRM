@@ -7,6 +7,7 @@ from flask import Blueprint, render_template
 from flask_login import current_user, login_required
 
 from app.decorators import role_required
+from app.fraud_ai.alert_service import FraudAlertService
 from app.services.dashboard_kpi_service import DashboardKPIService
 
 
@@ -46,8 +47,7 @@ def owner_dashboard():
             "credit_score": 662,
             "decision_reason": "FOIR exceeds current lender threshold and bureau score is borderline.",
             "next_step": "reduce obligations or consider a secured product before reapplying",
-        }
-        ,
+        },
         tenant_id=current_user.tenant_id,
     )
     similarity_service = CaseSimilarityService()
@@ -190,4 +190,11 @@ def calls_dashboard():
 @dashboard_bp.get("/dashboard/platform")
 @role_required("platform", "owner")
 def platform_dashboard():
-    return render_template("dashboard/platform_dashboard.html")
+    kpis = DashboardKPIService(tenant_id=current_user.tenant_id).get_owner_kpis()
+    alert_service = FraudAlertService(current_user.tenant_id)
+    alerts = alert_service.serialize_alerts(alert_service.list_alerts(limit=5))
+    return render_template(
+        "dashboard/platform_dashboard.html",
+        kpis=kpis,
+        fraud_alerts_feed=alerts,
+    )

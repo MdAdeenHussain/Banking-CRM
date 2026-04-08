@@ -20,5 +20,10 @@ numpy==1.26.4
 scikit-learn==1.5.1
 joblib==1.4.2
 
+# RAG + vector memory stack
+faiss-cpu==1.8.0.post1
+chromadb==0.5.5
+sentence-transformers==3.0.1
+
 # Production server
 gunicorn==22.0.0

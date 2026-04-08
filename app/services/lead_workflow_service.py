@@ -112,6 +112,25 @@ class LeadWorkflowService:
 
         # Update dashboard metrics cache placeholder.
         self._update_dashboard_counters()
+        self._trigger_workflow_event(
+            "lead_created",
+            {
+                "lead_id": lead.id,
+                "customer_name": lead.customer_name,
+                "customer_email": lead.email,
+                "customer_mobile": lead.mobile,
+                "loan_type": lead.loan_type or "loan",
+                "assigned_agent": lead.assigned_agent,
+                "source": lead.source,
+                "medium": data.get("medium"),
+                "campaign": data.get("campaign"),
+                "campaign_id": data.get("campaign_id"),
+                "adset_id": data.get("adset_id"),
+                "ad_id": data.get("ad_id"),
+                "utm_source": data.get("utm_source"),
+                "utm_campaign": data.get("utm_campaign"),
+            },
+        )
         return lead
 
     def update_stage(self, lead_id: int, new_stage: str) -> Lead:
@@ -133,6 +152,20 @@ class LeadWorkflowService:
 
         db.session.commit()
         self._update_dashboard_counters()
+        self._trigger_workflow_event(
+            "stage_changed",
+            {
+                "lead_id": lead.id,
+                "customer_name": lead.customer_name,
+                "customer_email": lead.email,
+                "customer_mobile": lead.mobile,
+                "loan_type": lead.loan_type or "loan",
+                "assigned_agent": lead.assigned_agent,
+                "old_stage": old_stage,
+                "new_stage": new_stage,
+                "lead_stuck_3d": new_stage not in {"DISBURSED", "LOST"},
+            },
+        )
         return lead
 
     def assign_agent(self, lead_id: int, agent_id: int) -> Lead:
@@ -294,6 +327,18 @@ class LeadWorkflowService:
         except Exception:
             # Keep workflow resilient even if cache infrastructure is down.
             current_app.logger.debug("KPI cache hint update skipped.")
+
+    def _trigger_workflow_event(self, event_name: str, payload: dict[str, Any]) -> None:
+        """Trigger Phase 10 automation engine without breaking core flow."""
+        try:
+            from app.automation_engine.workflow_engine import WorkflowEngine
+
+            WorkflowEngine(
+                tenant_id=self.tenant_id,
+                actor_user_id=self.actor_user_id,
+            ).trigger_event(event_name, payload)
+        except Exception:
+            current_app.logger.debug("Automation workflow event skipped: %s", event_name)
 
 
 # ======================================

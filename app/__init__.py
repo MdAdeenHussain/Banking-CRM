@@ -35,6 +35,8 @@ def create_app(config_name: str | None = None) -> Flask:
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
     # Ensure ML artifact directory exists for serialized classical models.
     os.makedirs(app.config.get("AI_MODEL_DIR", "model_store"), exist_ok=True)
+    # Ensure fraud-model artifact directory exists for anomaly models.
+    os.makedirs(app.config.get("FRAUD_MODEL_DIR", "model_store/fraud"), exist_ok=True)
     # Ensure vector-memory storage directory exists for RAG features.
     os.makedirs(app.config.get("RAG_STORE_DIR", "rag_store"), exist_ok=True)
 

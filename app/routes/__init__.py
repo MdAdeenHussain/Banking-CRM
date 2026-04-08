@@ -10,6 +10,8 @@ application startup remains clean and predictable.
 from flask import Flask
 
 from app.ai_hub.routes import ai_hub_bp
+from app.fraud_ai.routes import fraud_ai_bp
+from app.automation_engine.routes import automation_bp
 from app.routes.analytics_routes import analytics_bp
 from app.ai_ml.routes import ai_ml_bp
 from app.rag_engine.memory_routes import rag_memory_bp
@@ -46,3 +48,5 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(ai_ml_bp)
     app.register_blueprint(ai_hub_bp)
     app.register_blueprint(rag_memory_bp)
+    app.register_blueprint(fraud_ai_bp)
+    app.register_blueprint(automation_bp)

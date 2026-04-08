@@ -169,6 +169,16 @@ class AssistantService:
             )
             return self._append_memory_hint(narrative, prompt_values)
 
+        if task_type == "fraud_reasoning":
+            narrative = (
+                f"Fraud assessment is elevated because rule score is {prompt_values.get('rule_score', 0)}, "
+                f"anomaly score is {prompt_values.get('anomaly_score', 0)}, device score is "
+                f"{prompt_values.get('device_score', 0)}, identity score is {prompt_values.get('identity_score', 0)}, "
+                f"and forensic score is {prompt_values.get('forensic_score', 0)}. "
+                f"Key reasons: {prompt_values.get('reasons', 'No explicit reasons supplied')}."
+            )
+            return self._append_memory_hint(narrative, prompt_values)
+
         return "LLM placeholder response generated successfully."
 
     def _append_memory_hint(self, narrative: str, prompt_values: dict[str, Any]) -> str:

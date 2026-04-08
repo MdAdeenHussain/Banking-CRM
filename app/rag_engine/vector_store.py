@@ -10,7 +10,6 @@ can optionally use FAISS or Chroma when those libraries are installed.
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
 from typing import Any
 
