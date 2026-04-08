@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% import 'components/_macros.html' as m %}
+
+{% block title %}Leads | LoanCRM{% endblock %}
+
+{% block page_title %}Leads{% endblock %}
+{% block page_subtitle %}Manage and track all your loan applications{% endblock %}
+
+{% block page_content %}
+<!-- Top Actions -->
+<div class="flex items-center justify-between mb-6">
+    <div class="flex-1 max-w-md">
+        <input type="text" placeholder="Search leads by name, mobile, email..." 
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+               id="search-input">
+    </div>
+    <div class="flex items-center space-x-4">
+        <select class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                id="status-filter">
+            <option value="">All Statuses</option>
+            <option value="NEW_LEAD">New Lead</option>
+            <option value="CONTACTED">Contacted</option>
+            <option value="INTERESTED">Interested</option>
+            <option value="DOCS_PENDING">Docs Pending</option>
+            <option value="DOCS_RECEIVED">Docs Received</option>
+            <option value="ELIGIBILITY_CHECKED">Eligibility Checked</option>
+            <option value="BANK_MATCHED">Bank Matched</option>
+            <option value="APPLICATION_FILED">Application Filed</option>
+            <option value="UNDER_REVIEW">Under Review</option>
+            <option value="SANCTIONED">Sanctioned</option>
+            <option value="DISBURSED">Disbursed</option>
+            <option value="LOST">Lost</option>
+        </select>
+        <a href="{{ url_for('leads.create_lead') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition">
+            <i class="fas fa-plus mr-2"></i>New Lead
+        </a>
+    </div>
+</div>
+
+<!-- Leads Table -->
+<div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="overflow-x-auto">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Loan Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if leads %}
+                    {% for lead in leads %}
+                    <tr>
+                        <td>
+                            <div>
+                                <p class="font-medium text-gray-900">{{ lead.name }}</p>
+                                <p class="text-xs text-gray-500">{{ lead.email }}</p>
+                            </div>
+                        </td>
+                        <td>{{ lead.mobile }}</td>
+                        <td>{{ lead.loan_type }}</td>
+                        <td class="font-medium">₹{{ "{:,.0f}".format(lead.loan_amount) }}</td>
+                        <td>
+                            {% if lead.status == 'NEW_LEAD' %}
+                            {{ m.badge('New Lead', 'primary') }}
+                            {% elif lead.status in ['CONTACTED', 'INTERESTED'] %}
+                            {{ m.badge(lead.status.replace('_', ' '), 'warning') }}
+                            {% elif lead.status == 'DISBURSED' %}
+                            {{ m.badge('Disbursed', 'success') }}
+                            {% elif lead.status == 'LOST' %}
+                            {{ m.badge('Lost', 'danger') }}
+                            {% else %}
+                            {{ m.badge(lead.status.replace('_', ' '), 'gray') }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="text-sm">
+                                {% if lead.assigned_to_name %}
+                                    {{ lead.assigned_to_name }}
+                                {% else %}
+                                    <span class="text-gray-400">Unassigned</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="text-sm text-gray-600">
+                            <span class="whitespace-nowrap">{{ lead.created_at.strftime('%d %b %Y') }}</span>
+                        </td>
+                        <td>
+                            <div class="flex items-center space-x-2">
+                                <a href="{{ url_for('leads.view_lead', lead_id=lead.id) }}" 
+                                   class="text-indigo-600 hover:text-indigo-900 text-sm" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ url_for('leads.edit_lead', lead_id=lead.id) }}" 
+                                   class="text-indigo-600 hover:text-indigo-900 text-sm" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button onclick="deleteLead('{{ lead.id }}')" 
+                                        class="text-red-600 hover:text-red-900 text-sm" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center py-8">
+                        <i class="fas fa-inbox text-gray-400 text-3xl mb-4"></i>
+                        <p class="text-gray-600 mt-2">No leads found. <a href="{{ url_for('leads.create_lead') }}" class="text-indigo-600 hover:text-indigo-500 font-medium">Create one</a></p>
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if pagination %}
+{{ m.pagination(pagination.page, pagination.pages, url_for('leads.list_leads')) }}
+{% endif %}
+
+<script>
+function deleteLead(leadId) {
+    LoanCRM.showModal('Delete Lead', 'Are you sure you want to delete this lead? This action cannot be undone.', {
+        'Delete': () => {
+            // API call to delete lead
+            fetch(`/leads/${leadId}`, { method: 'DELETE' })
+                .then(r => r.json())
+                .then(data => {
+                    LoanCRM.showToast('Lead deleted successfully', 'success');
+                    location.reload();
+                });
+        },
+        'Cancel': null
+    });
+}
+
+// Search and filter
+const searchInput = document.getElementById('search-input');
+const statusFilter = document.getElementById('status-filter');
+
+if (searchInput) {
+    searchInput.addEventListener('input', LoanCRM.debounce((e) => {
+        // Implement client-side filtering or API call
+        console.log('Searching leads:', e.target.value);
+    }));
+}
+
+if (statusFilter) {
+    statusFilter.addEventListener('change', (e) => {
+        // Implement status filtering
+        console.log('Filter by status:', e.target.value);
+    });
+}
+</script>
+{% endblock %}

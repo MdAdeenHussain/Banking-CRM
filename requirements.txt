@@ -1,0 +1,44 @@
+# Core Framework
+Flask==2.3.2
+Werkzeug==2.3.6
+
+# Database & ORM
+Flask-SQLAlchemy==3.0.5
+SQLAlchemy==2.0.19
+psycopg2-binary==2.9.6
+Alembic==1.11.1
+
+# Authentication & Security
+Flask-Login==0.6.2
+PyJWT==2.8.0
+bcrypt==4.0.1
+WTForms==3.0.1
+Flask-WTF==1.1.1
+
+# Validation & Serialization
+marshmallow==3.19.0
+python-dotenv==1.0.0
+
+# Cache & Messaging
+redis==5.0.0
+celery==5.3.1
+
+# HTTP & CORS
+Flask-CORS==4.0.0
+requests==2.31.0
+
+# Utilities
+click==8.1.3
+python-dateutil==2.8.2
+
+# Server
+gunicorn==21.2.0
+
+# Testing
+pytest==7.4.0
+pytest-cov==4.1.0
+pytest-flask==1.2.0
+
+# Code Quality (optional, for dev)
+black==23.7.0
+flake8==6.0.0

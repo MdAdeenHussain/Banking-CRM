@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% import 'components/_macros.html' as m %}
+
+{% block title %}{% if lead %}Edit Lead{% else %}New Lead{% endif %} | LoanCRM{% endblock %}
+
+{% block page_title %}{% if lead %}Edit Lead{% else %}Create New Lead{% endif %}{% endblock %}
+{% block page_subtitle %}{{ lead.name if lead else 'Add a new potential customer' }}{% endblock %}
+
+{% block page_content %}
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-lg shadow p-8">
+        <!-- Errors -->
+        {% if errors %}
+        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            {% for error in errors %}
+            <p class="text-red-700 text-sm">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <!-- Form -->
+        <form method="POST" class="space-y-6">
+            <!-- Basic Information -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {{ m.form_field('name', 'Full Name', 'text', required=True, value=lead.name if lead else '', class='') }}
+                    {{ m.form_field('email', 'Email Address', 'email', required=False, value=lead.email if lead else '', class='') }}
+                    {{ m.form_field('mobile', 'Mobile Number', 'tel', required=True, value=lead.mobile if lead else '', help_text='10-digit mobile number', class='') }}
+                    {{ m.form_field('city', 'City', 'text', required=False, value=lead.city if lead else '', class='') }}
+                </div>
+            </div>
+            
+            <!-- Loan Details -->
+            <hr class="my-6">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Loan Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="loan_type" class="block text-sm font-medium text-gray-700">
+                            Loan Type <span class="text-red-600">*</span>
+                        </label>
+                        <select name="loan_type" id="loan_type" required
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">-- Select Loan Type --</option>
+                            <option value="HOME_LOAN" {% if lead and lead.loan_type == 'HOME_LOAN' %}selected{% endif %}>Home Loan</option>
+                            <option value="PERSONAL_LOAN" {% if lead and lead.loan_type == 'PERSONAL_LOAN' %}selected{% endif %}>Personal Loan</option>
+                            <option value="AUTO_LOAN" {% if lead and lead.loan_type == 'AUTO_LOAN' %}selected{% endif %}>Auto Loan</option>
+                            <option value="BUSINESS_LOAN" {% if lead and lead.loan_type == 'BUSINESS_LOAN' %}selected{% endif %}>Business Loan</option>
+                        </select>
+                    </div>
+                    {{ m.form_field('loan_amount', 'Loan Amount (₹)', 'number', required=False, value=lead.loan_amount if lead else '', class='') }}
+                </div>
+            </div>
+            
+            <!-- Source & Priority -->
+            <hr class="my-6">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Source & Priority</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="source" class="block text-sm font-medium text-gray-700">Source</label>
+                        <select name="source" id="source"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">-- Select Source --</option>
+                            <option value="WEBSITE" {% if lead and lead.source == 'WEBSITE' %}selected{% endif %}>Website</option>
+                            <option value="REFERRAL" {% if lead and lead.source == 'REFERRAL' %}selected{% endif %}>Referral</option>
+                            <option value="CAMPAIGN" {% if lead and lead.source == 'CAMPAIGN' %}selected{% endif %}>Campaign</option>
+                            <option value="DIRECT_CALL" {% if lead and lead.source == 'DIRECT_CALL' %}selected{% endif %}>Direct Call</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="priority" class="block text-sm font-medium text-gray-700">Priority</label>
+                        <select name="priority" id="priority"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="LOW" {% if lead and lead.priority == 'LOW' %}selected{% endif %}>Low</option>
+                            <option value="MEDIUM" {% if lead and lead.priority == 'MEDIUM' %}selected{% endif %} {% if not lead %}selected{% endif %}>Medium</option>
+                            <option value="HIGH" {% if lead and lead.priority == 'HIGH' %}selected{% endif %}>High</option>
+                            <option value="URGENT" {% if lead and lead.priority == 'URGENT' %}selected{% endif %}>Urgent</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Notes -->
+            <hr class="my-6">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-gray-700">Notes</label>
+                    <textarea name="notes" id="notes" rows="4"
+                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                              placeholder="Add any additional notes about this lead...">{% if lead and lead.custom_data.notes %}{{ lead.custom_data.notes }}{% endif %}</textarea>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex items-center justify-between pt-6 border-t">
+                <a href="{{ url_for('leads.list_leads') }}" class="text-gray-600 hover:text-gray-900 font-medium">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Leads
+                </a>
+                <div class="space-x-4">
+                    <a href="{{ url_for('leads.list_leads') }}" class="inline-block px-6 py-2 border border-gray-300 text-gray-900 rounded-lg hover:bg-gray-50 transition">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                        {% if lead %}Update Lead{% else %}Create Lead{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
