@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Add User | LoanCRM{% endblock %}
+
+{% block inner_content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Add New User</h1>
+            <p class="text-gray-600 mt-2">Create a new user account for your organization</p>
+        </div>
+        
+        <!-- Error Messages -->
+        {% if errors %}
+        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            {% for error in errors %}
+            <p class="text-red-700 text-sm">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <!-- Success Message -->
+        {% if success %}
+        <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <p class="text-green-700 text-sm">{{ success }}</p>
+        </div>
+        {% endif %}
+        
+        <!-- Registration Form -->
+        <form method="POST" class="space-y-6">
+            <!-- Email -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                <input type="email" name="email" id="email" required
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                       placeholder="user@company.com">
+            </div>
+            
+            <!-- Name -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="first_name" class="block text-sm font-medium text-gray-700">First Name</label>
+                    <input type="text" name="first_name" id="first_name" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                           placeholder="John">
+                </div>
+                <div>
+                    <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+                    <input type="text" name="last_name" id="last_name" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                           placeholder="Doe">
+                </div>
+            </div>
+            
+            <!-- Role -->
+            <div>
+                <label for="role_name" class="block text-sm font-medium text-gray-700">User Role</label>
+                <select name="role_name" id="role_name" required
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="">Select a role...</option>
+                    <option value="loan_officer">Loan Officer</option>
+                    <option value="manager">Manager</option>
+                    <option value="tenant_admin">Tenant Admin</option>
+                    <option value="viewer">Viewer</option>
+                </select>
+            </div>
+            
+            <!-- Password -->
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Temporary Password</label>
+                <input type="password" name="password" id="password" required
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                       placeholder="••••••••">
+                <p class="mt-1 text-xs text-gray-500">Minimum 8 characters. User will be prompted to change on first login.</p>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex gap-4">
+                <button type="submit" class="flex-1 flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
+                    Create User
+                </button>
+                <a href="{{ url_for('dashboard.dashboard') }}" class="flex-1 flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

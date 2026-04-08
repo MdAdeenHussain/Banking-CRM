@@ -6,7 +6,7 @@
 {% block page_title %}{% if lead %}Edit Lead{% else %}Create New Lead{% endif %}{% endblock %}
 {% block page_subtitle %}{{ lead.name if lead else 'Add a new potential customer' }}{% endblock %}
 
-{% block page_content %}
+{% block inner_content %}
 <div class="max-w-3xl mx-auto">
     <div class="bg-white rounded-lg shadow p-8">
         <!-- Errors -->

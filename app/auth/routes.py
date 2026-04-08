@@ -167,17 +167,10 @@ def register_tenant():
     GET /register/tenant
     Display tenant registration form.
     """
-    return jsonify({
-        "message": "Tenant registration form",
-        "fields": {
-            "tenant_name": "string",
-            "tenant_slug": "string",
-            "admin_email": "string",
-            "admin_password": "string",
-            "admin_first_name": "string",
-            "admin_last_name": "string"
-        }
-    }), 200
+    if current_user.is_authenticated:
+        return redirect(url_for("dashboard.dashboard"))
+    
+    return render_template("auth/register.html")
 
 
 @auth_bp.route("/register/tenant", methods=["POST"])
@@ -199,19 +192,32 @@ def register_tenant_post():
         400: Validation error
     """
     try:
-        data = request.get_json() or {}
+        # Handle both form and JSON
+        if request.is_json:
+            data = request.get_json() or {}
+        else:
+            data = request.form.to_dict()
+        
         tenant_name = data.get("tenant_name", "").strip()
         tenant_slug = data.get("tenant_slug", "").strip().lower()
         admin_email = data.get("admin_email", "").strip()
-        admin_password = data.get("admin_password", "")
+        admin_password = data.get("password", data.get("admin_password", ""))
         admin_first_name = data.get("admin_first_name", "").strip()
         admin_last_name = data.get("admin_last_name", "").strip()
         
         if not all([tenant_name, tenant_slug, admin_email, admin_password, admin_first_name, admin_last_name]):
-            return jsonify({"error": "Missing required fields"}), 400
+            error = "Missing required fields"
+            if request.is_json:
+                return jsonify({"error": error}), 400
+            else:
+                return render_template("auth/register.html", errors=[error]), 400
         
         if len(admin_password) < 8:
-            return jsonify({"error": "Password must be at least 8 characters"}), 400
+            error = "Password must be at least 8 characters"
+            if request.is_json:
+                return jsonify({"error": error}), 400
+            else:
+                return render_template("auth/register.html", errors=[error]), 400
         
         result = AuthService.create_tenant_and_admin(
             tenant_name=tenant_name,
@@ -228,22 +234,32 @@ def register_tenant_post():
         
         logger.info(f"Tenant registered: {tenant_slug}")
         
-        return jsonify({
-            "status": "success",
-            "message": "Tenant registered successfully",
-            "tenant": result["tenant"],
-            "user": result["user"],
-            "access_token": result["access_token"],
-            "refresh_token": result["refresh_token"]
-        }), 201
+        if request.is_json:
+            return jsonify({
+                "status": "success",
+                "message": "Tenant registered successfully",
+                "tenant": result["tenant"],
+                "user": result["user"],
+                "access_token": result["access_token"],
+                "refresh_token": result["refresh_token"]
+            }), 201
+        else:
+            return redirect(url_for("dashboard.dashboard"))
     
     except ValidationError as e:
         logger.warning(f"Tenant registration failed: {str(e)}")
-        return jsonify({"error": e.message}), 400
+        if request.is_json:
+            return jsonify({"error": e.message}), 400
+        else:
+            return render_template("auth/register.html", errors=[e.message]), 400
     
     except Exception as e:
         logger.error(f"Tenant registration error: {str(e)}", exc_info=True)
-        return jsonify({"error": "Registration failed"}), 500
+        error = "Registration failed. Please try again."
+        if request.is_json:
+            return jsonify({"error": error}), 500
+        else:
+            return render_template("auth/register.html", errors=[error]), 500
 
 
 # ============================================================================
@@ -258,16 +274,11 @@ def register_user():
     GET /register/user
     Display user registration form (tenant admin only).
     """
-    return jsonify({
-        "message": "User registration form",
-        "fields": {
-            "email": "string",
-            "password": "string",
-            "first_name": "string",
-            "last_name": "string",
-            "role_name": "string"
-        }
-    }), 200
+    if "tenant_admin" not in g.user_roles:
+        flash("Only tenant admins can create users", "error")
+        return redirect(url_for("dashboard.dashboard"))
+    
+    return render_template("auth/register-user.html")
 
 
 @auth_bp.route("/register/user", methods=["POST"])
@@ -292,9 +303,19 @@ def register_user_post():
     """
     try:
         if "tenant_admin" not in g.user_roles:
-            return jsonify({"error": "Only tenant admins can create users"}), 403
+            error = "Only tenant admins can create users"
+            if request.is_json:
+                return jsonify({"error": error}), 403
+            else:
+                flash(error, "error")
+                return redirect(url_for("dashboard.dashboard"))
         
-        data = request.get_json() or {}
+        # Handle both form and JSON
+        if request.is_json:
+            data = request.get_json() or {}
+        else:
+            data = request.form.to_dict()
+        
         email = data.get("email", "").strip()
         password = data.get("password", "")
         first_name = data.get("first_name", "").strip()
@@ -302,10 +323,18 @@ def register_user_post():
         role_name = data.get("role_name", "").strip().lower()
         
         if not all([email, password, first_name, last_name, role_name]):
-            return jsonify({"error": "Missing required fields"}), 400
+            error = "Missing required fields"
+            if request.is_json:
+                return jsonify({"error": error}), 400
+            else:
+                return render_template("auth/register-user.html", errors=[error]), 400
         
         if len(password) < 8:
-            return jsonify({"error": "Password must be at least 8 characters"}), 400
+            error = "Password must be at least 8 characters"
+            if request.is_json:
+                return jsonify({"error": error}), 400
+            else:
+                return render_template("auth/register-user.html", errors=[error]), 400
         
         result = AuthService.create_user_in_tenant(
             tenant_id=g.tenant_id,
@@ -319,21 +348,32 @@ def register_user_post():
         
         logger.info(f"User created: {email} in tenant {g.tenant_id}")
         
-        return jsonify({
-            "status": "success",
-            "message": "User created successfully",
-            "user": result["user"],
-            "access_token": result["access_token"],
-            "refresh_token": result["refresh_token"]
-        }), 201
+        if request.is_json:
+            return jsonify({
+                "status": "success",
+                "message": "User created successfully",
+                "user": result["user"],
+                "access_token": result["access_token"],
+                "refresh_token": result["refresh_token"]
+            }), 201
+        else:
+            flash("User created successfully", "success")
+            return redirect(url_for("dashboard.dashboard"))
     
     except ValidationError as e:
         logger.warning(f"User creation failed: {str(e)}")
-        return jsonify({"error": e.message}), 400
+        if request.is_json:
+            return jsonify({"error": e.message}), 400
+        else:
+            return render_template("auth/register-user.html", errors=[e.message]), 400
     
     except Exception as e:
         logger.error(f"User creation error: {str(e)}", exc_info=True)
-        return jsonify({"error": "User creation failed"}), 500
+        error = "User creation failed"
+        if request.is_json:
+            return jsonify({"error": error}), 500
+        else:
+            return render_template("auth/register-user.html", errors=[error]), 500
 
 
 # ============================================================================
@@ -343,13 +383,10 @@ def register_user_post():
 @auth_bp.route("/forgot-password", methods=["GET"])
 def forgot_password():
     """GET /forgot-password - Forgot password form."""
-    return jsonify({
-        "message": "Forgot password form",
-        "fields": {
-            "tenant_slug": "string",
-            "email": "string"
-        }
-    }), 200
+    if current_user.is_authenticated:
+        return redirect(url_for("dashboard.dashboard"))
+    
+    return render_template("auth/forgot-password.html")
 
 
 @auth_bp.route("/forgot-password", methods=["POST"])
@@ -363,17 +400,30 @@ def forgot_password_post():
         Note: PHASE_2_HOOK - send via email instead
     """
     try:
-        data = request.get_json() or {}
+        # Handle both form and JSON
+        if request.is_json:
+            data = request.get_json() or {}
+        else:
+            data = request.form.to_dict()
+        
         tenant_slug = data.get("tenant_slug", "").strip()
         email = data.get("email", "").strip()
         
         if not tenant_slug or not email:
-            return jsonify({"error": "Missing required fields"}), 400
+            error = "Missing required fields"
+            if request.is_json:
+                return jsonify({"error": error}), 400
+            else:
+                return render_template("auth/forgot-password.html", errors=[error]), 400
         
         from app.tenants.models import Tenant
         tenant = Tenant.query.filter_by(slug=tenant_slug, is_active=True, is_deleted=False).first()
         if not tenant:
-            return jsonify({"error": "Tenant not found"}), 404
+            if request.is_json:
+                # For API, don't reveal if tenant exists
+                return jsonify({"status": "success", "message": "If email exists, reset link will be sent"}), 200
+            else:
+                return render_template("auth/forgot-password.html", errors=["Organization not found"]), 404
         
         result = AuthService.request_password_reset(
             tenant_id=tenant.id,
@@ -382,20 +432,32 @@ def forgot_password_post():
         
         logger.info(f"Password reset requested: {email}")
         
-        return jsonify({
-            "status": "success",
-            "message": "If email exists, reset link will be sent",
-            "reset_token": result["reset_token"],
-            "expires_in": result["expires_in"]
-        }), 200
+        if request.is_json:
+            return jsonify({
+                "status": "success",
+                "message": "If email exists, reset link will be sent",
+                "reset_token": result["reset_token"],
+                "expires_in": result["expires_in"]
+            }), 200
+        else:
+            # In production, email the reset link instead
+            flash(f"Reset link: {url_for('auth.reset_password', token=result['reset_token'], _external=True)}", "info")
+            return render_template("auth/forgot-password.html", success="If email exists, reset link will be sent"), 200
     
     except NotFoundError:
         # Don't reveal if user exists
-        return jsonify({"status": "success", "message": "If email exists, reset link will be sent"}), 200
+        if request.is_json:
+            return jsonify({"status": "success", "message": "If email exists, reset link will be sent"}), 200
+        else:
+            return render_template("auth/forgot-password.html", success="If email exists, reset link will be sent"), 200
     
     except Exception as e:
         logger.error(f"Forgot password error: {str(e)}")
-        return jsonify({"error": "Request failed"}), 500
+        error = "Request failed"
+        if request.is_json:
+            return jsonify({"error": error}), 500
+        else:
+            return render_template("auth/forgot-password.html", errors=[error]), 500
 
 
 @auth_bp.route("/reset-password/<token>", methods=["GET"])
@@ -404,19 +466,13 @@ def reset_password(token):
     try:
         payload = TokenService.verify_reset_token(token)
         if not payload:
-            return jsonify({"error": "Invalid or expired token"}), 400
+            return render_template("auth/reset-password.html", errors=["Invalid or expired token"]), 400
         
-        return jsonify({
-            "message": "Reset password form",
-            "fields": {
-                "password": "string",
-                "password_confirm": "string"
-            }
-        }), 200
+        return render_template("auth/reset-password.html", token=token)
     
     except Exception as e:
         logger.error(f"Reset password form error: {str(e)}")
-        return jsonify({"error": "Invalid token"}), 400
+        return render_template("auth/reset-password.html", errors=["Invalid or expired token"]), 400
 
 
 @auth_bp.route("/reset-password/<token>", methods=["POST"])
@@ -435,20 +491,41 @@ def reset_password_post(token):
     try:
         payload = TokenService.verify_reset_token(token)
         if not payload:
-            return jsonify({"error": "Invalid or expired token"}), 400
+            error = "Invalid or expired token"
+            if request.is_json:
+                return jsonify({"error": error}), 400
+            else:
+                return render_template("auth/reset-password.html", errors=[error]), 400
         
-        data = request.get_json() or {}
+        # Handle both form and JSON
+        if request.is_json:
+            data = request.get_json() or {}
+        else:
+            data = request.form.to_dict()
+        
         password = data.get("password", "")
         password_confirm = data.get("password_confirm", "")
         
         if not password or not password_confirm:
-            return jsonify({"error": "Missing required fields"}), 400
+            error = "Missing required fields"
+            if request.is_json:
+                return jsonify({"error": error}), 400
+            else:
+                return render_template("auth/reset-password.html", errors=[error], token=token), 400
         
         if len(password) < 8:
-            return jsonify({"error": "Password must be at least 8 characters"}), 400
+            error = "Password must be at least 8 characters"
+            if request.is_json:
+                return jsonify({"error": error}), 400
+            else:
+                return render_template("auth/reset-password.html", errors=[error], token=token), 400
         
         if password != password_confirm:
-            return jsonify({"error": "Passwords do not match"}), 400
+            error = "Passwords do not match"
+            if request.is_json:
+                return jsonify({"error": error}), 400
+            else:
+                return render_template("auth/reset-password.html", errors=[error], token=token), 400
         
         tenant_id = payload.get("tenant_id")
         
@@ -463,20 +540,31 @@ def reset_password_post(token):
         
         logger.info(f"Password reset for user {result['user']['email']}")
         
-        return jsonify({
-            "status": "success",
-            "message": "Password reset successful",
-            "user": result["user"],
-            "access_token": result["access_token"],
-            "refresh_token": result["refresh_token"]
-        }), 200
+        if request.is_json:
+            return jsonify({
+                "status": "success",
+                "message": "Password reset successful",
+                "user": result["user"],
+                "access_token": result["access_token"],
+                "refresh_token": result["refresh_token"]
+            }), 200
+        else:
+            flash("Password reset successful. You are now logged in.", "success")
+            return redirect(url_for("dashboard.dashboard"))
     
     except AuthenticationError as e:
-        return jsonify({"error": e.message}), 401
+        if request.is_json:
+            return jsonify({"error": e.message}), 401
+        else:
+            return render_template("auth/reset-password.html", errors=[e.message], token=token), 401
     
     except Exception as e:
         logger.error(f"Password reset error: {str(e)}", exc_info=True)
-        return jsonify({"error": "Password reset failed"}), 500
+        error = "Password reset failed"
+        if request.is_json:
+            return jsonify({"error": error}), 500
+        else:
+            return render_template("auth/reset-password.html", errors=[error], token=token), 500
 
 
 # ============================================================================

@@ -17,42 +17,37 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body class="bg-gray-50">
-    {% block page_content %}
+    <div class="flex h-screen bg-gray-100">
+        <!-- Sidebar - conditionally shown -->
         {% if current_user.is_authenticated %}
-            <!-- Authenticated Layout with Sidebar -->
-            <div class="flex h-screen bg-gray-100">
-                <!-- Sidebar -->
-                {% include 'components/_sidebar.html' %}
-                
-                <!-- Main Content -->
-                <div class="flex-1 flex flex-col overflow-hidden">
-                    <!-- Navbar -->
-                    {% include 'components/_navbar.html' %}
-                    
-                    <!-- Page Content -->
-                    <main class="flex-1 overflow-auto">
-                        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                            {% block inner_content %}{% endblock %}
-                        </div>
-                    </main>
-                </div>
-            </div>
-        {% else %}
-            <!-- Unauthenticated Layout (Full Width) -->
-            <div class="min-h-screen flex flex-col">
-                <!-- Header for auth pages -->
-                {% include 'components/_auth_header.html' %}
-                
-                <!-- Page Content -->
-                <main class="flex-1">
-                    {% block inner_content %}{% endblock %}
-                </main>
-                
-                <!-- Footer for auth pages -->
-                {% include 'components/_footer.html' %}
-            </div>
+            {% include 'components/_sidebar.html' %}
         {% endif %}
-    {% endblock %}
+        
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Navbar - conditionally shown -->
+            {% if current_user.is_authenticated %}
+                {% include 'components/_navbar.html' %}
+            {% endif %}
+            
+            <!-- Page Content -->
+            <main class="flex-1 overflow-auto">
+                {% if not current_user.is_authenticated %}
+                    <!-- Header for auth pages -->
+                    {% include 'components/_auth_header.html' %}
+                {% endif %}
+                
+                <div class="{% if current_user.is_authenticated %}max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8{% else %}flex-1{% endif %}">
+                    {% block inner_content %}{% endblock %}
+                </div>
+                
+                {% if not current_user.is_authenticated %}
+                    <!-- Footer for auth pages -->
+                    {% include 'components/_footer.html' %}
+                {% endif %}
+            </main>
+        </div>
+    </div>
     
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
