@@ -30,3 +30,4 @@ class Customer(BaseModel):
     # SECTION: Relationships
     # =====================================
     applications = db.relationship("Application", back_populates="customer", lazy="dynamic")
+    documents = db.relationship("Document", back_populates="customer", lazy="dynamic")

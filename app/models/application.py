@@ -26,6 +26,7 @@ class Application(BaseModel):
     # SECTION: Relationships
     # =====================================
     customer = db.relationship("Customer", back_populates="applications")
+    documents = db.relationship("Document", back_populates="application", lazy="dynamic")
 
     # Future AI placeholders:
     # - underwriting_summary_placeholder

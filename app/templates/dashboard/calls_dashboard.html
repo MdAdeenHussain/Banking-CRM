@@ -14,4 +14,33 @@
   <div class="col-12 col-lg-8"><article class="neu-card p-3 min-h-240"><h2 class="h6 mb-2">Call Trend</h2><div class="chart-placeholder"></div></article></div>
   <div class="col-12 col-lg-4"><article class="neu-card p-3 min-h-240"><h2 class="h6 mb-2">Queue Health</h2><ul class="small mb-0"><li>Avg call duration: 4m 21s</li><li>Missed callbacks: 14</li><li>Escalations: 5</li></ul></article></div>
 </section>
+
+<section class="row g-3 mt-1">
+  <div class="col-12 col-lg-6">
+    <article class="neu-card p-3 min-h-240">
+      <h2 class="h6 mb-2">AI Call Summary Panel</h2>
+      <p class="small mb-2">{{ ai_call_summary.summary if ai_call_summary is defined else 'Customer wants quick sanction with EMI guidance.' }}</p>
+      <ul class="small mb-0">
+        <li>Amount: {{ ai_call_summary.amount if ai_call_summary is defined else 500000 }}</li>
+        <li>Urgency: {{ ai_call_summary.urgency if ai_call_summary is defined else 'high' }}</li>
+        <li>Next Action: {{ ai_call_summary.next_action if ai_call_summary is defined else 'follow-up tomorrow' }}</li>
+      </ul>
+    </article>
+  </div>
+  <div class="col-12 col-lg-6">
+    <article class="neu-card p-3 min-h-240">
+      <h2 class="h6 mb-2">WhatsApp Draft Preview</h2>
+      <p class="small mb-0">{{ ai_whatsapp_draft.draft if ai_whatsapp_draft is defined else 'Hello Rahul, please share your pending salary slip and bank statement so we can proceed.' }}</p>
+    </article>
+  </div>
+</section>
+
+<section class="row g-3 mt-1">
+  <div class="col-12">
+    <article class="neu-card p-3 min-h-240">
+      <h2 class="h6 mb-2">Previous Interaction Memory</h2>
+      <p class="small mb-0">{{ interaction_memory.memory_context if interaction_memory is defined else 'No prior interaction memory available yet.' }}</p>
+    </article>
+  </div>
+</section>
 {% endblock %}

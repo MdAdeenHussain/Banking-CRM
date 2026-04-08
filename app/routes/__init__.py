@@ -9,7 +9,10 @@ application startup remains clean and predictable.
 # =====================================
 from flask import Flask
 
+from app.ai_hub.routes import ai_hub_bp
 from app.routes.analytics_routes import analytics_bp
+from app.ai_ml.routes import ai_ml_bp
+from app.rag_engine.memory_routes import rag_memory_bp
 from app.routes.applications_routes import applications_bp
 from app.routes.auth_routes import auth_bp
 from app.routes.billing_routes import billing_bp
@@ -40,3 +43,6 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(settings_bp)
     app.register_blueprint(platform_bp)
     app.register_blueprint(meta_webhook_bp)
+    app.register_blueprint(ai_ml_bp)
+    app.register_blueprint(ai_hub_bp)
+    app.register_blueprint(rag_memory_bp)

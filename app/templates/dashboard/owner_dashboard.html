@@ -5,14 +5,16 @@
 {% block dashboard_content %}
 <!-- Owner KPI Bento Grid -->
 <section class="bento-grid bento-4 mb-4">
-  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Total Leads</p><p class="kpi-value">12,840</p><span class="soft-badge success">+9.5%</span></article>
-  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Active Applications</p><p class="kpi-value">1,124</p><span class="soft-badge info">Live</span></article>
-  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Conversions</p><p class="kpi-value">23.8%</p><span class="soft-badge success">+2.1%</span></article>
-  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Commissions</p><p class="kpi-value">INR 42.6L</p><span class="soft-badge success">Monthly</span></article>
-  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Branch Leaderboard</p><p class="kpi-value">West Hub</p><span class="soft-badge info">#1 performance</span></article>
-  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Fraud Alerts</p><p class="kpi-value">18</p><span class="soft-badge warning">Review needed</span></article>
-  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Lender Heatmap</p><p class="kpi-value">8 banks</p><span class="soft-badge info">Ranking active</span></article>
-  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Revenue Chart</p><p class="kpi-value">INR 1.8Cr</p><span class="soft-badge success">QTD</span></article>
+  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Total Leads</p><p class="kpi-value">{{ kpis.total_leads|default(0) }}</p><span class="soft-badge success">Live</span></article>
+  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Active Applications</p><p class="kpi-value">{{ kpis.applications|default(0) }}</p><span class="soft-badge info">Realtime</span></article>
+  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Conversions</p><p class="kpi-value">{{ kpis.conversions|default(0) }}%</p><span class="soft-badge success">Pipeline</span></article>
+  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Commissions</p><p class="kpi-value">INR {{ kpis.commission_earned|default(0) }}</p><span class="soft-badge success">Computed</span></article>
+  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Fraud Alerts</p><p class="kpi-value">{{ kpis.fraud_alerts|default(0) }}</p><span class="soft-badge warning">Rule-based</span></article>
+  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Verification Queue</p><p class="kpi-value">{{ kpis.verification_queue_count|default(0) }}</p><span class="soft-badge info">Docs queue</span></article>
+  <article class="neu-card bento-item kpi-card"><p class="small mb-1">AI Approval Probability</p><p class="kpi-value">{{ kpis.approval_probability|default(0) }}%</p><span class="soft-badge info">Classical ML</span></article>
+  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Top Lender Match</p><p class="kpi-value">{{ kpis.top_lender_matches[0].bank if kpis.top_lender_matches|default([])|length else 'N/A' }}</p><span class="soft-badge success">Ranked</span></article>
+  <article class="neu-card bento-item kpi-card"><p class="small mb-1">AI Lead Score Distribution</p><p class="kpi-value">{{ kpis.ai_lead_score_distribution.high|default(0) }}/{{ kpis.ai_lead_score_distribution.medium|default(0) }}/{{ kpis.ai_lead_score_distribution.low|default(0) }}</p><span class="soft-badge info">H/M/L</span></article>
+  <article class="neu-card bento-item kpi-card"><p class="small mb-1">Risk Segmentation</p><p class="kpi-value">{{ kpis.risk_segmentation.high|default(0) }} High</p><span class="soft-badge warning">Doc risk</span></article>
 </section>
 
 <section class="row g-3">
@@ -30,6 +32,63 @@
         <li>2. Central Hub - 287 disbursals</li>
         <li>3. South Hub - 241 disbursals</li>
       </ul>
+    </article>
+  </div>
+</section>
+
+<section class="row g-3 mt-1">
+  <div class="col-12 col-xl-6">
+    <article class="neu-card p-3 min-h-240">
+      <h2 class="h6 mb-2">Branch Report Narrative</h2>
+      <p class="small mb-0">{{ ai_branch_report.report if ai_branch_report is defined else 'This week the network improved conversion quality with stronger document turnarounds.' }}</p>
+    </article>
+  </div>
+  <div class="col-12 col-xl-6">
+    <article class="neu-card p-3 min-h-240">
+      <h2 class="h6 mb-2">Rejection Reason Insights</h2>
+      <p class="small mb-0">{{ ai_rejection_insight.explanation if ai_rejection_insight is defined else 'Applications are mostly failing on FOIR thresholds and borderline bureau scores.' }}</p>
+    </article>
+  </div>
+</section>
+
+<section class="row g-3 mt-1">
+  <div class="col-12 col-xl-6">
+    <article class="neu-card p-3 min-h-240">
+      <h2 class="h6 mb-2">Similar Past Cases</h2>
+      <ul class="small mb-0">
+        {% for item in similar_cases|default([]) %}
+        <li>{{ item.text }}</li>
+        {% else %}
+        <li>No similar past cases indexed yet.</li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+  <div class="col-12 col-xl-6">
+    <article class="neu-card p-3 min-h-240">
+      <h2 class="h6 mb-2">Lender Memory Panel</h2>
+      <p class="small mb-0">{{ lender_memory.memory_context if lender_memory is defined else 'No lender memory available yet.' }}</p>
+    </article>
+  </div>
+</section>
+
+<section class="row g-3 mt-1">
+  <div class="col-12 col-xl-6">
+    <article class="neu-card p-3 min-h-240">
+      <h2 class="h6 mb-2">Fraud Pattern History</h2>
+      <ul class="small mb-0">
+        {% for item in fraud_memory|default([]) %}
+        <li>{{ item.text }}</li>
+        {% else %}
+        <li>No fraud pattern memory available yet.</li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+  <div class="col-12 col-xl-6">
+    <article class="neu-card p-3 min-h-240">
+      <h2 class="h6 mb-2">Rejection Insights Memory</h2>
+      <p class="small mb-0">{{ ai_rejection_insight.memory_context if ai_rejection_insight is defined else 'No rejection memory available.' }}</p>
     </article>
   </div>
 </section>

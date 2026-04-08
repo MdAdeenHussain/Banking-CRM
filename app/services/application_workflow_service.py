@@ -100,6 +100,11 @@ class ApplicationWorkflowService:
         )
 
         attached_count = len(documents)
+        for document in documents:
+            # Link document to application so application workflow can surface
+            # all supporting files in one timeline.
+            document.application_id = application.id
+
         new_stage = "DOCS_VERIFIED" if attached_count > 0 else "DOCS_PENDING"
         application.current_stage = new_stage
         application.updated_at = datetime.now(timezone.utc)

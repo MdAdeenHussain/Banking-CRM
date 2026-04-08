@@ -48,6 +48,29 @@ class Config:
     # Future AI placeholders
     AI_PROVIDER = os.getenv("AI_PROVIDER", "placeholder")
     AI_ROUTER_MODE = os.getenv("AI_ROUTER_MODE", "disabled")
+    AI_MODEL_DIR = os.getenv("AI_MODEL_DIR", "model_store")
+    AI_ALLOW_CLOUD = os.getenv("AI_ALLOW_CLOUD", "1") == "1"
+    AI_PROVIDER_RETRIES = int(os.getenv("AI_PROVIDER_RETRIES", "2"))
+    OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    AI_LOCAL_PRIMARY_MODEL = os.getenv("AI_LOCAL_PRIMARY_MODEL", "llama3.1")
+    AI_LOCAL_SECONDARY_MODEL = os.getenv("AI_LOCAL_SECONDARY_MODEL", "mistral")
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+    OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "")
+    OPENAI_MODEL_NAME = os.getenv("OPENAI_MODEL_NAME", "gpt-4o-mini")
+    CLAUDE_API_KEY = os.getenv("CLAUDE_API_KEY", "")
+    CLAUDE_BASE_URL = os.getenv("CLAUDE_BASE_URL", "")
+    CLAUDE_MODEL_NAME = os.getenv("CLAUDE_MODEL_NAME", "claude-3-5-sonnet")
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+    GEMINI_BASE_URL = os.getenv("GEMINI_BASE_URL", "")
+    GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-1.5-pro")
+
+    # RAG / vector memory settings
+    RAG_VECTOR_BACKEND = os.getenv("RAG_VECTOR_BACKEND", "faiss")
+    RAG_INDEX_NAME = os.getenv("RAG_INDEX_NAME", "banking_crm_memory")
+    RAG_STORE_DIR = os.getenv("RAG_STORE_DIR", "rag_store")
+    RAG_EMBEDDING_MODEL = os.getenv("RAG_EMBEDDING_MODEL", "all-MiniLM-L6-v2")
+    RAG_EMBEDDING_DIM = int(os.getenv("RAG_EMBEDDING_DIM", "384"))
+    RAG_ENABLE_OPENAI_EMBEDDINGS = os.getenv("RAG_ENABLE_OPENAI_EMBEDDINGS", "0") == "1"
 
 
 # =====================================

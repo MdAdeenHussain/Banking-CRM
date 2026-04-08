@@ -9,6 +9,7 @@ Provides Redis-backed Celery setup for asynchronous task execution.
 from __future__ import annotations
 
 from celery import Celery
+from celery.schedules import crontab
 
 from app import create_app
 
@@ -24,6 +25,12 @@ def make_celery() -> Celery:
         "crm2_tasks",
         broker=flask_app.config["CELERY_BROKER_URL"],
         backend=flask_app.config["CELERY_RESULT_BACKEND"],
+        include=[
+            "tasks.lead_tasks",
+            "tasks.notification_tasks",
+            "tasks.ml_tasks",
+            "app.documents.tasks",
+        ],
     )
 
     celery_instance.conf.update(
@@ -33,6 +40,14 @@ def make_celery() -> Celery:
         accept_content=["json"],
         timezone="UTC",
         enable_utc=True,
+        beat_schedule={
+            # Weekly retraining architecture placeholder:
+            # Runs every Sunday at 02:00 UTC.
+            "weekly-model-retraining": {
+                "task": "tasks.ml_tasks.weekly_model_retraining",
+                "schedule": crontab(hour=2, minute=0, day_of_week="sunday"),
+            },
+        },
     )
 
     class FlaskContextTask(celery_instance.Task):

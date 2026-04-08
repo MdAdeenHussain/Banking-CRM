@@ -22,6 +22,7 @@ _EXPORT_MAP = {
     "CustomerService": ("app.services.customer_service", "CustomerService"),
     "ApplicationService": ("app.services.application_service", "ApplicationService"),
     "BillingService": ("app.services.billing_service", "BillingService"),
+    "DocumentService": ("app.services.document_service", "DocumentService"),
     "LeadWorkflowService": ("app.services.lead_workflow_service", "LeadWorkflowService"),
     "ApplicationWorkflowService": ("app.services.application_workflow_service", "ApplicationWorkflowService"),
     "LenderService": ("app.services.lender_service", "LenderService"),

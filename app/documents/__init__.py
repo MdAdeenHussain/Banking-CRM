@@ -1,8 +1,4 @@
-"""Route bridge for document module.
-
-Phase 5 moves document logic into app.documents.routes while keeping
-legacy blueprint import path stable for existing app registration.
-"""
+"""Document intelligence package exports."""
 
 # ==========================================
 # SECTION: Imports
@@ -13,16 +9,16 @@ from app.documents.routes import documents_bp
 # ==========================================
 # SECTION: Core Logic
 # ==========================================
-# `documents_bp` is imported from app.documents.routes.
+__all__ = ["documents_bp"]
 
 
 # ==========================================
 # SECTION: Validation
 # ==========================================
-# Validation responsibilities are implemented in app.documents.validators.
+# Validation helpers are provided in app.documents.validators
 
 
 # ==========================================
 # SECTION: Fraud Checks
 # ==========================================
-# Fraud endpoints are implemented in app.documents.routes + fraud_engine.
+# Fraud logic is provided in app.documents.fraud_engine

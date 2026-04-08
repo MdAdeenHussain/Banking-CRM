@@ -15,6 +15,7 @@ from app.models.customer import Customer
 from app.models.document import Document
 from app.models.lead import Lead
 from app.models.lender import Lender
+from app.models.model_registry import ModelRegistryEntry
 from app.models.notification import Notification
 from app.models.tenant import Tenant
 from app.models.user import User
@@ -28,6 +29,7 @@ __all__ = [
     "Application",
     "Document",
     "Lender",
+    "ModelRegistryEntry",
     "Notification",
     "AuditLog",
     "Billing",
