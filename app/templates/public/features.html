@@ -1,0 +1,25 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/base.html' %}
+{% block title %}Features | Banking DSA AI CRM{% endblock %}
+
+{% block content %}
+<section class="neu-card page-hero mb-4">
+  <h1 class="h2 mb-2">Feature-rich Banking AI CRM</h1>
+  <p class="mb-0">Comprehensive modules for lead operations, lending workflows, analytics, and SaaS governance.</p>
+</section>
+
+<section class="bento-grid bento-3 mb-4">
+  <article class="neu-card bento-item"><h3 class="h6">Lead CRM</h3><p>Capture and orchestrate leads with lifecycle visibility.</p></article>
+  <article class="neu-card bento-item"><h3 class="h6">AI Lead Scoring</h3><p>Prioritize prospects based on quality and conversion potential.</p></article>
+  <article class="neu-card bento-item"><h3 class="h6">Document Vault</h3><p>Securely store and tag customer files with access controls.</p></article>
+  <article class="neu-card bento-item"><h3 class="h6">Fraud Detection</h3><p>Detect mismatch signals and suspicious document patterns.</p></article>
+  <article class="neu-card bento-item"><h3 class="h6">Eligibility Engine</h3><p>Evaluate affordability with financial ratio placeholders.</p></article>
+  <article class="neu-card bento-item"><h3 class="h6">Lender Ranking</h3><p>Shortlist best-fit banks using configurable matrix scoring.</p></article>
+  <article class="neu-card bento-item"><h3 class="h6">Commission Tracking</h3><p>Track earnings by branch, lender, and team hierarchy.</p></article>
+  <article class="neu-card bento-item"><h3 class="h6">Analytics</h3><p>Funnel intelligence, productivity trends, and ROI reporting.</p></article>
+  <article class="neu-card bento-item"><h3 class="h6">Multi Branch Control</h3><p>Manage distributed teams with role-level governance.</p></article>
+  <article class="neu-card bento-item"><h3 class="h6">SaaS Billing</h3><p>Plan controls, usage visibility, and invoice lifecycle support.</p></article>
+</section>
+
+{% include 'layouts/cta_banner.html' %}
+{% endblock %}

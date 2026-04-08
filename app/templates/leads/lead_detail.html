@@ -1,0 +1,72 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Lead Detail | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="row g-3">
+  <div class="col-12 col-xl-8">
+    <article class="neu-card p-3 mb-3">
+      <h1 class="h5 mb-2">Lead #L-1103 - Meera Shah</h1>
+      <div class="d-flex flex-wrap gap-2 mb-2">
+        <span class="soft-badge info">AI Score: 74/100</span>
+        <span class="soft-badge warning">Stage: DOCS_PENDING</span>
+        <span class="soft-badge">Assigned: Karthik</span>
+      </div>
+      <p class="mb-0">Customer profile includes salaried applicant with stable income and active repayment history.</p>
+    </article>
+
+    <article class="neu-card p-3 mb-3">
+      <h2 class="h6 mb-2">Customer Details</h2>
+      <div class="row small">
+        <div class="col-6 col-md-4">Phone: +91 90000 00123</div>
+        <div class="col-6 col-md-4">Income: INR 95,000/mo</div>
+        <div class="col-6 col-md-4">City: Pune</div>
+      </div>
+    </article>
+
+    <article class="neu-card p-3 mb-3">
+      <h2 class="h6 mb-2">Notes</h2>
+      <ul class="small mb-0">
+        <li>Customer prefers Saturday callback.</li>
+        <li>Requested lender options with lower processing fee.</li>
+        <li>Pending salary slip upload.</li>
+      </ul>
+    </article>
+
+    <article class="neu-card p-3">
+      <h2 class="h6 mb-2">Documents</h2>
+      <div class="d-flex flex-wrap gap-2 small">
+        <span class="soft-badge success">PAN - Verified</span>
+        <span class="soft-badge warning">Salary Slip - Pending</span>
+        <span class="soft-badge info">Bank Statement - Uploaded</span>
+      </div>
+    </article>
+  </div>
+
+  <div class="col-12 col-xl-4">
+    <article class="neu-card p-3 mb-3">
+      <h2 class="h6">Timeline</h2>
+      <ul class="small mb-0">
+        <li>10:15 AM - Lead created</li>
+        <li>11:05 AM - Intro call completed</li>
+        <li>12:30 PM - Docs requested</li>
+      </ul>
+    </article>
+
+    <article class="neu-card p-3 mb-3">
+      <h2 class="h6">Next Best Action</h2>
+      <p class="small mb-0">Send lender shortlist and request missing salary documents before EOD.</p>
+    </article>
+
+    <article class="neu-card p-3">
+      <h2 class="h6">Stage Update Panel</h2>
+      <select class="neu-input mb-2">
+        <option>DOCS_PENDING</option>
+        <option>VERIFIED</option>
+        <option>ELIGIBILITY</option>
+      </select>
+      <button class="btn btn-primary btn-sm rounded-pill">Update Stage</button>
+    </article>
+  </div>
+</section>
+{% endblock %}

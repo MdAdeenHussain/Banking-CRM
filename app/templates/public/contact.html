@@ -1,0 +1,48 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/base.html' %}
+{% block title %}Contact | Banking DSA AI CRM{% endblock %}
+
+{% block content %}
+<section class="neu-card page-hero mb-4">
+  <h1 class="h2 mb-2">Talk to our FinTech SaaS team</h1>
+  <p class="mb-0">Share your branch size, lead volume, and objectives to get a tailored implementation walkthrough.</p>
+</section>
+
+<section class="row g-4">
+  <div class="col-12 col-lg-7">
+    <article class="neu-card p-4">
+      <h2 class="h5 mb-3">Send us your requirements</h2>
+      <form class="needs-validation" novalidate>
+        <div class="row g-3">
+          <div class="col-12 col-md-6"><input class="neu-input" type="text" placeholder="Full name" required></div>
+          <div class="col-12 col-md-6"><input class="neu-input" type="email" placeholder="Work email" required></div>
+          <div class="col-12 col-md-6"><input class="neu-input" type="text" placeholder="Company / DSA name"></div>
+          <div class="col-12 col-md-6"><input class="neu-input" type="text" placeholder="Phone number"></div>
+          <div class="col-12"><textarea class="neu-input" rows="4" placeholder="Tell us about your workflow"></textarea></div>
+        </div>
+        <button type="submit" class="btn btn-primary rounded-pill px-4 mt-3">Submit Inquiry</button>
+      </form>
+    </article>
+  </div>
+  <div class="col-12 col-lg-5">
+    <article class="neu-card p-4 mb-3">
+      <h3 class="h6">Support</h3>
+      <p class="mb-1">support@bankingdsa-crm.example</p>
+      <p class="mb-0">Mon-Sat, 9:00 AM to 7:00 PM IST</p>
+    </article>
+    <article class="neu-card p-4">
+      <h3 class="h6">Sales</h3>
+      <p class="mb-1">sales@bankingdsa-crm.example</p>
+      <p class="mb-0">+91 90000 00000</p>
+    </article>
+  </div>
+</section>
+
+<section class="bento-grid bento-3 mt-4">
+  <article class="neu-card bento-item"><h2 class="h6">Implementation Support</h2><p class="small mb-0">Guided onboarding plans for single and multi-branch teams.</p></article>
+  <article class="neu-card bento-item"><h2 class="h6">Migration Assistance</h2><p class="small mb-0">Structured migration from spreadsheets and legacy CRMs.</p></article>
+  <article class="neu-card bento-item"><h2 class="h6">Success Planning</h2><p class="small mb-0">KPI-first rollout with weekly adoption checkpoints.</p></article>
+</section>
+
+{% include 'layouts/cta_banner.html' %}
+{% endblock %}

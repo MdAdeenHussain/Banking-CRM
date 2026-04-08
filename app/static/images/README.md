@@ -1,6 +1,6 @@
-# CRM2 Project Root
+# Image Assets
 
-Root of the Banking DSA AI CRM SaaS codebase. Contains app source, deployment files, migrations, and tests.
+Reserved image folder for marketing visuals and UI illustrations.
 
 - Phase 1 status: structure ready, implementation intentionally minimal.
 - Future phases: business logic, integrations, and advanced workflows.

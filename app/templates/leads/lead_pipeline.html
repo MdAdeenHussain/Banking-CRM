@@ -1,0 +1,20 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Lead Pipeline | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="mb-3">
+  <h1 class="h5 mb-1">Lead Pipeline Kanban</h1>
+  <p class="mb-0">Drag-drop placeholders for stage movement will be added in future phases.</p>
+</section>
+
+<section class="kanban-board">
+  <article class="kanban-column"><h2 class="h6">NEW</h2><div class="kanban-card">L-1201 | Rahul</div><div class="kanban-card">L-1202 | Sneha</div></article>
+  <article class="kanban-column"><h2 class="h6">CONTACTED</h2><div class="kanban-card">L-1198 | Ayesha</div></article>
+  <article class="kanban-column"><h2 class="h6">INTERESTED</h2><div class="kanban-card">L-1189 | Vikram</div></article>
+  <article class="kanban-column"><h2 class="h6">DOCS_PENDING</h2><div class="kanban-card">L-1174 | Isha</div></article>
+  <article class="kanban-column"><h2 class="h6">SANCTIONED</h2><div class="kanban-card">L-1156 | Nikhil</div></article>
+  <article class="kanban-column"><h2 class="h6">DISBURSED</h2><div class="kanban-card">L-1133 | Kavya</div></article>
+  <article class="kanban-column"><h2 class="h6">LOST</h2><div class="kanban-card">L-1121 | Arman</div></article>
+</section>
+{% endblock %}

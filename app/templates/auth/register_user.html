@@ -1,0 +1,31 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/base.html' %}
+{% block title %}Register User | Banking DSA AI CRM{% endblock %}
+
+{% block content %}
+<section class="form-shell">
+  <article class="neu-card p-4 p-md-5">
+    <h1 class="h3 mb-2">Invite a new team member</h1>
+    <p class="mb-4">Create a user account with role-specific access controls.</p>
+
+    <form class="needs-validation" novalidate>
+      <div class="row g-3">
+        <div class="col-12 col-md-6"><input class="neu-input" type="text" placeholder="Full Name" required></div>
+        <div class="col-12 col-md-6"><input class="neu-input" type="email" placeholder="Work Email" required></div>
+        <div class="col-12 col-md-6">
+          <select class="neu-input" required>
+            <option value="">Select Role</option>
+            <option>Owner</option>
+            <option>Branch Manager</option>
+            <option>Agent</option>
+            <option>Operations</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-6"><input class="neu-input" type="text" placeholder="Branch Name"></div>
+        <div class="col-12"><input class="neu-input" type="password" placeholder="Temporary Password" required></div>
+      </div>
+      <button type="submit" class="btn btn-primary rounded-pill px-4 mt-3">Create User</button>
+    </form>
+  </article>
+</section>
+{% endblock %}

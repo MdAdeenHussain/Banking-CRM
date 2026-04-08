@@ -1,0 +1,29 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{# Sticky global navbar for public + app pages. #}
+<nav class="navbar navbar-expand-lg navbar-light app-navbar sticky-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{{ url_for('public.home') }}">
+      <span class="logo-dot"></span>
+      <span>Banking DSA AI CRM</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav ms-auto mb-2 mb-xl-0 align-items-xl-center gap-xl-1">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('public.features') }}">Features</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('public.solutions') }}">Solutions</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('public.pricing') }}">Pricing</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('public.security') }}">Security</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('public.contact') }}">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register_tenant') }}">Register</a></li>
+        <li class="nav-item ms-xl-2">
+          <a class="btn btn-primary rounded-pill px-3" href="{{ url_for('public.demo_booking') }}">Book Demo</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

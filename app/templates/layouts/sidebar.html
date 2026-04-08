@@ -1,0 +1,14 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{# Reusable sidebar for dashboard-style screens. #}
+<aside class="dashboard-sidebar neu-card p-3">
+  <h6 class="text-uppercase text-muted small">Workspace</h6>
+  <ul class="list-unstyled mt-3 mb-0 d-grid gap-2">
+    <li><a class="sidebar-link" href="{{ url_for('dashboard.owner_dashboard') }}">Owner Dashboard</a></li>
+    <li><a class="sidebar-link" href="{{ url_for('dashboard.branch_dashboard') }}">Branch Dashboard</a></li>
+    <li><a class="sidebar-link" href="{{ url_for('dashboard.agent_dashboard') }}">Agent Dashboard</a></li>
+    <li><a class="sidebar-link" href="{{ url_for('dashboard.calls_dashboard') }}">Calls Dashboard</a></li>
+    <li><a class="sidebar-link" href="{{ url_for('dashboard.platform_dashboard') }}">Platform Dashboard</a></li>
+    <li><a class="sidebar-link" href="{{ url_for('leads.leads_list') }}">Leads</a></li>
+    <li><a class="sidebar-link" href="{{ url_for('customers.customers_list') }}">Customers</a></li>
+  </ul>
+</aside>

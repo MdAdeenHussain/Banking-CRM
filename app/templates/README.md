@@ -1,6 +1,6 @@
-# CRM2 Project Root
+# Templates
 
-Root of the Banking DSA AI CRM SaaS codebase. Contains app source, deployment files, migrations, and tests.
+Jinja2 template system for public SaaS pages, auth flows, dashboards, and future CRM modules.
 
 - Phase 1 status: structure ready, implementation intentionally minimal.
 - Future phases: business logic, integrations, and advanced workflows.

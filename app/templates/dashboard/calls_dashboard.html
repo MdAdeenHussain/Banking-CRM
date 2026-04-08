@@ -1,0 +1,17 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Calls Dashboard | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="bento-grid bento-4 mb-4">
+  <article class="neu-card bento-item"><p class="small mb-1">Calls Today</p><p class="kpi-value">342</p><span class="soft-badge info">Inbound + Outbound</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">Connected Rate</p><p class="kpi-value">67%</p><span class="soft-badge success">Healthy</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">Follow-up Created</p><p class="kpi-value">128</p><span class="soft-badge warning">Pending actions</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">AI Summaries</p><p class="kpi-value">220</p><span class="soft-badge success">Auto-ready</span></article>
+</section>
+
+<section class="row g-3">
+  <div class="col-12 col-lg-8"><article class="neu-card p-3 min-h-240"><h2 class="h6 mb-2">Call Trend</h2><div class="chart-placeholder"></div></article></div>
+  <div class="col-12 col-lg-4"><article class="neu-card p-3 min-h-240"><h2 class="h6 mb-2">Queue Health</h2><ul class="small mb-0"><li>Avg call duration: 4m 21s</li><li>Missed callbacks: 14</li><li>Escalations: 5</li></ul></article></div>
+</section>
+{% endblock %}

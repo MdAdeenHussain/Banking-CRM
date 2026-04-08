@@ -1,0 +1,23 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Applications List | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="neu-card p-3 mb-3">
+  <h1 class="h5 mb-2">Loan Applications</h1>
+  <p class="mb-0">Track applications from initiation to disbursal with stage visibility.</p>
+</section>
+
+<section class="neu-card p-3">
+  <div class="table-responsive">
+    <table class="table table-soft">
+      <thead><tr><th>App ID</th><th>Customer</th><th>Loan Type</th><th>Stage</th><th>Amount</th><th>Updated</th></tr></thead>
+      <tbody>
+        <tr><td>APP-3211</td><td>Aarav Kumar</td><td>Home Loan</td><td><span class="soft-badge info">ELIGIBILITY</span></td><td>INR 45,00,000</td><td>15 mins ago</td></tr>
+        <tr><td>APP-3212</td><td>Meera Shah</td><td>Personal Loan</td><td><span class="soft-badge warning">DOCS_PENDING</span></td><td>INR 6,00,000</td><td>48 mins ago</td></tr>
+        <tr><td>APP-3213</td><td>Dev Patel</td><td>LAP</td><td><span class="soft-badge success">SANCTIONED</span></td><td>INR 18,00,000</td><td>1 hour ago</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

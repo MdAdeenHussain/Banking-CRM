@@ -1,0 +1,21 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/base.html' %}
+{% block title %}Solutions | Banking DSA AI CRM{% endblock %}
+
+{% block content %}
+<section class="neu-card page-hero mb-4">
+  <h1 class="h2 mb-2">Solutions by team and use-case</h1>
+  <p class="mb-0">Purpose-built solution stacks for owners, branch managers, field agents, and centralized operations teams.</p>
+</section>
+
+<section class="bento-grid bento-3 mb-4">
+  <article class="neu-card bento-item"><h3 class="h6">Owner Command Center</h3><p>Cross-branch KPIs, payouts, and strategic growth visibility.</p></article>
+  <article class="neu-card bento-item"><h3 class="h6">Branch Performance Stack</h3><p>Branch targets, team conversion, and daily action reviews.</p></article>
+  <article class="neu-card bento-item"><h3 class="h6">Agent Productivity Kit</h3><p>Lead assignments, callback planner, and AI next-action prompts.</p></article>
+  <article class="neu-card bento-item"><h3 class="h6">Document Control Hub</h3><p>Upload, OCR placeholders, mismatch alerts, and review timelines.</p></article>
+  <article class="neu-card bento-item"><h3 class="h6">Lender Intelligence</h3><p>Compare banks, product fit, approval probability, and speed score.</p></article>
+  <article class="neu-card bento-item"><h3 class="h6">Platform Governance</h3><p>Tenant billing, SLA monitoring, audit reporting, and controls.</p></article>
+</section>
+
+{% include 'layouts/cta_banner.html' %}
+{% endblock %}

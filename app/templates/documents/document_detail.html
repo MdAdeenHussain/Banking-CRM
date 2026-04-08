@@ -1,0 +1,29 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Document Detail | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="row g-3">
+  <div class="col-12 col-lg-8">
+    <article class="neu-card p-3">
+      <h1 class="h5 mb-2">Document D-9014 - Bank Statement</h1>
+      <div class="chart-placeholder min-h-300 d-flex align-items-center justify-content-center">Document preview placeholder</div>
+    </article>
+  </div>
+  <div class="col-12 col-lg-4">
+    <article class="neu-card p-3 mb-3">
+      <h2 class="h6">OCR Extracted Fields</h2>
+      <ul class="small mb-0"><li>Account Name: Aarav Kumar</li><li>Bank: Axis Bank</li><li>Statement Period: 6 months</li></ul>
+    </article>
+    <article class="neu-card p-3 mb-3">
+      <h2 class="h6">Fraud Score</h2>
+      <p class="kpi-value">72%</p>
+      <span class="soft-badge danger">High risk</span>
+    </article>
+    <article class="neu-card p-3">
+      <h2 class="h6">Mismatch Alerts</h2>
+      <ul class="small mb-0"><li>IFSC mismatch found in one page</li><li>Suspicious edited text blocks detected</li></ul>
+    </article>
+  </div>
+</section>
+{% endblock %}

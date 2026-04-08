@@ -1,0 +1,125 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/base.html' %}
+{% block title %}Banking DSA AI CRM | AI-Powered Banking DSA SaaS{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="neu-card page-hero mb-4 mb-md-5">
+  <div class="row g-4 align-items-center">
+    <div class="col-12 col-lg-6">
+      <span class="soft-badge info mb-3">FinTech CRM + AI Automation</span>
+      <h1 class="display-6 fw-bold text-balance">Scale your Banking DSA business with AI-ready CRM workflows</h1>
+      <p class="mt-3 mb-4">Manage leads, verify documents, compare lenders, reduce fraud risk, and improve conversions from one modern SaaS command center.</p>
+      <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('public.demo_booking') }}" class="btn btn-primary rounded-pill px-4">Book Live Demo</a>
+        <a href="{{ url_for('public.features') }}" class="btn btn-outline-primary rounded-pill px-4">Explore Features</a>
+      </div>
+      <div class="d-flex flex-wrap gap-2 mt-4">
+        <span class="trust-badge">99.9% Uptime Ready</span>
+        <span class="trust-badge">Role-Based Dashboards</span>
+        <span class="trust-badge">AI Assistance Layer</span>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6">
+      <div class="dashboard-preview">
+        <h2 class="h6 fw-semibold mb-3">Dashboard Preview Mockup</h2>
+        <div class="bento-grid bento-3">
+          <article class="neu-card bento-item">
+            <p class="small mb-1">Today's Leads</p>
+            <p class="kpi-value">248</p>
+            <span class="soft-badge success">+12% WoW</span>
+          </article>
+          <article class="neu-card bento-item">
+            <p class="small mb-1">Active Applications</p>
+            <p class="kpi-value">97</p>
+            <span class="soft-badge info">Realtime</span>
+          </article>
+          <article class="neu-card bento-item">
+            <p class="small mb-1">Fraud Alerts</p>
+            <p class="kpi-value">06</p>
+            <span class="soft-badge warning">Needs review</span>
+          </article>
+        </div>
+        <div class="chart-placeholder mt-3 p-3 d-flex align-items-end justify-content-between">
+          <span class="small muted">Revenue trend</span>
+          <span class="soft-badge info">+18.4%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Bento Grid -->
+<section class="mb-4 mb-md-5">
+  <div class="d-flex justify-content-between align-items-end mb-3">
+    <div>
+      <h2 class="h3 section-title mb-1">Built for banking-focused DSA operations</h2>
+      <p class="mb-0">Modular capabilities designed for lead-to-disbursal lifecycle management.</p>
+    </div>
+  </div>
+  <div class="bento-grid bento-3">
+    <article class="neu-card bento-item"><h3 class="h6">Lead Management</h3><p>Capture, assign, and track lead movement with branch-level ownership.</p></article>
+    <article class="neu-card bento-item"><h3 class="h6">AI Scoring</h3><p>Prioritize prospects using profile signals and interaction context.</p></article>
+    <article class="neu-card bento-item"><h3 class="h6">Fraud Detection</h3><p>Flag suspicious patterns in documents, identity, and application flow.</p></article>
+    <article class="neu-card bento-item"><h3 class="h6">Lender Comparison</h3><p>Evaluate banks by approval rate, speed, and product fit.</p></article>
+    <article class="neu-card bento-item"><h3 class="h6">Commission Tracker</h3><p>Monitor payouts by branch, agent, and lender program.</p></article>
+    <article class="neu-card bento-item"><h3 class="h6">Data Dashboards</h3><p>Role-based BI widgets for owner, branch, agent, and platform teams.</p></article>
+  </div>
+</section>
+
+<!-- Workflow Section -->
+<section class="neu-card p-4 p-md-5 mb-4 mb-md-5">
+  <h2 class="h3 mb-3">Lead to disbursal workflow</h2>
+  <div class="workflow-line">
+    <div class="workflow-step">Lead</div>
+    <div class="workflow-arrow">-></div>
+    <div class="workflow-step">Docs</div>
+    <div class="workflow-arrow">-></div>
+    <div class="workflow-step">Eligibility</div>
+    <div class="workflow-arrow">-></div>
+    <div class="workflow-step">Bank</div>
+    <div class="workflow-arrow">-></div>
+    <div class="workflow-step">Disbursal</div>
+  </div>
+</section>
+
+<!-- Pricing Preview -->
+<section class="mb-4 mb-md-5">
+  <h2 class="h3 mb-3">Simple plans for every growth stage</h2>
+  <div class="bento-grid bento-3">
+    <article class="neu-card bento-item pricing-card">
+      <h3 class="h5">Starter</h3>
+      <p class="kpi-value">INR 4,999/mo</p>
+      <p class="small">For new DSA teams</p>
+    </article>
+    <article class="neu-card bento-item pricing-card border border-primary">
+      <span class="soft-badge info mb-2">Recommended</span>
+      <h3 class="h5">Growth</h3>
+      <p class="kpi-value">INR 12,999/mo</p>
+      <p class="small">For multi-agent branches</p>
+    </article>
+    <article class="neu-card bento-item pricing-card">
+      <h3 class="h5">Enterprise</h3>
+      <p class="kpi-value">Custom</p>
+      <p class="small">For multi-branch DSA networks</p>
+    </article>
+  </div>
+</section>
+
+<!-- Testimonials + Trust -->
+<section class="neu-card p-4 p-md-5 mb-4 mb-md-5">
+  <h2 class="h3 mb-3">Trusted by fast-scaling DSA teams</h2>
+  <div class="row g-3">
+    <div class="col-12 col-md-6 col-lg-4"><article class="neu-card bento-item"><p class="mb-2">"Our lead response time dropped by 45% in 8 weeks."</p><strong class="small">Branch Head, Metro Finance DSA</strong></article></div>
+    <div class="col-12 col-md-6 col-lg-4"><article class="neu-card bento-item"><p class="mb-2">"AI suggestions improved conversion quality, not just volume."</p><strong class="small">Operations Lead, Prime Loan Desk</strong></article></div>
+    <div class="col-12 col-md-6 col-lg-4"><article class="neu-card bento-item"><p class="mb-2">"Centralized branch analytics gave us daily decision clarity."</p><strong class="small">Founder, Urban DSA Partners</strong></article></div>
+  </div>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <span class="trust-badge">ISO-ready controls</span>
+    <span class="trust-badge">Audit-friendly trails</span>
+    <span class="trust-badge">Role-based access</span>
+  </div>
+</section>
+
+{% include 'layouts/cta_banner.html' %}
+{% endblock %}

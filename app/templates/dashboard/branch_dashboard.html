@@ -1,0 +1,17 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Branch Dashboard | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="bento-grid bento-4 mb-4">
+  <article class="neu-card bento-item"><p class="small mb-1">Branch Leads</p><p class="kpi-value">1,420</p><span class="soft-badge success">+8%</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">Agents Performance</p><p class="kpi-value">82%</p><span class="soft-badge info">Productive</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">Branch Target</p><p class="kpi-value">74%</p><span class="soft-badge warning">In progress</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">Payout Progress</p><p class="kpi-value">INR 8.6L</p><span class="soft-badge success">On track</span></article>
+</section>
+
+<section class="row g-3">
+  <div class="col-12 col-lg-7"><article class="neu-card p-3 min-h-240"><h2 class="h6 mb-2">Lead Source Split</h2><div class="chart-placeholder"></div></article></div>
+  <div class="col-12 col-lg-5"><article class="neu-card p-3 min-h-240"><h2 class="h6 mb-2">Team Snapshot</h2><ul class="small mb-0"><li>Active agents: 18</li><li>Avg response time: 16 min</li><li>Docs pending: 124</li></ul></article></div>
+</section>
+{% endblock %}

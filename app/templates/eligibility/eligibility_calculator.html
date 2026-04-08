@@ -1,0 +1,16 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Eligibility Calculator | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="neu-card p-3 mb-3">
+  <h1 class="h5 mb-3">Eligibility Calculator</h1>
+  <div class="bento-grid bento-4">
+    <article class="neu-card bento-item"><h2 class="h6">FOIR</h2><p class="kpi-value">41%</p><p class="small mb-0">Fixed obligation to income ratio</p></article>
+    <article class="neu-card bento-item"><h2 class="h6">DTI</h2><p class="kpi-value">36%</p><p class="small mb-0">Debt to income ratio</p></article>
+    <article class="neu-card bento-item"><h2 class="h6">LTV</h2><p class="kpi-value">72%</p><p class="small mb-0">Loan to value ratio</p></article>
+    <article class="neu-card bento-item"><h2 class="h6">EMI</h2><p class="kpi-value">INR 38,500</p><p class="small mb-0">Estimated monthly EMI</p></article>
+    <article class="neu-card bento-item"><h2 class="h6">Max Loan Eligibility</h2><p class="kpi-value">INR 52,00,000</p><p class="small mb-0">Based on profile inputs</p></article>
+  </div>
+</section>
+{% endblock %}

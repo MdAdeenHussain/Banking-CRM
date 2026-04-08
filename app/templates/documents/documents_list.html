@@ -1,0 +1,25 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Documents List | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="neu-card p-3 mb-3">
+  <div class="d-flex flex-wrap justify-content-between gap-2 align-items-center">
+    <h1 class="h5 mb-0">Document Vault</h1>
+    <button class="btn btn-primary rounded-pill">Upload New Document</button>
+  </div>
+</section>
+
+<section class="neu-card p-3">
+  <div class="table-responsive">
+    <table class="table table-soft">
+      <thead><tr><th>Doc ID</th><th>Lead / Customer</th><th>Type</th><th>Status</th><th>Fraud Score</th><th>Updated</th></tr></thead>
+      <tbody>
+        <tr><td>D-9012</td><td>L-1103 / Meera Shah</td><td>PAN</td><td><span class="soft-badge success">Verified</span></td><td><span class="soft-badge info">11%</span></td><td>20 mins ago</td></tr>
+        <tr><td>D-9013</td><td>L-1104 / Dev Patel</td><td>Salary Slip</td><td><span class="soft-badge warning">Review</span></td><td><span class="soft-badge warning">46%</span></td><td>42 mins ago</td></tr>
+        <tr><td>D-9014</td><td>C-331 / Aarav Kumar</td><td>Bank Statement</td><td><span class="soft-badge danger">Mismatch</span></td><td><span class="soft-badge danger">72%</span></td><td>1 hour ago</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,159 @@
+/*
+  Reusable component classes for Bento UI, dashboard widgets,
+  steps, timelines, and callout banners.
+*/
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.bento-item {
+  padding: 1rem;
+  min-height: 136px;
+}
+
+.bento-item-lg {
+  min-height: 220px;
+}
+
+.dashboard-preview {
+  min-height: 320px;
+  background: linear-gradient(160deg, #f8fbff, #ecf3fb);
+  border-radius: 1rem;
+  box-shadow: var(--neu-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.84);
+  padding: 1rem;
+}
+
+.chart-placeholder {
+  min-height: 180px;
+  border-radius: 0.85rem;
+  background: linear-gradient(140deg, rgba(37,99,235,0.1), rgba(14,165,233,0.04));
+  border: 1px dashed rgba(59, 130, 246, 0.35);
+}
+
+.workflow-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.workflow-step {
+  flex: 1 1 120px;
+  text-align: center;
+  padding: 0.8rem;
+  border-radius: 0.8rem;
+  background: #f3f7fd;
+  box-shadow: var(--neu-shadow);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.workflow-arrow {
+  font-weight: 700;
+  color: #64748b;
+}
+
+.pricing-card ul {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.trust-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  background: #f4f8fe;
+  box-shadow: var(--neu-shadow);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.cta-banner {
+  background: linear-gradient(135deg, #e8f1ff, #ecf8ff);
+  border-radius: 1rem;
+  padding: 1.4rem;
+  box-shadow: var(--neu-shadow);
+}
+
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.kanban-column {
+  min-height: 220px;
+  padding: 0.9rem;
+  border-radius: 0.9rem;
+  background: #edf3fb;
+  box-shadow: var(--neu-inset);
+}
+
+.kanban-card {
+  background: #f6f9fe;
+  border-radius: 0.8rem;
+  padding: 0.75rem;
+  box-shadow: var(--neu-shadow);
+  margin-bottom: 0.7rem;
+}
+
+.step-progress {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.step-chip {
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #edf3fb;
+  box-shadow: var(--neu-shadow);
+}
+
+.step-chip.active {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.form-shell {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .step-progress {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 992px) {
+  .bento-grid.bento-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .bento-grid.bento-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .kanban-board {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .kanban-board {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+}

@@ -1,0 +1,32 @@
+/*
+  Dashboard-specific layout utilities.
+*/
+.dashboard-shell {
+  min-height: 72vh;
+}
+
+.dashboard-sidebar {
+  position: sticky;
+  top: 92px;
+}
+
+.sidebar-link {
+  display: block;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.75rem;
+  color: #334155;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.sidebar-link:hover {
+  box-shadow: var(--neu-shadow);
+  color: var(--primary);
+}
+
+.kpi-card {
+  min-height: 130px;
+}
+
+.data-panel {
+  min-height: 260px;
+}

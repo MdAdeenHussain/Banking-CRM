@@ -1,0 +1,50 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/base.html' %}
+{% block title %}Book Demo | Banking DSA AI CRM{% endblock %}
+
+{% block content %}
+<section class="neu-card page-hero mb-4">
+  <h1 class="h2 mb-2">Book your personalized product demo</h1>
+  <p class="mb-0">See a guided walkthrough across lead flow, eligibility insights, and branch analytics in under 30 minutes.</p>
+</section>
+
+<section class="row g-4 align-items-start">
+  <div class="col-12 col-lg-7">
+    <article class="neu-card p-4">
+      <h2 class="h5 mb-3">Schedule demo</h2>
+      <form class="needs-validation" novalidate>
+        <div class="row g-3">
+          <div class="col-12 col-md-6"><input class="neu-input" type="text" placeholder="Your name" required></div>
+          <div class="col-12 col-md-6"><input class="neu-input" type="email" placeholder="Business email" required></div>
+          <div class="col-12 col-md-6"><input class="neu-input" type="text" placeholder="DSA / Company"></div>
+          <div class="col-12 col-md-6"><input class="neu-input" type="text" placeholder="Current monthly lead volume"></div>
+          <div class="col-12 col-md-6"><input class="neu-input" type="date" required></div>
+          <div class="col-12 col-md-6"><input class="neu-input" type="time" required></div>
+          <div class="col-12"><textarea class="neu-input" rows="3" placeholder="Specific workflows to review"></textarea></div>
+        </div>
+        <button type="submit" class="btn btn-primary rounded-pill px-4 mt-3">Confirm Demo Slot</button>
+      </form>
+    </article>
+  </div>
+  <div class="col-12 col-lg-5">
+    <article class="neu-card p-4">
+      <h3 class="h6 mb-3">What you will see</h3>
+      <ul class="small mb-0">
+        <li>Lead-to-disbursal workflow map</li>
+        <li>Role-based owner/branch/agent dashboards</li>
+        <li>Document and fraud review screen walkthrough</li>
+        <li>Eligibility and lender comparison interface</li>
+        <li>Billing and platform administration controls</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<section class="bento-grid bento-3 mt-4">
+  <article class="neu-card bento-item"><h2 class="h6">Use-case Walkthrough</h2><p class="small mb-0">Owner, branch, and agent views demonstrated in one session.</p></article>
+  <article class="neu-card bento-item"><h2 class="h6">Workflow Mapping</h2><p class="small mb-0">Lead, docs, eligibility, lender routing, and disbursal sequence.</p></article>
+  <article class="neu-card bento-item"><h2 class="h6">Implementation Roadmap</h2><p class="small mb-0">Phase-wise rollout plan with adoption milestones.</p></article>
+</section>
+
+{% include 'layouts/cta_banner.html' %}
+{% endblock %}

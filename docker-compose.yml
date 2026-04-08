@@ -1,0 +1,43 @@
+version: "3.9"
+
+# Phase 1 Docker Compose foundation for local development.
+services:
+  web:
+    build: .
+    container_name: crm2_web
+    ports:
+      - "5000:5000"
+    environment:
+      APP_ENV: development
+      SECRET_KEY: change-me
+      JWT_SECRET_KEY: change-me-too
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/crm2
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:16
+    container_name: crm2_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: crm2
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: crm2_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:

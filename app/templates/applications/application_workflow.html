@@ -1,0 +1,24 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Application Workflow | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="neu-card p-3 mb-3">
+  <h1 class="h5 mb-3">Application Stage Workflow</h1>
+  <div class="step-progress">
+    <span class="step-chip active">INITIATED</span>
+    <span class="step-chip active">DOCS_PENDING</span>
+    <span class="step-chip active">VERIFIED</span>
+    <span class="step-chip active">ELIGIBILITY</span>
+    <span class="step-chip">BANK_MATCHED</span>
+    <span class="step-chip">SUBMITTED</span>
+    <span class="step-chip">SANCTIONED</span>
+    <span class="step-chip">DISBURSED</span>
+  </div>
+</section>
+
+<section class="row g-3">
+  <div class="col-12 col-lg-8"><article class="neu-card p-3 min-h-240"><h2 class="h6 mb-2">Workflow Timeline</h2><div class="chart-placeholder"></div></article></div>
+  <div class="col-12 col-lg-4"><article class="neu-card p-3 min-h-240"><h2 class="h6 mb-2">Current Notes</h2><ul class="small mb-0"><li>Income validated</li><li>FOIR acceptable range</li><li>Awaiting lender shortlist</li></ul></article></div>
+</section>
+{% endblock %}

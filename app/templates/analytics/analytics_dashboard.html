@@ -1,0 +1,17 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Analytics Dashboard | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="bento-grid bento-4 mb-3">
+  <article class="neu-card bento-item"><h2 class="h6">Funnel</h2><p class="kpi-value">24.2%</p><p class="small mb-0">Lead to disbursal conversion</p></article>
+  <article class="neu-card bento-item"><h2 class="h6">Leaderboard</h2><p class="kpi-value">Riya</p><p class="small mb-0">Top agent this month</p></article>
+  <article class="neu-card bento-item"><h2 class="h6">Heatmaps</h2><p class="kpi-value">5 zones</p><p class="small mb-0">Geo performance analysis</p></article>
+  <article class="neu-card bento-item"><h2 class="h6">Charts</h2><p class="kpi-value">12 widgets</p><p class="small mb-0">Ops and finance metrics</p></article>
+</section>
+
+<section class="row g-3">
+  <div class="col-12 col-lg-8"><article class="neu-card p-3 min-h-300"><h2 class="h6 mb-2">Performance Trends</h2><div class="chart-placeholder min-h-240"></div></article></div>
+  <div class="col-12 col-lg-4"><article class="neu-card p-3 min-h-300"><h2 class="h6 mb-2">Top Branch Heatmap</h2><div class="chart-placeholder min-h-240"></div></article></div>
+</section>
+{% endblock %}

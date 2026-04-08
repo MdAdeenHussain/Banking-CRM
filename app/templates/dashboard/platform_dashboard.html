@@ -1,0 +1,19 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Platform Dashboard | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="bento-grid bento-4 mb-4">
+  <article class="neu-card bento-item"><p class="small mb-1">Total Tenants</p><p class="kpi-value">286</p><span class="soft-badge success">+14 this month</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">Total Usage</p><p class="kpi-value">1.2M events</p><span class="soft-badge info">Monthly</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">AI Token Usage</p><p class="kpi-value">84.2M</p><span class="soft-badge warning">Quota watch</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">Billing Overview</p><p class="kpi-value">INR 2.4Cr ARR</p><span class="soft-badge success">Stable</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">Uptime</p><p class="kpi-value">99.95%</p><span class="soft-badge success">SLA target met</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">SLA Alerts</p><p class="kpi-value">03</p><span class="soft-badge danger">Requires action</span></article>
+</section>
+
+<section class="row g-3">
+  <div class="col-12 col-xl-8"><article class="neu-card p-3 min-h-300"><h2 class="h6 mb-2">Tenant Growth + Usage</h2><div class="chart-placeholder min-h-240"></div></article></div>
+  <div class="col-12 col-xl-4"><article class="neu-card p-3 min-h-300"><h2 class="h6 mb-2">Platform Alerts</h2><ul class="small mb-0"><li>API latency spike for region-2</li><li>Billing retry failures: 7</li><li>Token overrun risk: 3 tenants</li></ul></article></div>
+</section>
+{% endblock %}

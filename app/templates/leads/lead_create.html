@@ -1,0 +1,21 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Create Lead | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="neu-card p-4">
+  <h1 class="h5 mb-3">Create New Lead</h1>
+  <form class="needs-validation" novalidate>
+    <div class="row g-3">
+      <div class="col-12 col-md-6"><input class="neu-input" type="text" placeholder="Full Name" required></div>
+      <div class="col-12 col-md-6"><input class="neu-input" type="tel" placeholder="Phone Number" required></div>
+      <div class="col-12 col-md-6"><input class="neu-input" type="email" placeholder="Email Address"></div>
+      <div class="col-12 col-md-6"><select class="neu-input"><option>Lead Source</option><option>Meta Ads</option><option>Referral</option><option>Website</option></select></div>
+      <div class="col-12 col-md-6"><select class="neu-input"><option>Assign Agent</option><option>Riya</option><option>Karthik</option><option>Anil</option></select></div>
+      <div class="col-12 col-md-6"><select class="neu-input"><option>Loan Type</option><option>Home Loan</option><option>Personal Loan</option><option>LAP</option></select></div>
+      <div class="col-12"><textarea class="neu-input" rows="4" placeholder="Lead Notes"></textarea></div>
+    </div>
+    <button type="submit" class="btn btn-primary rounded-pill px-4 mt-3">Save Lead</button>
+  </form>
+</section>
+{% endblock %}

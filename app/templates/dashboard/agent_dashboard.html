@@ -1,0 +1,18 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Agent Dashboard | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="bento-grid bento-4 mb-4">
+  <article class="neu-card bento-item"><p class="small mb-1">Assigned Leads</p><p class="kpi-value">84</p><span class="soft-badge info">My queue</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">Callbacks Today</p><p class="kpi-value">19</p><span class="soft-badge warning">Scheduled</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">Pending Docs</p><p class="kpi-value">31</p><span class="soft-badge warning">Follow-up</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">AI Suggestions</p><p class="kpi-value">12</p><span class="soft-badge success">Ready</span></article>
+  <article class="neu-card bento-item"><p class="small mb-1">Monthly Target</p><p class="kpi-value">62%</p><span class="soft-badge info">Progress</span></article>
+</section>
+
+<section class="row g-3">
+  <div class="col-12 col-lg-7"><article class="neu-card p-3 min-h-240"><h2 class="h6 mb-2">My Funnel</h2><div class="chart-placeholder"></div></article></div>
+  <div class="col-12 col-lg-5"><article class="neu-card p-3 min-h-240"><h2 class="h6 mb-2">Next Best Actions</h2><ul class="small mb-0"><li>Call Priya Sharma at 11:30 AM</li><li>Collect salary slips for lead #L-1822</li><li>Send EMI summary for lead #L-1930</li></ul></article></div>
+</section>
+{% endblock %}

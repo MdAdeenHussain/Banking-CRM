@@ -1,0 +1,16 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Settings Profile | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="neu-card p-4">
+  <h1 class="h5 mb-3">Profile Settings</h1>
+  <form class="row g-3">
+    <div class="col-12 col-md-6"><input class="neu-input" type="text" placeholder="Full Name" value="Karthik Rao"></div>
+    <div class="col-12 col-md-6"><input class="neu-input" type="email" placeholder="Email" value="karthik@example.com"></div>
+    <div class="col-12 col-md-6"><input class="neu-input" type="text" placeholder="Role" value="Branch Manager"></div>
+    <div class="col-12 col-md-6"><input class="neu-input" type="text" placeholder="Phone" value="+91 90000 11223"></div>
+    <div class="col-12"><button class="btn btn-primary rounded-pill px-4" type="button">Save Profile</button></div>
+  </form>
+</section>
+{% endblock %}

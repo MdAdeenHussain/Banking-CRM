@@ -1,0 +1,41 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Leads List | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<!-- Search and filters -->
+<section class="neu-card p-3 mb-3">
+  <div class="row g-3 align-items-center">
+    <div class="col-12 col-lg-5"><input class="neu-input" type="search" placeholder="Search by name, phone, lead ID"></div>
+    <div class="col-6 col-lg-2"><select class="neu-input"><option>All Stages</option><option>New</option><option>Contacted</option><option>Docs Pending</option></select></div>
+    <div class="col-6 col-lg-2"><select class="neu-input"><option>All Sources</option><option>Meta Ads</option><option>Referral</option><option>Website</option></select></div>
+    <div class="col-6 col-lg-2"><select class="neu-input"><option>All Agents</option><option>Riya</option><option>Karthik</option><option>Anil</option></select></div>
+    <div class="col-6 col-lg-1"><button class="btn btn-primary w-100 rounded-pill">Go</button></div>
+  </div>
+</section>
+
+<!-- Lead table -->
+<section class="neu-card p-3">
+  <h1 class="h5 mb-3">Lead Pipeline Table</h1>
+  <div class="table-responsive">
+    <table class="table table-soft align-middle">
+      <thead>
+        <tr>
+          <th>Lead</th>
+          <th>Stage</th>
+          <th>AI Score</th>
+          <th>Source</th>
+          <th>Assigned Agent</th>
+          <th>Last Activity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>#L-1102 / Aarav Kumar</td><td><span class="soft-badge info">CONTACTED</span></td><td><span class="soft-badge success">86/100</span></td><td>Meta Ads</td><td>Riya</td><td>10 mins ago</td></tr>
+        <tr><td>#L-1103 / Meera Shah</td><td><span class="soft-badge warning">DOCS_PENDING</span></td><td><span class="soft-badge info">74/100</span></td><td>Referral</td><td>Karthik</td><td>35 mins ago</td></tr>
+        <tr><td>#L-1104 / Dev Patel</td><td><span class="soft-badge success">SANCTIONED</span></td><td><span class="soft-badge success">91/100</span></td><td>Website</td><td>Anil</td><td>1 hour ago</td></tr>
+        <tr><td>#L-1105 / Sana Iqbal</td><td><span class="soft-badge danger">LOST</span></td><td><span class="soft-badge warning">52/100</span></td><td>Cold Call</td><td>Riya</td><td>2 hours ago</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

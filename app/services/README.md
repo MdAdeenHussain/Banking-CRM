@@ -1,6 +1,6 @@
-# CRM2 Project Root
+# Services
 
-Root of the Banking DSA AI CRM SaaS codebase. Contains app source, deployment files, migrations, and tests.
+Service layer skeleton that will hold business use-cases and orchestration logic.
 
 - Phase 1 status: structure ready, implementation intentionally minimal.
 - Future phases: business logic, integrations, and advanced workflows.

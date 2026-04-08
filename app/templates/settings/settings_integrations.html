@@ -1,0 +1,14 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Settings Integrations | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="neu-card p-4">
+  <h1 class="h5 mb-3">Integration Settings</h1>
+  <div class="bento-grid bento-3">
+    <article class="neu-card bento-item"><h2 class="h6">WhatsApp API</h2><p class="small mb-2">Status: Connected</p><button class="btn btn-outline-primary btn-sm rounded-pill">Configure</button></article>
+    <article class="neu-card bento-item"><h2 class="h6">Email Provider</h2><p class="small mb-2">Status: Pending setup</p><button class="btn btn-outline-primary btn-sm rounded-pill">Configure</button></article>
+    <article class="neu-card bento-item"><h2 class="h6">Telephony</h2><p class="small mb-2">Status: Connected</p><button class="btn btn-outline-primary btn-sm rounded-pill">Configure</button></article>
+  </div>
+</section>
+{% endblock %}

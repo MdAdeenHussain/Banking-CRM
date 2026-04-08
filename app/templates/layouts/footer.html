@@ -1,0 +1,38 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{# Global footer used across all SaaS and dashboard pages. #}
+<footer class="app-footer mt-5">
+  <div class="container py-4 py-md-5">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <h5 class="fw-semibold mb-2">Banking DSA AI CRM</h5>
+        <p class="small mb-0">FinTech SaaS workflow platform for DSA teams, branches, and enterprise operators.</p>
+      </div>
+      <div class="col-6 col-md-2">
+        <h6 class="fw-semibold">Product</h6>
+        <ul class="list-unstyled small mb-0 d-grid gap-1">
+          <li><a href="{{ url_for('public.features') }}">Features</a></li>
+          <li><a href="{{ url_for('public.solutions') }}">Solutions</a></li>
+          <li><a href="{{ url_for('public.pricing') }}">Pricing</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-2">
+        <h6 class="fw-semibold">Trust</h6>
+        <ul class="list-unstyled small mb-0 d-grid gap-1">
+          <li><a href="{{ url_for('public.security') }}">Security</a></li>
+          <li><a href="{{ url_for('public.contact') }}">Contact</a></li>
+          <li><a href="{{ url_for('public.demo_booking') }}">Demo</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h6 class="fw-semibold">Social</h6>
+        <div class="d-flex flex-wrap gap-2 small">
+          <span class="trust-badge">LinkedIn</span>
+          <span class="trust-badge">YouTube</span>
+          <span class="trust-badge">X</span>
+        </div>
+      </div>
+    </div>
+    <hr class="my-4" />
+    <p class="small mb-0">&copy; {{ 2026 }} Banking DSA AI CRM SaaS. All rights reserved.</p>
+  </div>
+</footer>

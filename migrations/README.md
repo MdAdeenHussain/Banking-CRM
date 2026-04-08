@@ -1,6 +1,6 @@
-# CRM2 Project Root
+# Migrations
 
-Root of the Banking DSA AI CRM SaaS codebase. Contains app source, deployment files, migrations, and tests.
+Database migration scripts folder (Alembic/Flask-Migrate).
 
 - Phase 1 status: structure ready, implementation intentionally minimal.
 - Future phases: business logic, integrations, and advanced workflows.

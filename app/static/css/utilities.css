@@ -1,0 +1,10 @@
+/*
+  Small utility classes used across pages.
+*/
+.soft-inset { box-shadow: var(--neu-inset); }
+.text-balance { text-wrap: balance; }
+.muted { color: #64748b; }
+.w-fit { width: fit-content; }
+.min-h-180 { min-height: 180px; }
+.min-h-240 { min-height: 240px; }
+.min-h-300 { min-height: 300px; }

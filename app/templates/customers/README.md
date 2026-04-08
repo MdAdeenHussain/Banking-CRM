@@ -1,6 +1,6 @@
-# CRM2 Project Root
+# Customers Templates
 
-Root of the Banking DSA AI CRM SaaS codebase. Contains app source, deployment files, migrations, and tests.
+Customer list/profile templates for CRM customer management flows.
 
 - Phase 1 status: structure ready, implementation intentionally minimal.
 - Future phases: business logic, integrations, and advanced workflows.

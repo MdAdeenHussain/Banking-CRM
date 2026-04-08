@@ -1,0 +1,67 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/base.html' %}
+{% block title %}Pricing | Banking DSA AI CRM{% endblock %}
+
+{% block content %}
+<section class="neu-card page-hero mb-4">
+  <h1 class="h2 mb-2">Transparent pricing for every stage</h1>
+  <p class="mb-0">Start small, scale across branches, and move to enterprise-grade controls when needed.</p>
+</section>
+
+<section class="bento-grid bento-4 mb-4">
+  <article class="neu-card bento-item pricing-card">
+    <h2 class="h5">Starter</h2>
+    <p class="kpi-value">INR 4,999/mo</p>
+    <p class="small">INR 49,999/year</p>
+    <ul class="small mt-2">
+      <li>Up to 5 users</li>
+      <li>Core lead CRM</li>
+      <li>Basic dashboards</li>
+      <li>Email support</li>
+    </ul>
+    <button class="btn btn-outline-primary btn-sm rounded-pill mt-3">Start Starter</button>
+  </article>
+
+  <article class="neu-card bento-item pricing-card border border-primary">
+    <span class="soft-badge info mb-2">Recommended</span>
+    <h2 class="h5">Growth</h2>
+    <p class="kpi-value">INR 12,999/mo</p>
+    <p class="small">INR 1,29,999/year</p>
+    <ul class="small mt-2">
+      <li>Up to 25 users</li>
+      <li>AI assistance modules</li>
+      <li>Branch dashboards</li>
+      <li>Priority support</li>
+    </ul>
+    <button class="btn btn-primary btn-sm rounded-pill mt-3">Choose Growth</button>
+  </article>
+
+  <article class="neu-card bento-item pricing-card">
+    <h2 class="h5">Enterprise</h2>
+    <p class="kpi-value">INR 29,999/mo</p>
+    <p class="small">INR 2,99,999/year</p>
+    <ul class="small mt-2">
+      <li>Unlimited branches</li>
+      <li>Compliance dashboards</li>
+      <li>Advanced analytics</li>
+      <li>Dedicated CSM</li>
+    </ul>
+    <button class="btn btn-outline-primary btn-sm rounded-pill mt-3">Choose Enterprise</button>
+  </article>
+
+  <article class="neu-card bento-item pricing-card">
+    <h2 class="h5">Custom</h2>
+    <p class="kpi-value">Talk to sales</p>
+    <p class="small">Annual contract</p>
+    <ul class="small mt-2">
+      <li>Custom AI quotas</li>
+      <li>Private onboarding</li>
+      <li>SLA alignment</li>
+      <li>Integration support</li>
+    </ul>
+    <button class="btn btn-outline-dark btn-sm rounded-pill mt-3">Contact Sales</button>
+  </article>
+</section>
+
+{% include 'layouts/cta_banner.html' %}
+{% endblock %}

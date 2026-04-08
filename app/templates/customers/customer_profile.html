@@ -1,0 +1,59 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Customer Profile | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="row g-3">
+  <div class="col-12 col-xl-8">
+    <article class="neu-card p-3 mb-3">
+      <h1 class="h5 mb-2">Customer Profile - Aarav Kumar</h1>
+      <div class="d-flex flex-wrap gap-2">
+        <span class="soft-badge success">KYC: VERIFIED</span>
+        <span class="soft-badge warning">AI Risk Score: 62/100</span>
+      </div>
+    </article>
+
+    <article class="neu-card p-3 mb-3">
+      <h2 class="h6 mb-2">Financial Snapshot</h2>
+      <div class="row small">
+        <div class="col-6 col-md-4">Income: INR 1,10,000/mo</div>
+        <div class="col-6 col-md-4">Liabilities: INR 22,000/mo</div>
+        <div class="col-6 col-md-4">Credit Score: 758</div>
+      </div>
+    </article>
+
+    <article class="neu-card p-3 mb-3">
+      <h2 class="h6 mb-2">Active Loans</h2>
+      <ul class="small mb-0">
+        <li>Car Loan - INR 8,20,000 outstanding</li>
+        <li>Personal Loan - Closed</li>
+      </ul>
+    </article>
+
+    <article class="neu-card p-3">
+      <h2 class="h6 mb-2">Applications</h2>
+      <ul class="small mb-0">
+        <li>APP-3211 / Home Loan / Eligibility stage</li>
+        <li>APP-3055 / Balance Transfer / Submitted</li>
+      </ul>
+    </article>
+  </div>
+
+  <div class="col-12 col-xl-4">
+    <article class="neu-card p-3 mb-3">
+      <h2 class="h6">Documents</h2>
+      <ul class="small mb-0">
+        <li>PAN - Verified</li>
+        <li>Aadhaar - Verified</li>
+        <li>ITR - Uploaded</li>
+        <li>Bank Statement - Pending latest month</li>
+      </ul>
+    </article>
+
+    <article class="neu-card p-3">
+      <h2 class="h6">AI Risk Explanation</h2>
+      <p class="small mb-0">Risk elevated due to short employment tenure and multiple lender inquiries in the last 30 days.</p>
+    </article>
+  </div>
+</section>
+{% endblock %}

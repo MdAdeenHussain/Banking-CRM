@@ -1,0 +1,20 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Lender Compare | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="neu-card p-3">
+  <h1 class="h5 mb-3">Lender Comparison Matrix</h1>
+  <div class="table-responsive">
+    <table class="table table-soft">
+      <thead><tr><th>Bank Name</th><th>Interest</th><th>Approval %</th><th>Speed</th><th>Ease Score</th></tr></thead>
+      <tbody>
+        <tr><td>Axis Bank</td><td>9.10%</td><td>72%</td><td>Fast</td><td><span class="soft-badge success">8.8/10</span></td></tr>
+        <tr><td>HDFC Bank</td><td>9.25%</td><td>78%</td><td>Medium</td><td><span class="soft-badge info">8.5/10</span></td></tr>
+        <tr><td>ICICI Bank</td><td>9.30%</td><td>69%</td><td>Fast</td><td><span class="soft-badge warning">8.1/10</span></td></tr>
+        <tr><td>Kotak Bank</td><td>9.40%</td><td>63%</td><td>Medium</td><td><span class="soft-badge warning">7.7/10</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

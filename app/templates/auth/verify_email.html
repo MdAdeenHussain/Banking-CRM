@@ -1,0 +1,25 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/base.html' %}
+{% block title %}Verify Email | Banking DSA AI CRM{% endblock %}
+
+{% block content %}
+<section class="form-shell">
+  <article class="neu-card p-4 p-md-5 text-center">
+    <span class="soft-badge success mb-3">Verification Pending</span>
+    <h1 class="h3 mb-2">Verify your email address</h1>
+    <p class="mb-4">We sent a 6-digit verification code to your registered email.</p>
+
+    <form class="needs-validation" novalidate>
+      <div class="row g-2 justify-content-center mb-3">
+        <div class="col-2"><input class="neu-input text-center" type="text" maxlength="1" required></div>
+        <div class="col-2"><input class="neu-input text-center" type="text" maxlength="1" required></div>
+        <div class="col-2"><input class="neu-input text-center" type="text" maxlength="1" required></div>
+        <div class="col-2"><input class="neu-input text-center" type="text" maxlength="1" required></div>
+        <div class="col-2"><input class="neu-input text-center" type="text" maxlength="1" required></div>
+        <div class="col-2"><input class="neu-input text-center" type="text" maxlength="1" required></div>
+      </div>
+      <button type="submit" class="btn btn-primary rounded-pill px-4">Verify Email</button>
+    </form>
+  </article>
+</section>
+{% endblock %}

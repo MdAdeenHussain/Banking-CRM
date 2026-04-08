@@ -1,0 +1,19 @@
+{# Template scaffold for Phase 2 frontend architecture. #}
+{% extends 'layouts/dashboard_base.html' %}
+{% block title %}Settings Roles | Banking DSA AI CRM{% endblock %}
+
+{% block dashboard_content %}
+<section class="neu-card p-4">
+  <h1 class="h5 mb-3">Role and Permission Settings</h1>
+  <div class="table-responsive">
+    <table class="table table-soft">
+      <thead><tr><th>Role</th><th>Lead Access</th><th>Doc Access</th><th>Billing Access</th></tr></thead>
+      <tbody>
+        <tr><td>Owner</td><td>Full</td><td>Full</td><td>Full</td></tr>
+        <tr><td>Branch Manager</td><td>Branch</td><td>Branch</td><td>Limited</td></tr>
+        <tr><td>Agent</td><td>Assigned only</td><td>Assigned only</td><td>No</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
