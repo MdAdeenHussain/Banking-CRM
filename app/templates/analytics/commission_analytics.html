@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+
+{% block title %}Commission Analytics - Banking CRM{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <div class="analytics-header">
+        <h1>Commission Analytics</h1>
+        <div class="period-selector">
+            <button class="period-btn active" data-period="month">This Month</button>
+            <button class="period-btn" data-period="quarter">This Quarter</button>
+            <button class="period-btn" data-period="year">This Year</button>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <h3>Total Commission</h3>
+            <p class="value">₹{{ "{:,.0f}".format(total_commission) }}</p>
+            <div class="trend positive">📈 +{{ commission_growth }}%</div>
+        </div>
+        <div class="kpi-card">
+            <h3>Paid</h3>
+            <p class="value">₹{{ "{:,.0f}".format(paid_commission) }}</p>
+            <div class="trend">{{ paid_count }} payouts</div>
+        </div>
+        <div class="kpi-card">
+            <h3>Pending</h3>
+            <p class="value">₹{{ "{:,.0f}".format(pending_commission) }}</p>
+            <div class="trend warning">{{ pending_count }} awaiting</div>
+        </div>
+        <div class="kpi-card">
+            <h3>Avg Commission</h3>
+            <p class="value">₹{{ "{:,.0f}".format(avg_commission) }}</p>
+            <div class="trend">Per transaction</div>
+        </div>
+    </div>
+
+    <!-- Commission Status -->
+    <div class="chart-section">
+        <h2>Commission Status Breakdown</h2>
+        <div class="status-cards">
+            <div class="status-card">
+                <span class="status-name">Pending</span>
+                <p class="status-amount">₹{{ "{:,.0f}".format(pending_commission) }}</p>
+                <p class="status-count">{{ pending_count }} commissions</p>
+            </div>
+            <div class="status-card">
+                <span class="status-name">Processing</span>
+                <p class="status-amount">₹{{ "{:,.0f}".format(processing_commission) }}</p>
+                <p class="status-count">{{ processing_count }} commissions</p>
+            </div>
+            <div class="status-card">
+                <span class="status-name">Paid</span>
+                <p class="status-amount">₹{{ "{:,.0f}".format(paid_commission) }}</p>
+                <p class="status-count">{{ paid_count }} commissions</p>
+            </div>
+            <div class="status-card">
+                <span class="status-name">Rejected</span>
+                <p class="status-amount">₹{{ "{:,.0f}".format(rejected_commission) }}</p>
+                <p class="status-count">{{ rejected_count }} commissions</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Earners -->
+    <div class="chart-section">
+        <h2>Top Commission Earners</h2>
+        <div class="earners-list">
+            {% for earner in top_earners %}
+            <div class="earner-item">
+                <span class="rank">{{ loop.index }}</span>
+                <span class="name">{{ earner.name }}</span>
+                <span class="amount">₹{{ "{:,.0f}".format(earner.commission) }}</span>
+                <div class="bar-mini">
+                    <div class="fill" style="width: {{ (earner.commission / top_earners[0].commission * 100)|int }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Monthly Commission Trend -->
+    <div class="chart-section">
+        <h2>Monthly Commission Trend</h2>
+        <div class="trend-chart">
+            {% for month in monthly_commission %}
+            <div class="month-column">
+                <div class="bar-container">
+                    <div class="bar" style="height: {{ (month.amount / max_monthly_commission * 100)|int }}%"></div>
+                </div>
+                <p class="month">{{ month.month }}</p>
+                <p class="amount">₹{{ "{:,.0f}".format(month.amount) }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Commission by Bank -->
+    <div class="chart-section">
+        <h2>Commission Distribution by Bank</h2>
+        <div class="bank-distribution">
+            {% for bank in commission_by_bank %}
+            <div class="bank-row">
+                <span class="bank-name">{{ bank.name }}</span>
+                <div class="bank-bar">
+                    <div class="fill" style="width: {{ (bank.commission / total_commission * 100)|int }}%"></div>
+                </div>
+                <span class="bank-amount">₹{{ "{:,.0f}".format(bank.commission) }}</span>
+                <span class="bank-percent">{{ ((bank.commission / total_commission) * 100)|int }}%</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Commission Performance Metrics -->
+    <div class="chart-section">
+        <h2>Performance Metrics</h2>
+        <div class="metrics-grid">
+            <div class="metric-box">
+                <h4>Avg Payout Time</h4>
+                <p class="big-value">{{ avg_payout_days }} days</p>
+            </div>
+            <div class="metric-box">
+                <h4>Processing Rate</h4>
+                <p class="big-value">{{ processing_rate }}%</p>
+            </div>
+            <div class="metric-box">
+                <h4>Rejection Rate</h4>
+                <p class="big-value">{{ rejection_rate }}%</p>
+            </div>
+            <div class="metric-box">
+                <h4>On-time Payouts</h4>
+                <p class="big-value">{{ ontime_rate }}%</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.analytics-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.analytics-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.analytics-header h1 {
+    color: #1f4788;
+    margin: 0;
+    font-size: 2rem;
+}
+
+.period-selector {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.period-btn {
+    padding: 0.6rem 1rem;
+    border: none;
+    background: white;
+    color: #748390;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: inset 2px 2px 5px #d9e0e8;
+    transition: all 0.3s ease;
+}
+
+.period-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.kpi-card h3 {
+    color: #2d3e50;
+    font-size: 0.85rem;
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+}
+
+.kpi-card .value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1f4788;
+    margin: 0.5rem 0;
+}
+
+.trend {
+    color: #748390;
+    font-size: 0.85rem;
+}
+
+.trend.positive {
+    color: #28a745;
+}
+
+.trend.warning {
+    color: #ffc107;
+}
+
+.chart-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+    margin-bottom: 1.5rem;
+}
+
+.chart-section h2 {
+    color: #1f4788;
+    margin: 0 0 1rem 0;
+}
+
+.status-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.status-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    border-left: 4px solid #667eea;
+}
+
+.status-name {
+    display: block;
+    color: #2d3e50;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.status-amount {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1f4788;
+    margin: 0.5rem 0;
+}
+
+.status-count {
+    color: #748390;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.earners-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.earner-item {
+    display: grid;
+    grid-template-columns: 30px 2fr 1fr 1.5fr;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 6px;
+}
+
+.rank {
+    text-align: center;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.name {
+    color: #1f4788;
+    font-weight: 500;
+}
+
+.amount {
+    color: #28a745;
+    font-weight: 600;
+    text-align: right;
+}
+
+.bar-mini {
+    height: 6px;
+    background: #d9e0e8;
+    border-radius: 3px;
+}
+
+.bar-mini .fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 3px;
+}
+
+.trend-chart {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 1rem;
+}
+
+.month-column {
+    text-align: center;
+}
+
+.bar-container {
+    height: 200px;
+    background: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 5px;
+}
+
+.bar {
+    width: 40%;
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    border-radius: 3px;
+    min-height: 2px;
+}
+
+.month {
+    color: #2d3e50;
+    font-weight: 600;
+    margin: 0.5rem 0 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.amount {
+    color: #748390;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.bank-distribution {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.bank-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 150px 80px;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 6px;
+}
+
+.bank-name {
+    font-weight: 600;
+    color: #1f4788;
+}
+
+.bank-bar {
+    height: 8px;
+    background: #d9e0e8;
+    border-radius: 4px;
+}
+
+.bank-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+}
+
+.bank-amount {
+    text-align: right;
+    font-weight: 600;
+    color: #28a745;
+}
+
+.bank-percent {
+    text-align: center;
+    color: #748390;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.metric-box {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.metric-box h4 {
+    color: #2d3e50;
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.metric-box .big-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1f4788;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .analytics-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .earner-item,
+    .bank-row {
+        grid-template-columns: 1fr;
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,683 @@
+{% extends "base.html" %}
+
+{% block title %}Performance Analytics - Banking CRM{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <div class="analytics-header">
+        <h1>Performance Analytics</h1>
+        <div class="period-selector">
+            <button class="period-btn active" data-period="month">This Month</button>
+            <button class="period-btn" data-period="quarter">This Quarter</button>
+            <button class="period-btn" data-period="year">This Year</button>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <h3>Total Leads</h3>
+            <p class="value">{{ total_leads }}</p>
+            <div class="trend positive">📈 +{{ leads_growth }}%</div>
+        </div>
+        <div class="kpi-card">
+            <h3>Avg Conversion</h3>
+            <p class="value">{{ avg_conversion }}%</p>
+            <div class="trend">Target: 15%</div>
+        </div>
+        <div class="kpi-card">
+            <h3>Total Commission</h3>
+            <p class="value">₹{{ "{:,.0f}".format(total_commission) }}</p>
+            <div class="trend positive">+{{ commission_growth }}%</div>
+        </div>
+        <div class="kpi-card">
+            <h3>Avg Lead Value</h3>
+            <p class="value">₹{{ "{:,.0f}".format(avg_lead_value) }}</p>
+            <div class="trend">Per conversion</div>
+        </div>
+    </div>
+
+    <!-- Performance Ratings -->
+    <div class="chart-section">
+        <h2>Employee Performance Ratings</h2>
+        <div class="ratings-grid">
+            <div class="rating-card excellent">
+                <span class="star">⭐⭐⭐⭐⭐</span>
+                <p class="rating-title">Excellent</p>
+                <p class="rating-value">{{ excellent_count }}</p>
+                <p class="rating-desc">Conversion > 20%</p>
+            </div>
+            <div class="rating-card good">
+                <span class="star">⭐⭐⭐⭐</span>
+                <p class="rating-title">Good</p>
+                <p class="rating-value">{{ good_count }}</p>
+                <p class="rating-desc">Conversion 15-20%</p>
+            </div>
+            <div class="rating-card average">
+                <span class="star">⭐⭐⭐</span>
+                <p class="rating-title">Average</p>
+                <p class="rating-value">{{ average_count }}</p>
+                <p class="rating-desc">Conversion 10-15%</p>
+            </div>
+            <div class="rating-card poor">
+                <span class="star">⭐⭐</span>
+                <p class="rating-title">Needs Improvement</p>
+                <p class="rating-value">{{ poor_count }}</p>
+                <p class="rating-desc">Conversion < 10%</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Performers -->
+    <div class="chart-section">
+        <h2>Top Performers</h2>
+        <div class="performers-grid">
+            {% for performer in top_performers %}
+            <div class="performer-card">
+                <div class="performer-rank">{{ loop.index }}</div>
+                <div class="performer-info">
+                    <h4>{{ performer.name }}</h4>
+                    <p class="role">{{ performer.role }}</p>
+                </div>
+                <div class="performer-stats">
+                    <div class="stat">
+                        <span class="label">Leads</span>
+                        <span class="value">{{ performer.leads }}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Conv.</span>
+                        <span class="value">{{ performer.conversion }}%</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Comm.</span>
+                        <span class="value">₹{{ "{:,.0f}".format(performer.commission) }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Department Performance -->
+    <div class="chart-section">
+        <h2>Performance by Department</h2>
+        <div class="department-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Department</th>
+                        <th>Employees</th>
+                        <th>Total Leads</th>
+                        <th>Avg Conversion</th>
+                        <th>Total Commission</th>
+                        <th>Trend</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dept in departments %}
+                    <tr>
+                        <td class="dept-name">{{ dept.name }}</td>
+                        <td>{{ dept.employees }}</td>
+                        <td>{{ dept.leads }}</td>
+                        <td>{{ dept.conversion }}%</td>
+                        <td>₹{{ "{:,.0f}".format(dept.commission) }}</td>
+                        <td>
+                            {% if dept.trend > 0 %}
+                                <span class="trend positive">📈 +{{ dept.trend }}%</span>
+                            {% else %}
+                                <span class="trend negative">📉 {{ dept.trend }}%</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Lead Performance Trends -->
+    <div class="chart-section">
+        <h2>6-Month Performance Trend</h2>
+        <div class="dual-trend-chart">
+            {% for month in monthly_trends %}
+            <div class="trend-bar-set">
+                <div class="trend-bars">
+                    <div class="bar-item leads">
+                        <div class="bar" style="height: {{ (month.leads / max_leads * 100)|int }}%"></div>
+                        <span class="bar-label" title="Leads">{{ month.leads }}</span>
+                    </div>
+                    <div class="bar-item conversions">
+                        <div class="bar" style="height: {{ (month.conversions / max_conversions * 100)|int }}%"></div>
+                        <span class="bar-label" title="Conversions">{{ month.conversions }}</span>
+                    </div>
+                </div>
+                <p class="trend-month">{{ month.month }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="trend-legend">
+            <span class="legend-item leads">Leads</span>
+            <span class="legend-item conversions">Conversions</span>
+        </div>
+    </div>
+
+    <!-- Activity Analysis -->
+    <div class="chart-section">
+        <h2>Activity Analysis</h2>
+        <div class="activity-grid">
+            <div class="activity-box">
+                <h4>Calls Made</h4>
+                <p class="activity-value">{{ total_calls }}</p>
+                <p class="activity-detail">Avg: {{ avg_calls_per_emp }} per employee</p>
+            </div>
+            <div class="activity-box">
+                <h4>Meetings Scheduled</h4>
+                <p class="activity-value">{{ total_meetings }}</p>
+                <p class="activity-detail">Avg: {{ avg_meetings_per_emp }} per employee</p>
+            </div>
+            <div class="activity-box">
+                <h4>Follow-ups</h4>
+                <p class="activity-value">{{ total_followups }}</p>
+                <p class="activity-detail">Rate: {{ followup_rate }}%</p>
+            </div>
+            <div class="activity-box">
+                <h4>Response Time</h4>
+                <p class="activity-value">{{ avg_response_time }}h</p>
+                <p class="activity-detail">Average hours</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboards -->
+    <div class="leaderboards-section">
+        <div class="leaderboard">
+            <h3>Lead Generators</h3>
+            <div class="leaderboard-list">
+                {% for leader in lead_leaders %}
+                <div class="leaderboard-item">
+                    <span class="rank">{{ loop.index }}</span>
+                    <span class="name">{{ leader.name }}</span>
+                    <span class="count">{{ leader.count }} leads</span>
+                    <div class="mini-bar">
+                        <div class="fill" style="width: {{ (leader.count / lead_leaders[0].count * 100)|int }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="leaderboard">
+            <h3>Conversion Rate</h3>
+            <div class="leaderboard-list">
+                {% for leader in conv_leaders %}
+                <div class="leaderboard-item">
+                    <span class="rank">{{ loop.index }}</span>
+                    <span class="name">{{ leader.name }}</span>
+                    <span class="count">{{ leader.count }}%</span>
+                    <div class="mini-bar">
+                        <div class="fill" style="width: {{ (leader.count / 100 * 100)|int }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="leaderboard">
+            <h3>Earnings</h3>
+            <div class="leaderboard-list">
+                {% for leader in earnings_leaders %}
+                <div class="leaderboard-item">
+                    <span class="rank">{{ loop.index }}</span>
+                    <span class="name">{{ leader.name }}</span>
+                    <span class="count">₹{{ "{:,.0f}".format(leader.count) }}</span>
+                    <div class="mini-bar">
+                        <div class="fill" style="width: {{ (leader.count / earnings_leaders[0].count * 100)|int }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.analytics-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.analytics-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.analytics-header h1 {
+    color: #1f4788;
+    margin: 0;
+    font-size: 2rem;
+}
+
+.period-selector {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.period-btn {
+    padding: 0.6rem 1rem;
+    border: none;
+    background: white;
+    color: #748390;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: inset 2px 2px 5px #d9e0e8;
+    transition: all 0.3s ease;
+}
+
+.period-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.kpi-card h3 {
+    color: #2d3e50;
+    font-size: 0.85rem;
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+}
+
+.kpi-card .value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1f4788;
+    margin: 0.5rem 0;
+}
+
+.trend {
+    color: #748390;
+    font-size: 0.85rem;
+}
+
+.trend.positive {
+    color: #28a745;
+}
+
+.chart-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+    margin-bottom: 1.5rem;
+}
+
+.chart-section h2 {
+    color: #1f4788;
+    margin: 0 0 1rem 0;
+}
+
+.ratings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.rating-card {
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    background: white;
+    border-top: 4px solid #667eea;
+}
+
+.rating-card.excellent {
+    border-top-color: #28a745;
+}
+
+.rating-card.good {
+    border-top-color: #17a2b8;
+}
+
+.rating-card.average {
+    border-top-color: #ffc107;
+}
+
+.rating-card.poor {
+    border-top-color: #dc3545;
+}
+
+.star {
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.rating-title {
+    color: #2d3e50;
+    font-weight: 600;
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+}
+
+.rating-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1f4788;
+    margin: 0.5rem 0;
+}
+
+.rating-desc {
+    color: #748390;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.performers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.performer-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    gap: 1rem;
+}
+
+.performer-rank {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+}
+
+.performer-info h4 {
+    color: #1f4788;
+    margin: 0 0 0.2rem 0;
+    font-size: 0.95rem;
+}
+
+.role {
+    color: #748390;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.performer-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat .label {
+    display: block;
+    color: #748390;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.stat .value {
+    display: block;
+    color: #1f4788;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.department-table {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: white;
+}
+
+th {
+    color: #2d3e50;
+    font-weight: 600;
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 2px solid #d9e0e8;
+}
+
+td {
+    color: #1f4788;
+    padding: 0.75rem;
+    border-bottom: 1px solid #e8eef8;
+}
+
+.dept-name {
+    font-weight: 600;
+}
+
+.dual-trend-chart {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 1rem;
+}
+
+.trend-bar-set {
+    text-align: center;
+}
+
+.trend-bars {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 0.5rem;
+    height: 150px;
+    margin-bottom: 0.5rem;
+}
+
+.bar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.bar-item.leads .bar {
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    width: 15px;
+}
+
+.bar-item.conversions .bar {
+    background: linear-gradient(180deg, #28a745 0%, #20c997 100%);
+    width: 15px;
+}
+
+.bar {
+    border-radius: 3px;
+    min-height: 2px;
+}
+
+.bar-label {
+    font-size: 0.75rem;
+    color: #748390;
+    margin-top: 0.25rem;
+}
+
+.trend-month {
+    color: #2d3e50;
+    font-weight: 600;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.trend-legend {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.legend-item.leads::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+}
+
+.legend-item.conversions::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border-radius: 2px;
+}
+
+.activity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.activity-box {
+    background: white;
+    padding: 1.25rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.activity-box h4 {
+    color: #2d3e50;
+    margin: 0 0 0.5rem 0;
+}
+
+.activity-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1f4788;
+    margin: 0.5rem 0;
+}
+
+.activity-detail {
+    color: #748390;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.leaderboards-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.leaderboard {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.leaderboard h3 {
+    color: #1f4788;
+    margin: 0 0 1rem 0;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.leaderboard-item {
+    display: grid;
+    grid-template-columns: 25px 2fr 1fr 1fr;
+    gap: 0.75rem;
+    align-items: center;
+    background: white;
+    padding: 0.75rem;
+    border-radius: 6px;
+}
+
+.leaderboard-item .rank {
+    text-align: center;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.leaderboard-item .name {
+    color: #1f4788;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.leaderboard-item .count {
+    color: #748390;
+    font-size: 0.85rem;
+    text-align: right;
+}
+
+.mini-bar {
+    height: 4px;
+    background: #d9e0e8;
+    border-radius: 2px;
+}
+
+.mini-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+    .analytics-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .performers-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .leaderboards-section {
+        grid-template-columns: 1fr;
+    }
+
+    table {
+        font-size: 0.9rem;
+    }
+}
+</style>
+{% endblock %}

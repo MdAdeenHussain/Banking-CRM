@@ -1,0 +1,397 @@
+{% extends "base.html" %}
+
+{% block title %}{{ document.name }} - Preview - Banking CRM{% endblock %}
+
+{% block content %}
+<div class="preview-container">
+    <div class="preview-header">
+        <a href="{{ url_for('documents.library') }}" class="back-link">← Back to Library</a>
+        <h1>{{ document.name }}</h1>
+        <div class="header-actions">
+            <a href="{{ url_for('documents.download_document', doc_id=document.id) }}" class="btn btn-primary">⬇️ Download</a>
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
+        </div>
+    </div>
+
+    <!-- Document Info -->
+    <div class="doc-info-bar">
+        <div class="info-item">
+            <span class="label">Category:</span>
+            <span class="value">{{ document.category }}</span>
+        </div>
+        <div class="info-item">
+            <span class="label">Upload Date:</span>
+            <span class="value">{{ document.uploaded_at.strftime('%d %b %Y') }}</span>
+        </div>
+        <div class="info-item">
+            <span class="label">Size:</span>
+            <span class="value">{{ (document.size / 1024)|int }} KB</span>
+        </div>
+        <div class="info-item">
+            <span class="label">Type:</span>
+            <span class="value">{{ document.file_type|upper }}</span>
+        </div>
+    </div>
+
+    <!-- Preview Content -->
+    <div class="preview-content">
+        {% if document.file_type in ['jpg', 'jpeg', 'png', 'gif'] %}
+        <!-- Image Preview -->
+        <div class="image-preview">
+            <img src="{{ url_for('documents.view_document', doc_id=document.id) }}" alt="{{ document.name }}">
+        </div>
+        {% elif document.file_type == 'pdf' %}
+        <!-- PDF Preview -->
+        <div class="pdf-preview">
+            <div class="pdf-placeholder">
+                <p>📄 PDF Document</p>
+                <p>{{ document.name }}</p>
+                <a href="{{ url_for('documents.download_document', doc_id=document.id) }}" class="btn btn-primary">Download PDF</a>
+            </div>
+        </div>
+        {% elif document.file_type in ['txt', 'csv', 'json'] %}
+        <!-- Text Preview -->
+        <div class="text-preview">
+            <pre id="textContent">Loading document content...</pre>
+        </div>
+        {% else %}
+        <!-- Generic Document Preview -->
+        <div class="generic-preview">
+            <div class="preview-icon">📎</div>
+            <p class="preview-text">{{ document.name }}</p>
+            <p class="preview-subtext">Cannot preview {{ document.file_type|upper }} files directly</p>
+            <a href="{{ url_for('documents.download_document', doc_id=document.id) }}" class="btn btn-primary">Download File</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Document Details Sidebar -->
+    <div class="details-sidebar">
+        <h2>Document Details</h2>
+        
+        <div class="detail-item">
+            <label>Uploaded By</label>
+            <p>{{ document.uploaded_by }}</p>
+        </div>
+
+        <div class="detail-item">
+            <label>Description</label>
+            <p>{{ document.description if document.description else 'No description' }}</p>
+        </div>
+
+        <div class="detail-item">
+            <label>Linked Lead</label>
+            <p>
+                {% if document.linked_lead %}
+                <a href="{{ url_for('leads.get_lead', lead_id=document.linked_lead.id) }}">{{ document.linked_lead.name }}</a>
+                {% else %}
+                Not linked to any lead
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="detail-item">
+            <label>Status</label>
+            <p>
+                <span class="status-badge status-{{ document.status|lower }}">{{ document.status }}</span>
+            </p>
+        </div>
+
+        <div class="detail-item">
+            <label>Visibility</label>
+            <p>{{ 'Public' if document.is_public else 'Private' }}</p>
+        </div>
+
+        {% if document.expiry_date %}
+        <div class="detail-item">
+            <label>Expires On</label>
+            <p>{{ document.expiry_date.strftime('%d %b %Y') }}</p>
+        </div>
+        {% endif %}
+
+        <div class="detail-item">
+            <label>File Size</label>
+            <p>{{ (document.size / 1024)|int }} KB</p>
+        </div>
+
+        <div class="detail-item">
+            <label>Created</label>
+            <p>{{ document.created_at.strftime('%d %b %Y %H:%M') }}</p>
+        </div>
+
+        <div class="detail-item">
+            <label>Last Modified</label>
+            <p>{{ document.modified_at.strftime('%d %b %Y %H:%M') if document.modified_at else 'Never' }}</p>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+        <a href="{{ url_for('documents.edit_document', doc_id=document.id) }}" class="btn btn-primary">✏️ Edit Details</a>
+        <button class="btn btn-secondary" onclick="shareDocument({{ document.id }})">🔗 Share</button>
+        <button class="btn btn-secondary" onclick="deleteDocument({{ document.id }})">🗑️ Delete</button>
+    </div>
+</div>
+
+<style>
+.preview-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.preview-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #d9e0e8;
+}
+
+.back-link {
+    color: #576cbe;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.preview-header h1 {
+    color: #1f4788;
+    margin: 0;
+    flex: 1;
+    font-size: 1.75rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: #1f4788;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+}
+
+.doc-info-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-item .label {
+    color: #2d3e50;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.info-item .value {
+    color: #1f4788;
+    font-weight: 500;
+}
+
+.preview-content {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+    margin-bottom: 2rem;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 600px;
+    border-radius: 8px;
+}
+
+.pdf-preview,
+.generic-preview {
+    text-align: center;
+}
+
+.pdf-placeholder,
+.preview-icon,
+.preview-text {
+    color: #748390;
+}
+
+.preview-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.preview-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f4788;
+    margin: 1rem 0;
+}
+
+.preview-subtext {
+    color: #748390;
+    margin-bottom: 2rem;
+}
+
+.text-preview {
+    width: 100%;
+    background: #f5f7fa;
+    border: 1px solid #d9e0e8;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+}
+
+.text-preview pre {
+    color: #2d3e50;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+}
+
+.details-sidebar {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+    margin-bottom: 2rem;
+}
+
+.details-sidebar h2 {
+    color: #1f4788;
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+}
+
+.detail-item {
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+}
+
+.detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.detail-item label {
+    display: block;
+    color: #2d3e50;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.detail-item p {
+    color: #1f4788;
+    margin: 0;
+}
+
+.detail-item a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+}
+
+.status-active {
+    background: #28a745;
+}
+
+.status-draft {
+    background: #ffc107;
+    color: #333;
+}
+
+.status-archived {
+    background: #6c757d;
+}
+
+.actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.actions .btn {
+    flex: 1;
+    min-width: 150px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .preview-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .doc-info-bar {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .preview-content {
+        min-height: 300px;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .actions .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}

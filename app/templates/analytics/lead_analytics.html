@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+
+{% block title %}Lead Analytics - Banking CRM{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <div class="analytics-header">
+        <h1>Lead Analytics</h1>
+        <div class="period-selector">
+            <button class="period-btn active" data-period="month">This Month</button>
+            <button class="period-btn" data-period="quarter">This Quarter</button>
+            <button class="period-btn" data-period="year">This Year</button>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <h3>Total Leads</h3>
+            <p class="value">{{ total_leads }}</p>
+            <div class="trend positive">📈 +{{ leads_growth }}%</div>
+        </div>
+        <div class="kpi-card">
+            <h3>New Leads</h3>
+            <p class="value">{{ new_leads }}</p>
+            <div class="trend">This period</div>
+        </div>
+        <div class="kpi-card">
+            <h3>Conversion Rate</h3>
+            <p class="value">{{ conversion_rate }}%</p>
+            <div class="trend">{{ conversion_change }}% vs last period</div>
+        </div>
+        <div class="kpi-card">
+            <h3>Avg Lead Value</h3>
+            <p class="value">₹{{ "{:,.0f}".format(avg_lead_value) }}</p>
+            <div class="trend">Per converted lead</div>
+        </div>
+    </div>
+
+    <!-- Lead Status Distribution -->
+    <div class="chart-section">
+        <h2>Lead Status Distribution</h2>
+        <div class="status-distribution">
+            {% for status in lead_statuses %}
+            <div class="status-bar">
+                <span class="status-label">{{ status.name }}</span>
+                <div class="bar-container">
+                    <div class="bar" style="width: {{ (status.count / max_status_count * 100)|int }}%"></div>
+                </div>
+                <span class="status-count">{{ status.count }} ({{ status.percentage }}%)</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Source Analysis -->
+    <div class="chart-section">
+        <h2>Leads by Source</h2>
+        <div class="sources-grid">
+            {% for source in sources %}
+            <div class="source-card">
+                <h3>{{ source.name }}</h3>
+                <p class="count">{{ source.count }} leads</p>
+                <div class="percentage">{{ source.percentage }}%</div>
+                <div class="quality">Quality: {{ source.quality }}/5</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Monthly Trend -->
+    <div class="chart-section">
+        <h2>Monthly Lead Trend</h2>
+        <div class="mini-chart">
+            {% for month in monthly_leads %}
+            <div class="chart-bar">
+                <div class="bar" style="height: {{ (month.count / max_monthly_leads * 100)|int }}%"></div>
+                <p>{{ month.month }}</p>
+                <p class="value">{{ month.count }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Top Performing Employees -->
+    <div class="chart-section">
+        <h2>Top Lead Generators</h2>
+        <div class="employees-ranking">
+            {% for emp in top_employees %}
+            <div class="ranking-item">
+                <span class="rank">{{ loop.index }}</span>
+                <span class="name">{{ emp.name }}</span>
+                <span class="count">{{ emp.leads }} leads</span>
+                <div class="bar-mini">
+                    <div class="fill" style="width: {{ (emp.leads / top_employees[0].leads * 100)|int }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Lead Quality Metrics -->
+    <div class="chart-section">
+        <h2>Lead Quality Metrics</h2>
+        <div class="metrics-grid">
+            <div class="metric">
+                <h4>Hot Leads</h4>
+                <p class="big-number">{{ hot_leads }}</p>
+                <small>High conversion potential</small>
+            </div>
+            <div class="metric">
+                <h4>Warm Leads</h4>
+                <p class="big-number">{{ warm_leads }}</p>
+                <small>Medium potential</small>
+            </div>
+            <div class="metric">
+                <h4>Cold Leads</h4>
+                <p class="big-number">{{ cold_leads }}</p>
+                <small>Needs nurturing</small>
+            </div>
+            <div class="metric">
+                <h4>Dead Leads</h4>
+                <p class="big-number">{{ dead_leads }}</p>
+                <small>No potential</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.analytics-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.analytics-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.analytics-header h1 {
+    color: #1f4788;
+    margin: 0;
+    font-size: 2rem;
+}
+
+.period-selector {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.period-btn {
+    padding: 0.6rem 1rem;
+    border: none;
+    background: white;
+    color: #748390;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: inset 2px 2px 5px #d9e0e8;
+    transition: all 0.3s ease;
+}
+
+.period-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.kpi-card h3 {
+    color: #2d3e50;
+    font-size: 0.85rem;
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+}
+
+.kpi-card .value {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: #1f4788;
+    margin: 0.5rem 0;
+}
+
+.trend {
+    color: #748390;
+    font-size: 0.85rem;
+}
+
+.trend.positive {
+    color: #28a745;
+}
+
+.chart-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+    margin-bottom: 1.5rem;
+}
+
+.chart-section h2 {
+    color: #1f4788;
+    margin: 0 0 1rem 0;
+}
+
+.status-distribution {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.status-bar {
+    display: grid;
+    grid-template-columns: 100px 1fr 100px;
+    gap: 1rem;
+    align-items: center;
+}
+
+.status-label {
+    color: #2d3e50;
+    font-weight: 600;
+}
+
+.bar-container {
+    height: 10px;
+    background: #d9e0e8;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.bar {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.status-count {
+    color: #748390;
+    text-align: right;
+}
+
+.sources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.source-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.source-card h3 {
+    color: #1f4788;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.source-card .count {
+    color: #667eea;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+.source-card .percentage {
+    color: #748390;
+    font-size: 1.1rem;
+}
+
+.mini-chart {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 1rem;
+}
+
+.chart-bar {
+    text-align: center;
+}
+
+.chart-bar .bar {
+    height: 150px;
+    background: white;
+    border-radius: 4px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.chart-bar .bar > div {
+    width: 60%;
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+}
+
+.chart-bar p {
+    color: #2d3e50;
+    margin: 0.25rem 0;
+    font-size: 0.85rem;
+}
+
+.chart-bar .value {
+    font-weight: bold;
+    color: #1f4788;
+}
+
+.employees-ranking {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ranking-item {
+    display: grid;
+    grid-template-columns: 30px 2fr 1fr 1fr;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 6px;
+}
+
+.rank {
+    text-align: center;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.name {
+    color: #1f4788;
+    font-weight: 500;
+}
+
+.count {
+    color: #748390;
+}
+
+.bar-mini {
+    height: 6px;
+    background: #d9e0e8;
+    border-radius: 3px;
+}
+
+.bar-mini .fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 3px;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.metric {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.metric h4 {
+    color: #2d3e50;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.metric .big-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1f4788;
+    margin: 0.5rem 0;
+}
+
+.metric small {
+    color: #748390;
+}
+
+@media (max-width: 768px) {
+    .analytics-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .period-selector {
+        flex-wrap: wrap;
+    }
+
+    .status-bar,
+    .ranking-item {
+        grid-template-columns: 1fr;
+    }
+
+    .mini-chart {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+{% endblock %}

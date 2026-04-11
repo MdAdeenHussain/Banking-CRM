@@ -1,0 +1,408 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Lead - DSA CRM{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Create New Lead</h1>
+        <p class="page-subtitle">Add a new customer lead to the system</p>
+    </div>
+
+    <form method="POST" class="lead-form card" data-validate>
+        <div class="card-header">
+            <h3>Lead Information</h3>
+        </div>
+        
+        <div class="card-body">
+            <!-- Personal Information Section -->
+            <fieldset>
+                <legend>Personal Information</legend>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="customer_full_name" class="form-label">Full Name *</label>
+                        <input 
+                            type="text" 
+                            id="customer_full_name" 
+                            name="customer_full_name" 
+                            class="form-input" 
+                            placeholder="John Doe"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mobile_number" class="form-label">Mobile Number *</label>
+                        <input 
+                            type="text" 
+                            id="mobile_number" 
+                            name="mobile_number" 
+                            class="form-input" 
+                            placeholder="9876543210"
+                            pattern="[0-9]{10}"
+                            required
+                        >
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="alternate_mobile" class="form-label">Alternate Mobile</label>
+                        <input 
+                            type="text" 
+                            id="alternate_mobile" 
+                            name="alternate_mobile" 
+                            class="form-input" 
+                            placeholder="9876543210"
+                            pattern="[0-9]{10}"
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="john@example.com"
+                        >
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city" class="form-label">City *</label>
+                        <input 
+                            type="text" 
+                            id="city" 
+                            name="city" 
+                            class="form-input" 
+                            placeholder="Mumbai"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="occupation" class="form-label">Occupation</label>
+                        <input 
+                            type="text" 
+                            id="occupation" 
+                            name="occupation" 
+                            class="form-input" 
+                            placeholder="Software Engineer"
+                        >
+                    </div>
+                </div>
+            </fieldset>
+            
+            <!-- Financial Information Section -->
+            <fieldset>
+                <legend>Financial Information</legend>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="annual_income" class="form-label">Annual Income</label>
+                        <input 
+                            type="number" 
+                            id="annual_income" 
+                            name="annual_income" 
+                            class="form-input" 
+                            placeholder="500000"
+                            step="10000"
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cibil_score" class="form-label">CIBIL Score</label>
+                        <input 
+                            type="number" 
+                            id="cibil_score" 
+                            name="cibil_score" 
+                            class="form-input" 
+                            placeholder="750"
+                            min="300"
+                            max="900"
+                        >
+                    </div>
+                </div>
+            </fieldset>
+            
+            <!-- Loan Details Section -->
+            <fieldset>
+                <legend>Loan Details</legend>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="loan_type" class="form-label">Loan Type *</label>
+                        <select id="loan_type" name="loan_type" class="form-input" required>
+                            <option value="">--- Select Loan Type ---</option>
+                            <option value="personal_loan">Personal Loan</option>
+                            <option value="business_loan">Business Loan</option>
+                            <option value="home_loan">Home Loan</option>
+                            <option value="mortgage_loan">Mortgage Loan</option>
+                            <option value="lap">LAP</option>
+                            <option value="credit_card">Credit Card</option>
+                            <option value="vehicle_loan">Vehicle Loan</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loan_amount_applied" class="form-label">Loan Amount Requested *</label>
+                        <input 
+                            type="number" 
+                            id="loan_amount_applied" 
+                            name="loan_amount_applied" 
+                            class="form-input" 
+                            placeholder="500000"
+                            step="10000"
+                            required
+                        >
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bank_financer" class="form-label">Bank / Financer *</label>
+                        <select id="bank_financer" name="bank_financer" class="form-input" required>
+                            <option value="">--- Select Bank ---</option>
+                            <option value="hdfc">HDFC Bank</option>
+                            <option value="icici">ICICI Bank</option>
+                            <option value="axis">Axis Bank</option>
+                            <option value="sbi">SBI</option>
+                            <option value="kotak">Kotak Mahindra</option>
+                            <option value="yes_bank">YES Bank</option>
+                            <option value="bob">Bank of Baroda</option>
+                            <option value="federal">Federal Bank</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lead_source" class="form-label">Lead Source</label>
+                        <select id="lead_source" name="lead_source" class="form-input">
+                            <option value="">--- Select Source ---</option>
+                            <option value="referral">Referral</option>
+                            <option value="website">Website</option>
+                            <option value="call">Direct Call</option>
+                            <option value="social_media">Social Media</option>
+                            <option value="partner">Partner</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+            
+            <!-- Additional Information Section -->
+            <fieldset>
+                <legend>Additional Information</legend>
+                
+                <div class="form-group">
+                    <label for="priority_tag" class="form-label">Priority</label>
+                    <select id="priority_tag" name="priority_tag" class="form-input">
+                        <option value="">--- Select Priority ---</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="remarks" class="form-label">Remarks</label>
+                    <textarea 
+                        id="remarks" 
+                        name="remarks" 
+                        class="form-input" 
+                        placeholder="Any additional notes or comments..."
+                    ></textarea>
+                </div>
+            </fieldset>
+        </div>
+        
+        <div class="card-footer">
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Create Lead
+                </button>
+                <a href="/leads" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Cancel
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .page-header {
+        margin-bottom: 2rem;
+    }
+    
+    .page-header h1 {
+        color: #2c3e50;
+        margin: 0;
+    }
+    
+    .page-subtitle {
+        color: #7f8c8d;
+        margin-top: 0.5rem;
+    }
+    
+    .lead-form {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .card-header {
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-header h3 {
+        margin: 0;
+        font-size: 1.3rem;
+        color: #2c3e50;
+    }
+    
+    .card-body {
+        padding: 0;
+    }
+    
+    fieldset {
+        border: none;
+        padding: 1.5rem 0;
+        margin: 0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    fieldset:last-of-type {
+        border-bottom: none;
+    }
+    
+    legend {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-input,
+    select,
+    textarea {
+        padding: 0.85rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+        font-family: inherit;
+    }
+    
+    .form-input:focus,
+    select:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+    
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    .card-footer {
+        border-top: 1px solid #e0e0e0;
+        padding-top: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.85rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-outline {
+        background: white;
+        border: 2px solid #667eea;
+        color: #667eea;
+    }
+    
+    .btn-outline:hover {
+        background: #667eea;
+        color: white;
+    }
+    
+    @media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+        }
+        
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}

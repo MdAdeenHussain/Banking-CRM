@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+
+{% block title %}Super Admin Dashboard - DSA CRM{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h1>Welcome, {{ user.full_name }}</h1>
+        <p>Super Administrator Dashboard</p>
+    </div>
+
+    <!-- KPI Section - Bento Grid -->
+    <div class="kpi-grid">
+        <!-- Total Leads -->
+        <div class="kpi-card bento-1">
+            <div class="kpi-icon">📊</div>
+            <div class="kpi-content">
+                <p class="kpi-label">Total Leads</p>
+                <h2 class="kpi-value" id="total-leads">---</h2>
+                <p class="kpi-change">↑ 12% from last month</p>
+            </div>
+        </div>
+
+        <!-- Converted Leads -->
+        <div class="kpi-card bento-2">
+            <div class="kpi-icon">✅</div>
+            <div class="kpi-content">
+                <p class="kpi-label">Converted Leads</p>
+                <h2 class="kpi-value" id="converted-leads">---</h2>
+                <p class="kpi-change">Conversion Rate: <span id="conversion-rate">0</span>%</p>
+            </div>
+        </div>
+
+        <!-- Total Commission -->
+        <div class="kpi-card bento-3">
+            <div class="kpi-icon">💰</div>
+            <div class="kpi-content">
+                <p class="kpi-label">Total Commission</p>
+                <h2 class="kpi-value" id="total-commission">₹ ---</h2>
+                <p class="kpi-change">Pending: <span id="pending-commission">₹ 0</span></p>
+            </div>
+        </div>
+
+        <!-- Disbursed Amount -->
+        <div class="kpi-card bento-4">
+            <div class="kpi-icon">💳</div>
+            <div class="kpi-content">
+                <p class="kpi-label">Disbursed Amount</p>
+                <h2 class="kpi-value" id="disbursed-amount">₹ ---</h2>
+                <p class="kpi-change">This Month</p>
+            </div>
+        </div>
+
+        <!-- Active Employees -->
+        <div class="kpi-card bento-5">
+            <div class="kpi-icon">👥</div>
+            <div class="kpi-content">
+                <p class="kpi-label">Active Employees</p>
+                <h2 class="kpi-value" id="active-employees">---</h2>
+                <p class="kpi-change"><a href="/employees">Manage →</a></p>
+            </div>
+        </div>
+
+        <!-- Pending Tasks -->
+        <div class="kpi-card bento-6">
+            <div class="kpi-icon">✏️</div>
+            <div class="kpi-content">
+                <p class="kpi-label">Pending Tasks</p>
+                <h2 class="kpi-value" id="pending-tasks">---</h2>
+                <p class="kpi-change">System-wide</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Row -->
+    <div class="analytics-row">
+        <!-- Monthly Performance Chart -->
+        <div class="chart-card">
+            <h3>Monthly Performance</h3>
+            <canvas id="monthly-performance-chart"></canvas>
+        </div>
+
+        <!-- Conversion Funnel -->
+        <div class="chart-card">
+            <h3>Conversion Funnel</h3>
+            <canvas id="conversion-funnel-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- Employee Performance Table -->
+    <div class="table-card">
+        <h3>Top Employees by Commission</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Total Leads</th>
+                    <th>Conversions</th>
+                    <th>Total Commission</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="employee-list">
+                <tr><td colspan="7">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <a href="/employees" class="action-btn">👥 Manage Employees</a>
+        <a href="/leads/create" class="action-btn">➕ New Lead</a>
+        <a href="/admin/permissions" class="action-btn">🔐 Manage Permissions</a>
+        <a href="/analytics/export" class="action-btn">📥 Export Data</a>
+    </div>
+</div>
+
+<style>
+    /* Neomorphic Dashboard Styles */
+    .dashboard-container {
+        padding: 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dashboard-header {
+        margin-bottom: 3rem;
+        color: white;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    /* Bento Grid */
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .kpi-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .kpi-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .kpi-icon {
+        font-size: 2.5rem;
+    }
+
+    .kpi-content {
+        flex: 1;
+    }
+
+    .kpi-label {
+        color: #999;
+        font-size: 0.85rem;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0.5rem 0;
+    }
+
+    .kpi-change {
+        color: #4CAF50;
+        font-size: 0.85rem;
+        margin: 0;
+    }
+
+    /* Charts */
+    .analytics-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .chart-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-card h3 {
+        margin-top: 0;
+        color: #333;
+    }
+
+    /* Table */
+    .table-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table thead {
+        background: #f5f5f5;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .action-btn {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        text-decoration: none;
+        color: #667eea;
+        font-weight: 600;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        color: #764ba2;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .dashboard-container {
+            padding: 1rem;
+        }
+
+        .kpi-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .analytics-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script src="/static/js/dashboard.js"></script>
+<script>
+    // Load KPI data
+    async function loadKPIs() {
+        const response = await fetch('/dashboard/api/kpis');
+        const data = await response.json();
+        
+        document.getElementById('total-leads').textContent = data.total_leads;
+        document.getElementById('converted-leads').textContent = data.converted_leads;
+        document.getElementById('conversion-rate').textContent = data.conversion_rate;
+        document.getElementById('total-commission').textContent = '₹ ' + data.total_commission.toLocaleString();
+        document.getElementById('pending-commission').textContent = '₹ ' + data.pending_commission.toLocaleString();
+        document.getElementById('disbursed-amount').textContent = '₹ ' + data.disbursed_amount.toLocaleString();
+        document.getElementById('active-employees').textContent = data.active_employees;
+        document.getElementById('pending-tasks').textContent = data.pending_tasks;
+    }
+
+    loadKPIs();
+    setInterval(loadKPIs, 60000); // Refresh every minute
+</script>
+{% endblock %}

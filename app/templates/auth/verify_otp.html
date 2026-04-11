@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Verify OTP - Banking CRM{% endblock %}
+
+{% block content %}
+<div class="auth-container verify-otp-page">
+    <div class="auth-card otp-card">
+        <div class="auth-header">
+            <h1>Verify Your Code</h1>
+            <p>Enter the 6-digit code sent to your phone</p>
+        </div>
+
+        <form method="POST" class="auth-form" id="verifyOtpForm">
+            <div class="otp-input-group">
+                <input type="text" class="otp-input" maxlength="1" name="digit1" required>
+                <input type="text" class="otp-input" maxlength="1" name="digit2" required>
+                <input type="text" class="otp-input" maxlength="1" name="digit3" required>
+                <input type="text" class="otp-input" maxlength="1" name="digit4" required>
+                <input type="text" class="otp-input" maxlength="1" name="digit5" required>
+                <input type="text" class="otp-input" maxlength="1" name="digit6" required>
+            </div>
+
+            <input type="hidden" id="otp_code" name="otp_code">
+
+            <button type="submit" class="btn btn-primary btn-block">Verify Code</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Didn't receive the code? <a href="#">Resend</a></p>
+            <p style="margin-top: 1rem;">
+                <a href="{{ url_for('auth.login') }}">Back to Login</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+.verify-otp-page .auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 100px);
+}
+
+.otp-card {
+    max-width: 400px;
+}
+
+.otp-input-group {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.otp-input {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #2d3e50;
+    box-shadow: inset 2px 2px 5px #d9e0e8, inset -2px -2px 5px #ffffff;
+    transition: all 0.3s ease;
+}
+
+.otp-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(87, 108, 190, 0.3);
+}
+
+@media (max-width: 768px) {
+    .otp-card {
+        margin: 2rem;
+    }
+
+    .otp-input {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+
+    .otp-input-group {
+        gap: 0.5rem;
+    }
+}
+</style>
+
+<script>
+const otpInputs = document.querySelectorAll('.otp-input');
+const otpForm = document.getElementById('verifyOtpForm');
+const otpCodeInput = document.getElementById('otp_code');
+
+otpInputs.forEach((input, index) => {
+    input.addEventListener('input', (e) => {
+        if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+            otpInputs[index + 1].focus();
+        }
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && input.value === '' && index > 0) {
+            otpInputs[index - 1].focus();
+        }
+    });
+});
+
+otpForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const code = Array.from(otpInputs).map(input => input.value).join('');
+    otpCodeInput.value = code;
+    otpForm.submit();
+});
+</script>
+{% endblock %}

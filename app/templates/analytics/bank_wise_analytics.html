@@ -1,0 +1,704 @@
+{% extends "base.html" %}
+
+{% block title %}Bank-wise Analytics - Banking CRM{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <div class="analytics-header">
+        <h1>Bank-wise Analytics</h1>
+        <div class="period-selector">
+            <button class="period-btn active" data-period="month">This Month</button>
+            <button class="period-btn" data-period="quarter">This Quarter</button>
+            <button class="period-btn" data-period="year">This Year</button>
+        </div>
+    </div>
+
+    <!-- Bank Summary Cards -->
+    <div class="banks-summary">
+        {% for bank in banks %}
+        <div class="bank-summary-card">
+            <h3>{{ bank.name }}</h3>
+            <div class="bank-metrics">
+                <div class="metric">
+                    <span class="metric-label">Total Leads</span>
+                    <span class="metric-value">{{ bank.leads }}</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Conversion</span>
+                    <span class="metric-value">{{ bank.conversion }}%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Commission</span>
+                    <span class="metric-value">₹{{ "{:,.0f}".format(bank.commission) }}</span>
+                </div>
+            </div>
+            <div class="bank-status">
+                {% if bank.status == 'active' %}
+                    <span class="badge active">✓ Active</span>
+                {% else %}
+                    <span class="badge inactive">✗ Inactive</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Bank Performance Comparison -->
+    <div class="chart-section">
+        <h2>Bank Performance Comparison</h2>
+        <div class="comparison-grid">
+            <div class="comparison-column">
+                <h4>Leads by Bank</h4>
+                <div class="bank-bars">
+                    {% for bank in bank_leads %}
+                    <div class="bank-bar-item">
+                        <span class="bank-label">{{ bank.name }}</span>
+                        <div class="bar-container">
+                            <div class="bar" style="width: {{ (bank.leads / max_leads * 100)|int }}%"></div>
+                        </div>
+                        <span class="bank-value">{{ bank.leads }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="comparison-column">
+                <h4>Commission Distribution</h4>
+                <div class="bank-bars">
+                    {% for bank in bank_commission %}
+                    <div class="bank-bar-item">
+                        <span class="bank-label">{{ bank.name }}</span>
+                        <div class="bar-container">
+                            <div class="bar" style="width: {{ (bank.commission / max_commission * 100)|int }}%"></div>
+                        </div>
+                        <span class="bank-value">₹{{ "{:,.0f}".format(bank.commission) }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="comparison-column">
+                <h4>Conversion Rate</h4>
+                <div class="bank-bars">
+                    {% for bank in bank_conversion %}
+                    <div class="bank-bar-item">
+                        <span class="bank-label">{{ bank.name }}</span>
+                        <div class="bar-container">
+                            <div class="bar" style="width: {{ bank.conversion }}%"></div>
+                        </div>
+                        <span class="bank-value">{{ bank.conversion }}%</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product-wise Distribution by Bank -->
+    <div class="chart-section">
+        <h2>Product-wise Distribution by Bank</h2>
+        <div class="product-bank-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        {% for bank in banks %}
+                        <th>{{ bank.name }}</th>
+                        {% endfor %}
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td class="product-name">{{ product.name }}</td>
+                        {% for bank in banks %}
+                        <td>{{ product[bank.id] }}</td>
+                        {% endfor %}
+                        <td class="total-cell">{{ product.total }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Employee Assignment by Bank -->
+    <div class="chart-section">
+        <h2>Employee Assignment by Bank</h2>
+        <div class="employee-bank-grid">
+            {% for bank in bank_employees %}
+            <div class="bank-employees-card">
+                <h4>{{ bank.name }}</h4>
+                <p class="employee-count">{{ bank.count }} employees</p>
+                <div class="employee-list">
+                    {% for emp in bank.employees %}
+                    <div class="employee-item">
+                        <span class="emp-name">{{ emp.name }}</span>
+                        <span class="emp-leads">{{ emp.leads }} leads</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Monthly Trends by Bank -->
+    <div class="chart-section">
+        <h2>6-Month Trend by Bank</h2>
+        <div class="banks-trends">
+            {% for bank in bank_monthly_trends %}
+            <div class="trend-section">
+                <h4>{{ bank.name }}</h4>
+                <div class="mini-trend-chart">
+                    {% for month in bank.months %}
+                    <div class="month-bar">
+                        <div class="bar" style="height: {{ (month.value / bank.max_value * 100)|int }}%"></div>
+                        <span class="month-label">{{ month.month }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                <p class="trend-info">Avg: {{ bank.avg }} | Total: {{ bank.total }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Bank Performance Metrics -->
+    <div class="chart-section">
+        <h2>Performance Metrics by Bank</h2>
+        <div class="metrics-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bank</th>
+                        <th>Total Leads</th>
+                        <th>Conversions</th>
+                        <th>Conv. Rate</th>
+                        <th>Avg Lead Value</th>
+                        <th>Total Commission</th>
+                        <th>Growth</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bank in bank_metrics %}
+                    <tr>
+                        <td class="bank-name">{{ bank.name }}</td>
+                        <td>{{ bank.leads }}</td>
+                        <td>{{ bank.conversions }}</td>
+                        <td>{{ bank.conversion }}%</td>
+                        <td>₹{{ "{:,.0f}".format(bank.avg_lead_value) }}</td>
+                        <td>₹{{ "{:,.0f}".format(bank.commission) }}</td>
+                        <td>
+                            {% if bank.growth > 0 %}
+                                <span class="growth positive">📈 +{{ bank.growth }}%</span>
+                            {% else %}
+                                <span class="growth negative">📉 {{ bank.growth }}%</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Top Products by Bank -->
+    <div class="chart-section">
+        <h2>Top Products by Bank</h2>
+        <div class="top-products-grid">
+            {% for bank in top_products_by_bank %}
+            <div class="top-products-card">
+                <h4>{{ bank.name }}</h4>
+                <div class="products-list">
+                    {% for product in bank.products %}
+                    <div class="product-item">
+                        <span class="product-rank">{{ loop.index }}</span>
+                        <span class="product-name">{{ product.name }}</span>
+                        <span class="product-count">{{ product.count }}</span>
+                        <div class="mini-bar">
+                            <div class="fill" style="width: {{ (product.count / bank.products[0].count * 100)|int }}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Bank Comparison Dashboard -->
+    <div class="chart-section">
+        <h2>Bank Comparison Dashboard</h2>
+        <div class="comparison-dashboard">
+            <div class="comparison-box">
+                <h5>🏆 Top Performing Bank</h5>
+                <p class="comparison-value">{{ top_bank.name }}</p>
+                <p class="comparison-detail">{{ top_bank.commission | currency }}</p>
+            </div>
+            <div class="comparison-box">
+                <h5>📈 Fastest Growing</h5>
+                <p class="comparison-value">{{ fastest_growing.name }}</p>
+                <p class="comparison-detail">+{{ fastest_growing.growth }}% this month</p>
+            </div>
+            <div class="comparison-box">
+                <h5>💼 Most Active</h5>
+                <p class="comparison-value">{{ most_active.name }}</p>
+                <p class="comparison-detail">{{ most_active.leads }} leads</p>
+            </div>
+            <div class="comparison-box">
+                <h5>🎯 Best Conversion</h5>
+                <p class="comparison-value">{{ best_conversion.name }}</p>
+                <p class="comparison-detail">{{ best_conversion.conversion }}% rate</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.analytics-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.analytics-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.analytics-header h1 {
+    color: #1f4788;
+    margin: 0;
+    font-size: 2rem;
+}
+
+.period-selector {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.period-btn {
+    padding: 0.6rem 1rem;
+    border: none;
+    background: white;
+    color: #748390;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: inset 2px 2px 5px #d9e0e8;
+    transition: all 0.3s ease;
+}
+
+.period-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.banks-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.bank-summary-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.bank-summary-card h3 {
+    color: #1f4788;
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+}
+
+.bank-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.metric {
+    text-align: center;
+}
+
+.metric-label {
+    display: block;
+    color: #748390;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.metric-value {
+    display: block;
+    color: #1f4788;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.bank-status {
+    text-align: center;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.4rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge.active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge.inactive {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.chart-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+    margin-bottom: 1.5rem;
+}
+
+.chart-section h2 {
+    color: #1f4788;
+    margin: 0 0 1rem 0;
+}
+
+.comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.comparison-column h4 {
+    color: #2d3e50;
+    margin: 0 0 1rem 0;
+    font-size: 0.95rem;
+}
+
+.bank-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.bank-bar-item {
+    display: grid;
+    grid-template-columns: 80px 1fr 80px;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.bank-label {
+    color: #1f4788;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.bar-container {
+    height: 20px;
+    background: white;
+    border-radius: 4px;
+}
+
+.bar {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.bank-value {
+    text-align: right;
+    color: #748390;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.product-bank-table {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: white;
+}
+
+th {
+    color: #2d3e50;
+    font-weight: 600;
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 2px solid #d9e0e8;
+}
+
+td {
+    color: #1f4788;
+    padding: 0.75rem;
+    border-bottom: 1px solid #e8eef8;
+}
+
+.product-name {
+    font-weight: 600;
+}
+
+.total-cell {
+    font-weight: 600;
+    background: #f0f3f8;
+}
+
+.employee-bank-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.bank-employees-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.bank-employees-card h4 {
+    color: #1f4788;
+    margin: 0 0 0.25rem 0;
+}
+
+.employee-count {
+    color: #748390;
+    font-size: 0.85rem;
+    margin: 0 0 0.75rem 0;
+}
+
+.employee-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.employee-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.emp-name {
+    color: #1f4788;
+    font-weight: 500;
+}
+
+.emp-leads {
+    color: #748390;
+}
+
+.banks-trends {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.trend-section {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.trend-section h4 {
+    color: #1f4788;
+    margin: 0 0 1rem 0;
+    font-size: 0.95rem;
+}
+
+.mini-trend-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    height: 120px;
+    margin-bottom: 0.75rem;
+    gap: 0.25rem;
+}
+
+.month-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.month-bar .bar {
+    width: 100%;
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+    min-height: 2px;
+}
+
+.month-label {
+    font-size: 0.7rem;
+    color: #748390;
+    margin-top: 0.25rem;
+}
+
+.trend-info {
+    color: #748390;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.metrics-table {
+    overflow-x: auto;
+}
+
+.bank-name {
+    font-weight: 600;
+}
+
+.growth {
+    font-weight: 600;
+}
+
+.growth.positive {
+    color: #28a745;
+}
+
+.growth.negative {
+    color: #dc3545;
+}
+
+.top-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.top-products-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.top-products-card h4 {
+    color: #1f4788;
+    margin: 0 0 1rem 0;
+}
+
+.products-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.product-item {
+    display: grid;
+    grid-template-columns: 25px 2fr 50px 1fr;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.product-rank {
+    text-align: center;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.product-name {
+    color: #1f4788;
+    font-size: 0.9rem;
+}
+
+.product-count {
+    text-align: right;
+    color: #748390;
+    font-size: 0.85rem;
+}
+
+.mini-bar {
+    height: 4px;
+    background: #d9e0e8;
+    border-radius: 2px;
+}
+
+.mini-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+}
+
+.comparison-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.comparison-box {
+    background: white;
+    padding: 1.25rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.comparison-box h5 {
+    color: #2d3e50;
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.comparison-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1f4788;
+    margin: 0.5rem 0;
+}
+
+.comparison-detail {
+    color: #748390;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .analytics-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .comparison-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bank-bar-item {
+        grid-template-columns: 60px 1fr 60px;
+    }
+
+    table {
+        font-size: 0.9rem;
+    }
+
+    .product-item {
+        grid-template-columns: 20px 1fr 40px 0.8fr;
+    }
+}
+</style>
+{% endblock %}

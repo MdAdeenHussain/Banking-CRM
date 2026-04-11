@@ -1,0 +1,478 @@
+{% extends "base.html" %}
+
+{% block title %}Lead Search - Banking CRM{% endblock %}
+
+{% block content %}
+<div class="search-container">
+    <div class="search-header">
+        <h1>Lead Search</h1>
+        <p>Find leads using advanced filters</p>
+    </div>
+
+    <!-- Search Filters -->
+    <div class="filters-panel">
+        <form method="GET" id="searchForm">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="name">Lead Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter name" value="{{ request.args.get('name', '') }}">
+                </div>
+
+                <div class="filter-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Enter phone" value="{{ request.args.get('phone', '') }}">
+                </div>
+
+                <div class="filter-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter email" value="{{ request.args.get('email', '') }}">
+                </div>
+            </div>
+
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option value="">All Status</option>
+                        <option value="New">New</option>
+                        <option value="Follow-up">Follow-up</option>
+                        <option value="Interested">Interested</option>
+                        <option value="Converted">Converted</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="bank">Bank</label>
+                    <select id="bank" name="bank">
+                        <option value="">All Banks</option>
+                        <option value="Bank A">Bank A</option>
+                        <option value="Bank B">Bank B</option>
+                        <option value="Bank C">Bank C</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="product">Product</label>
+                    <select id="product" name="product">
+                        <option value="">All Products</option>
+                        <option value="Savings Account">Savings Account</option>
+                        <option value="Loan">Loan</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Investment">Investment</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="source">Source</label>
+                    <input type="text" id="source" name="source" placeholder="Enter source" value="{{ request.args.get('source', '') }}">
+                </div>
+
+                <div class="filter-group">
+                    <label for="dsa">DSA/Employee</label>
+                    <select id="dsa" name="dsa">
+                        <option value="">All Employees</option>
+                        {% for emp in employees %}
+                        <option value="{{ emp.id }}">{{ emp.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="date_from">Date From</label>
+                    <input type="date" id="date_from" name="date_from" value="{{ request.args.get('date_from', '') }}">
+                </div>
+            </div>
+
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="date_to">Date To</label>
+                    <input type="date" id="date_to" name="date_to" value="{{ request.args.get('date_to', '') }}">
+                </div>
+
+                <div class="filter-group">
+                    <label for="sort_by">Sort By</label>
+                    <select id="sort_by" name="sort_by">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="name">Name A-Z</option>
+                        <option value="status">Status</option>
+                    </select>
+                </div>
+
+                <div class="filter-group" style="display: flex; gap: 0.5rem; align-items: flex-end;">
+                    <button type="submit" class="btn btn-primary">🔍 Search</button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">Clear</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="results-header">
+        <p>Found <strong>{{ leads|length }}</strong> leads</p>
+        <div class="view-options">
+            <button class="view-btn active" onclick="switchView('list')">📋 List</button>
+            <button class="view-btn" onclick="switchView('grid')">🔲 Grid</button>
+        </div>
+    </div>
+
+    <!-- Results List View -->
+    <div id="listView" class="view active">
+        <div class="leads-table">
+            <div class="table-header">
+                <div class="col-name">Lead Name</div>
+                <div class="col-phone">Phone</div>
+                <div class="col-bank">Bank</div>
+                <div class="col-status">Status</div>
+                <div class="col-date">Date Added</div>
+                <div class="col-action">Action</div>
+            </div>
+            {% for lead in leads %}
+            <div class="table-row">
+                <div class="col-name">{{ lead.name }}</div>
+                <div class="col-phone">{{ lead.phone }}</div>
+                <div class="col-bank">{{ lead.bank_name }}</div>
+                <div class="col-status">
+                    <span class="status-badge status-{{ lead.status|lower }}">{{ lead.status }}</span>
+                </div>
+                <div class="col-date">{{ lead.created_at.strftime('%d %b %Y') }}</div>
+                <div class="col-action">
+                    <a href="{{ url_for('leads.get_lead', lead_id=lead.id) }}" class="action-link">View</a>
+                </div>
+            </div>
+            {% else %}
+            <div class="table-empty">No leads found matching your search criteria</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Results Grid View -->
+    <div id="gridView" class="view">
+        <div class="leads-grid">
+            {% for lead in leads %}
+            <div class="lead-card">
+                <div class="card-header">
+                    <h3>{{ lead.name }}</h3>
+                    <span class="status-badge status-{{ lead.status|lower }}">{{ lead.status }}</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Phone:</strong> {{ lead.phone }}</p>
+                    <p><strong>Email:</strong> {{ lead.email }}</p>
+                    <p><strong>Bank:</strong> {{ lead.bank_name }}</p>
+                    <p><strong>Product:</strong> {{ lead.product }}</p>
+                    <p><strong>Added:</strong> {{ lead.created_at.strftime('%d %b %Y') }}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('leads.get_lead', lead_id=lead.id) }}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-grid">No leads found</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+.search-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.search-header {
+    margin-bottom: 2rem;
+}
+
+.search-header h1 {
+    color: #1f4788;
+    margin: 0;
+    font-size: 2rem;
+}
+
+.search-header p {
+    color: #748390;
+    margin: 0.5rem 0 0 0;
+}
+
+.filters-panel {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+    margin-bottom: 2rem;
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    color: #2d3e50;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    background: white;
+    box-shadow: inset 2px 2px 5px #d9e0e8, inset -2px -2px 5px #ffffff;
+    color: #2d3e50;
+    font-size: 0.95rem;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    outline: none;
+    box-shadow: inset 2px 2px 5px #d9e0e8, inset -2px -2px 5px #ffffff, 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: #1f4788;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 10px;
+}
+
+.results-header p {
+    color: #1f4788;
+    font-weight: 600;
+    margin: 0;
+}
+
+.view-options {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.view-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: white;
+    color: #748390;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: inset 2px 2px 5px #d9e0e8, inset -2px -2px 5px #ffffff;
+    transition: all 0.3s ease;
+}
+
+.view-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.view {
+    display: none;
+}
+
+.view.active {
+    display: block;
+}
+
+.leads-table {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1.5fr 1fr 1.5fr 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 2px solid #d9e0e8;
+    font-weight: 600;
+    color: #1f4788;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1.5fr 1fr 1.5fr 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #d9e0e8;
+    align-items: center;
+}
+
+.table-row:last-child {
+    border-bottom: none;
+}
+
+.table-empty {
+    text-align: center;
+    color: #748390;
+    padding: 2rem;
+}
+
+.status-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-new { background: #e3f2fd; color: #1976d2; }
+.status-follow-up { background: #fff3e0; color: #f57c00; }
+.status-interested { background: #f3e5f5; color: #7b1fa2; }
+.status-converted { background: #e8f5e9; color: #388e3c; }
+.status-rejected { background: #ffebee; color: #d32f2f; }
+
+.action-link {
+    color: #576cbe;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.action-link:hover {
+    color: #764ba2;
+}
+
+.leads-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.lead-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.lead-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 12px 12px 20px #bebebe, -8px -8px 20px #ffffff;
+}
+
+.card-header {
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.card-body {
+    padding: 1rem 1.5rem;
+}
+
+.card-body p {
+    color: #2d3e50;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.card-body strong {
+    color: #1f4788;
+}
+
+.card-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #d9e0e8;
+}
+
+.card-footer .btn {
+    width: 100%;
+    text-align: center;
+}
+
+.empty-grid {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #748390;
+    padding: 3rem;
+}
+
+@media (max-width: 768px) {
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr;
+    }
+
+    .results-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .leads-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</script>
+
+<script>
+function switchView(viewName) {
+    // Hide all views
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+
+    // Show selected view
+    document.getElementById(viewName === 'list' ? 'listView' : 'gridView').classList.add('active');
+    event.target.classList.add('active');
+}
+
+function resetForm() {
+    document.getElementById('searchForm').reset();
+    document.getElementById('searchForm').submit();
+}
+</script>
+{% endblock %}

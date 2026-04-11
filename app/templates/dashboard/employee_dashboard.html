@@ -1,0 +1,500 @@
+{% extends "base.html" %}
+
+{% block title %}Employee Dashboard - Banking CRM{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Dashboard</h1>
+        <p>Welcome back, {{ current_user.full_name }}</p>
+    </div>
+
+    <!-- Performance Summary -->
+    <div class="summary-grid">
+        <div class="summary-card">
+            <div class="summary-icon">🎯</div>
+            <h3>My Leads</h3>
+            <p class="summary-value">{{ my_leads }}</p>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ (leads_converted / my_leads * 100)|int }}%"></div>
+            </div>
+            <small>{{ leads_converted }} Converted</small>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon">💎</div>
+            <h3>This Month Commission</h3>
+            <p class="summary-value">₹{{ "{:,.0f}".format(current_month_commission) }}</p>
+            <span class="commission-badge">{{ commission_percentage }}% to target</span>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon">📝</div>
+            <h3>Pending Tasks</h3>
+            <p class="summary-value">{{ pending_tasks }}</p>
+            <small>Due today: {{ due_today }}</small>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon">📊</div>
+            <h3>Conversion Rate</h3>
+            <p class="summary-value">{{ conversion_rate }}%</p>
+            <small>Bank average: {{ bank_avg_rate }}%</small>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="quick-stats">
+        <div class="stat-item">
+            <span class="stat-label">Total Commission YTD</span>
+            <span class="stat-value">₹{{ "{:,.0f}".format(ytd_commission) }}</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Leads This Month</span>
+            <span class="stat-value">{{ leads_this_month }}</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Documents Status</span>
+            <span class="stat-value">{{ documents_received }}/{{ documents_total }}</span>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a href="{{ url_for('leads.create_lead') }}" class="btn btn-primary">➕ New Lead</a>
+        <a href="{{ url_for('leads.list_leads') }}" class="btn btn-secondary">📋 View Leads</a>
+        <a href="{{ url_for('commissions.view_commissions') }}" class="btn btn-secondary">💰 Commissions</a>
+        <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-secondary">✅ Tasks</a>
+    </div>
+
+    <!-- My Recent Leads -->
+    <div class="recent-section">
+        <h2>Recent Leads</h2>
+        <div class="leads-table">
+            <div class="table-header">
+                <div class="col-name">Lead Name</div>
+                <div class="col-phone">Phone</div>
+                <div class="col-status">Status</div>
+                <div class="col-date">Date</div>
+                <div class="col-action">Action</div>
+            </div>
+            {% for lead in recent_leads %}
+            <div class="table-row">
+                <div class="col-name">
+                    <strong>{{ lead.name }}</strong>
+                    <br><small>{{ lead.dsa_name if lead.dsa_name else 'N/A' }}</small>
+                </div>
+                <div class="col-phone">{{ lead.phone }}</div>
+                <div class="col-status">
+                    <span class="status-badge status-{{ lead.status|lower }}">{{ lead.status }}</span>
+                </div>
+                <div class="col-date">{{ lead.created_at.strftime('%d %b %Y') }}</div>
+                <div class="col-action">
+                    <a href="{{ url_for('leads.get_lead', lead_id=lead.id) }}" class="action-link">View</a>
+                </div>
+            </div>
+            {% else %}
+            <div class="table-empty">No leads yet. Start by creating your first lead!</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Today's Tasks -->
+    <div class="recent-section">
+        <h2>Today's Tasks</h2>
+        <div class="tasks-list">
+            {% for task in today_tasks %}
+            <div class="task-item">
+                <input type="checkbox" class="task-checkbox" id="task-{{ task.id }}" {% if task.completed %}checked{% endif %}>
+                <label for="task-{{ task.id }}" class="task-label">
+                    <strong>{{ task.title }}</strong>
+                    <p>{{ task.description }}</p>
+                </label>
+                <span class="task-time">{{ task.due_time if task.due_time else 'No time set' }}</span>
+            </div>
+            {% else %}
+            <div class="empty-state">No tasks scheduled for today</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Commission Breakdown -->
+    <div class="recent-section">
+        <h2>Commission Breakdown</h2>
+        <div class="commission-breakdown">
+            <div class="breakdown-item">
+                <span class="breakdown-label">Bank A</span>
+                <div class="breakdown-bar">
+                    <div class="breakdown-fill" style="width: 65%"></div>
+                </div>
+                <span class="breakdown-value">₹{{ "{:,.0f}".format(bank_a_commission) }}</span>
+            </div>
+            <div class="breakdown-item">
+                <span class="breakdown-label">Bank B</span>
+                <div class="breakdown-bar">
+                    <div class="breakdown-fill" style="width: 45%"></div>
+                </div>
+                <span class="breakdown-value">₹{{ "{:,.0f}".format(bank_b_commission) }}</span>
+            </div>
+            <div class="breakdown-item">
+                <span class="breakdown-label">Bank C</span>
+                <div class="breakdown-bar">
+                    <div class="breakdown-fill" style="width: 35%"></div>
+                </div>
+                <span class="breakdown-value">₹{{ "{:,.0f}".format(bank_c_commission) }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.dashboard-header {
+    margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+    font-size: 2rem;
+    color: #1f4788;
+    margin: 0;
+}
+
+.dashboard-header p {
+    color: #748390;
+    margin: 0.5rem 0 0 0;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.summary-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+    transition: all 0.3s ease;
+    border-left: 4px solid #576cbe;
+}
+
+.summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 12px 12px 20px #bebebe, -8px -8px 20px #ffffff;
+}
+
+.summary-icon {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.summary-card h3 {
+    color: #2d3e50;
+    font-size: 0.85rem;
+    margin: 0.5rem 0;
+    text-transform: uppercase;
+}
+
+.summary-value {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: #1f4788;
+    margin: 0.5rem 0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #d9e0e8;
+    border-radius: 4px;
+    margin: 0.75rem 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.commission-badge {
+    display: inline-block;
+    background: #e8f4f8;
+    color: #0c5460;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.summary-card small {
+    color: #748390;
+}
+
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.stat-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: #1f4788;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 12px 12px 20px #bebebe, -8px -8px 20px #ffffff;
+}
+
+.recent-section {
+    margin: 2.5rem 0;
+}
+
+.recent-section h2 {
+    color: #1f4788;
+    margin-bottom: 1rem;
+}
+
+.leads-table {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 1.5fr 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 2px solid #d9e0e8;
+    font-weight: 600;
+    color: #1f4788;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 1.5fr 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #d9e0e8;
+    align-items: center;
+}
+
+.table-row:last-child {
+    border-bottom: none;
+}
+
+.table-empty {
+    text-align: center;
+    color: #748390;
+    padding: 2rem;
+}
+
+.status-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-new {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-follow-up {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.status-converted {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.status-rejected {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+.action-link {
+    color: #576cbe;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.action-link:hover {
+    color: #764ba2;
+}
+
+.tasks-list {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.task-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    background: white;
+    border-radius: 10px;
+    align-items: flex-start;
+}
+
+.task-checkbox {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    cursor: pointer;
+}
+
+.task-label {
+    flex: 1;
+    cursor: pointer;
+}
+
+.task-label strong {
+    color: #1f4788;
+}
+
+.task-label p {
+    margin: 0.25rem 0 0 0;
+    color: #748390;
+    font-size: 0.9rem;
+}
+
+.task-time {
+    color: #748390;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.empty-state {
+    text-align: center;
+    color: #748390;
+    padding: 2rem;
+}
+
+.commission-breakdown {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.breakdown-item {
+    display: grid;
+    grid-template-columns: 100px 1fr 150px;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+.breakdown-label {
+    font-weight: 600;
+    color: #1f4788;
+}
+
+.breakdown-bar {
+    height: 10px;
+    background: #d9e0e8;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.breakdown-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 5px;
+    min-width: 2px;
+}
+
+.breakdown-value {
+    text-align: right;
+    font-weight: 600;
+    color: #1f4788;
+}
+
+@media (max-width: 768px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .btn {
+        flex: 1;
+        min-width: 120px;
+    }
+}
+</style>
+{% endblock %}

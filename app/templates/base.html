@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}DSA CRM - Banking Loan Distribution{% endblock %}</title>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    {% if 'user_id' in session %}
+        {% include 'layouts/navbar.html' %}
+        <div class="main-container">
+            <!-- Sidebar -->
+            {% include 'layouts/sidebar.html' %}
+            
+            <!-- Main Content -->
+            <main class="main-content">
+                {% if request.args.get('success') %}
+                    <div class="alert alert-success">
+                        {{ request.args.get('success') }}
+                    </div>
+                {% endif %}
+                
+                {% if request.args.get('error') %}
+                    <div class="alert alert-error">
+                        {{ request.args.get('error') }}
+                    </div>
+                {% endif %}
+                
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+        
+        <!-- Footer -->
+        {% include 'layouts/footer.html' %}
+    {% else %}
+        <!-- Auth Pages (No Sidebar/Navbar) -->
+        {% block content %}{% endblock %}
+    {% endif %}
+    
+    <!-- JavaScripts -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/forms.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

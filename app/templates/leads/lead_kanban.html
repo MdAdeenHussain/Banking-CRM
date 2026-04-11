@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+
+{% block title %}Lead Kanban - Banking CRM{% endblock %}
+
+{% block content %}
+<div class="kanban-container">
+    <div class="kanban-header">
+        <h1>Lead Kanban Board</h1>
+        <p>Drag and drop leads to change status</p>
+    </div>
+
+    <div class="kanban-board">
+        <!-- New Column -->
+        <div class="kanban-column" data-status="New">
+            <div class="column-header">
+                <h2>🆕 New</h2>
+                <span class="column-count">{{ new_leads|length }}</span>
+            </div>
+            <div class="column-content" data-status="New">
+                {% for lead in new_leads %}
+                <div class="kanban-card" draggable="true" data-lead-id="{{ lead.id }}" data-position="{{ loop.index }}">
+                    <div class="card-header">
+                        <h4>{{ lead.name }}</h4>
+                        <span class="priority-badge">{{ lead.priority if lead.priority else 'Medium' }}</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="phone">📞 {{ lead.phone }}</p>
+                        <p class="bank">🏦 {{ lead.bank_name }}</p>
+                        <p class="product">💼 {{ lead.product }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <small>{{ lead.created_at.strftime('%d %b') }}</small>
+                        <a href="{{ url_for('leads.get_lead', lead_id=lead.id) }}" class="card-link">View</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Follow-up Column -->
+        <div class="kanban-column" data-status="Follow-up">
+            <div class="column-header">
+                <h2>📞 Follow-up</h2>
+                <span class="column-count">{{ followup_leads|length }}</span>
+            </div>
+            <div class="column-content" data-status="Follow-up">
+                {% for lead in followup_leads %}
+                <div class="kanban-card" draggable="true" data-lead-id="{{ lead.id }}" data-position="{{ loop.index }}">
+                    <div class="card-header">
+                        <h4>{{ lead.name }}</h4>
+                        <span class="priority-badge">{{ lead.priority if lead.priority else 'Medium' }}</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="phone">📞 {{ lead.phone }}</p>
+                        <p class="bank">🏦 {{ lead.bank_name }}</p>
+                        <p class="product">💼 {{ lead.product }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <small>{{ lead.created_at.strftime('%d %b') }}</small>
+                        <a href="{{ url_for('leads.get_lead', lead_id=lead.id) }}" class="card-link">View</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Interested Column -->
+        <div class="kanban-column" data-status="Interested">
+            <div class="column-header">
+                <h2>👍 Interested</h2>
+                <span class="column-count">{{ interested_leads|length }}</span>
+            </div>
+            <div class="column-content" data-status="Interested">
+                {% for lead in interested_leads %}
+                <div class="kanban-card" draggable="true" data-lead-id="{{ lead.id }}" data-position="{{ loop.index }}">
+                    <div class="card-header">
+                        <h4>{{ lead.name }}</h4>
+                        <span class="priority-badge">{{ lead.priority if lead.priority else 'Medium' }}</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="phone">📞 {{ lead.phone }}</p>
+                        <p class="bank">🏦 {{ lead.bank_name }}</p>
+                        <p class="product">💼 {{ lead.product }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <small>{{ lead.created_at.strftime('%d %b') }}</small>
+                        <a href="{{ url_for('leads.get_lead', lead_id=lead.id) }}" class="card-link">View</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Converted Column -->
+        <div class="kanban-column" data-status="Converted">
+            <div class="column-header">
+                <h2>✅ Converted</h2>
+                <span class="column-count">{{ converted_leads|length }}</span>
+            </div>
+            <div class="column-content" data-status="Converted">
+                {% for lead in converted_leads %}
+                <div class="kanban-card" draggable="true" data-lead-id="{{ lead.id }}" data-position="{{ loop.index }}">
+                    <div class="card-header">
+                        <h4>{{ lead.name }}</h4>
+                        <span class="priority-badge">{{ lead.priority if lead.priority else 'Medium' }}</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="phone">📞 {{ lead.phone }}</p>
+                        <p class="bank">🏦 {{ lead.bank_name }}</p>
+                        <p class="product">💼 {{ lead.product }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <small>{{ lead.created_at.strftime('%d %b') }}</small>
+                        <a href="{{ url_for('leads.get_lead', lead_id=lead.id) }}" class="card-link">View</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Rejected Column -->
+        <div class="kanban-column" data-status="Rejected">
+            <div class="column-header">
+                <h2>❌ Rejected</h2>
+                <span class="column-count">{{ rejected_leads|length }}</span>
+            </div>
+            <div class="column-content" data-status="Rejected">
+                {% for lead in rejected_leads %}
+                <div class="kanban-card" draggable="true" data-lead-id="{{ lead.id }}" data-position="{{ loop.index }}">
+                    <div class="card-header">
+                        <h4>{{ lead.name }}</h4>
+                        <span class="priority-badge">{{ lead.priority if lead.priority else 'Medium' }}</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="phone">📞 {{ lead.phone }}</p>
+                        <p class="bank">🏦 {{ lead.bank_name }}</p>
+                        <p class="product">💼 {{ lead.product }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <small>{{ lead.created_at.strftime('%d %b') }}</small>
+                        <a href="{{ url_for('leads.get_lead', lead_id=lead.id) }}" class="card-link">View</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.kanban-container {
+    padding: 0;
+}
+
+.kanban-header {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+}
+
+.kanban-header h1 {
+    color: #1f4788;
+    margin: 0;
+    font-size: 2rem;
+}
+
+.kanban-header p {
+    color: #748390;
+    margin: 0.5rem 0 0 0;
+}
+
+.kanban-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 0 1.5rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(300px, 1fr);
+}
+
+.kanban-column {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+    padding: 1.5rem 1rem;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #d9e0e8;
+}
+
+.column-header h2 {
+    color: #1f4788;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.column-count {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.column-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+    min-height: 400px;
+}
+
+.column-content:empty::after {
+    content: 'Drop leads here';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #748390;
+    text-align: center;
+    font-style: italic;
+}
+
+.kanban-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: grab;
+    border-left: 4px solid #667eea;
+    transition: all 0.3s ease;
+}
+
+.kanban-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.kanban-card.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.kanban-card.drag-over {
+    background-color: #f0f0f0;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+    gap: 0.5rem;
+}
+
+.card-header h4 {
+    color: #1f4788;
+    margin: 0;
+    font-size: 0.95rem;
+    flex: 1;
+}
+
+.priority-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+.priority-badge {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.card-body {
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.card-body p {
+    margin: 0.3rem 0;
+    color: #2d3e50;
+}
+
+.card-body .phone,
+.card-body .bank,
+.card-body .product {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #748390;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 0.5rem;
+}
+
+.card-link {
+    color: #576cbe;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.card-link:hover {
+    color: #764ba2;
+}
+
+@media (max-width: 768px) {
+    .kanban-board {
+        grid-template-columns: 1fr;
+        grid-auto-flow: row;
+        grid-auto-columns: auto;
+    }
+
+    .column-content {
+        min-height: 300px;
+    }
+
+    .kanban-column {
+        min-height: 400px;
+    }
+}
+</style>
+
+<script>
+let draggedCard = null;
+
+document.querySelectorAll('.kanban-card').forEach(card => {
+    card.addEventListener('dragstart', handleDragStart);
+    card.addEventListener('dragend', handleDragEnd);
+});
+
+document.querySelectorAll('.column-content').forEach(column => {
+    column.addEventListener('dragover', handleDragOver);
+    column.addEventListener('drop', handleDrop);
+});
+
+function handleDragStart(e) {
+    draggedCard = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragEnd(e) {
+    this.classList.remove('dragging');
+    document.querySelectorAll('.column-content').forEach(col => {
+        col.classList.remove('drag-over');
+    });
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    this.classList.add('drag-over');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    this.classList.remove('drag-over');
+    
+    if (draggedCard) {
+        this.appendChild(draggedCard);
+        const newStatus = this.dataset.status;
+        const leadId = draggedCard.dataset.leadId;
+        
+        // Update backend
+        updateLeadStatus(leadId, newStatus);
+    }
+}
+
+function updateLeadStatus(leadId, newStatus) {
+    fetch(`/api/leads/${leadId}/status`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus })
+    })
+    .catch(err => console.log('Status updated:', newStatus));
+}
+</script>
+{% endblock %}

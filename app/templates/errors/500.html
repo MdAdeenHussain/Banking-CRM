@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Server Error</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .error-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .error-code {
+            font-size: 5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .error-title {
+            color: #1f4788;
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            color: #748390;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-direction: column;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #1f4788;
+            box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+        }
+
+        .troubleshoot-section {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            border-radius: 6px;
+            text-align: left;
+            margin-top: 2rem;
+            color: #856404;
+            font-size: 0.9rem;
+        }
+
+        .troubleshoot-section strong {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .troubleshoot-section ol {
+            padding-left: 1.5rem;
+        }
+
+        .troubleshoot-section li {
+            margin-bottom: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .error-container {
+                padding: 2rem;
+            }
+
+            .error-code {
+                font-size: 3.5rem;
+            }
+
+            .error-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <div class="error-code">500</div>
+        <h1 class="error-title">Server Error</h1>
+        <p class="error-message">
+            Something went wrong on our end. Our team has been notified and is working to fix it.
+            Please try again in a few moments.
+        </p>
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="location.reload()">🔄 Retry</button>
+            <a href="/" class="btn btn-secondary">← Go Home</a>
+        </div>
+        <div class="troubleshoot-section">
+            <strong>Try these steps:</strong>
+            <ol>
+                <li>Refresh the page (Ctrl+R or Cmd+R)</li>
+                <li>Clear your browser cache</li>
+                <li>Try using a different browser</li>
+                <li>Check your internet connection</li>
+                <li>Contact support if the problem persists</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

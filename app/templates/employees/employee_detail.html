@@ -1,0 +1,558 @@
+{% extends "base.html" %}
+
+{% block title %}Employee Profile - Banking CRM{% endblock %}
+
+{% block content %}
+<div class="employee-detail-container">
+    <div class="detail-header">
+        <a href="{{ url_for('employees.list_employees') }}" class="back-link">← Back</a>
+        <h1>{{ employee.name }}</h1>
+        <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
+    </div>
+
+    <div class="detail-grid">
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <div class="profile-header">
+                <div class="profile-avatar-large">{{ employee.name[0] }}</div>
+                <div class="profile-meta">
+                    <h2>{{ employee.name }}</h2>
+                    <p class="role">{{ employee.role }}</p>
+                    <span class="status-badge status-{{ employee.status|lower }}">{{ employee.status }}</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <div class="info-item">
+                    <label>Email</label>
+                    <p>{{ employee.email }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Phone</label>
+                    <p>{{ employee.phone }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Department</label>
+                    <p>{{ employee.department }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Bank Assigned</label>
+                    <p>{{ employee.bank_assigned }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Joining Date</label>
+                    <p>{{ employee.joining_date.strftime('%d %b %Y') }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Manager</label>
+                    <p>{{ employee.manager_name if employee.manager_name else 'N/A' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Section -->
+        <div class="performance-section">
+            <h2>Performance Metrics</h2>
+            
+            <div class="metric-card">
+                <div class="metric-label">Total Leads</div>
+                <p class="metric-value">{{ employee.total_leads }}</p>
+                <small>All time</small>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Converted Leads</div>
+                <p class="metric-value">{{ employee.converted_leads }}</p>
+                <small>Total conversions</small>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Conversion Rate</div>
+                <p class="metric-value">{{ employee.conversion_rate }}%</p>
+                <small>Bank average: {{ bank_avg }}%</small>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Total Commission</div>
+                <p class="metric-value">₹{{ "{:,.0f}".format(employee.total_commission) }}</p>
+                <small>Year to date</small>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">This Month</div>
+                <p class="metric-value">₹{{ "{:,.0f}".format(employee.monthly_commission) }}</p>
+                <small>Current month</small>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Pending Payouts</div>
+                <p class="metric-value">₹{{ "{:,.0f}".format(employee.pending_commission) }}</p>
+                <small>Awaiting approval</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-button active" onclick="showTab('leads')">Recent Leads</button>
+        <button class="tab-button" onclick="showTab('commissions')">Commissions</button>
+        <button class="tab-button" onclick="showTab('performance')">Performance</button>
+        <button class="tab-button" onclick="showTab('documents')">Documents</button>
+    </div>
+
+    <!-- Recent Leads Tab -->
+    <div id="leads" class="tab-content active">
+        <div class="leads-table">
+            <div class="table-header">
+                <div class="col">Lead Name</div>
+                <div class="col">Phone</div>
+                <div class="col">Bank</div>
+                <div class="col">Status</div>
+                <div class="col">Date</div>
+            </div>
+            {% for lead in employee.recent_leads %}
+            <div class="table-row">
+                <div class="col">{{ lead.name }}</div>
+                <div class="col">{{ lead.phone }}</div>
+                <div class="col">{{ lead.bank_name }}</div>
+                <div class="col">
+                    <span class="status-badge status-{{ lead.status|lower }}">{{ lead.status }}</span>
+                </div>
+                <div class="col">{{ lead.created_at.strftime('%d %b %Y') }}</div>
+            </div>
+            {% else %}
+            <div class="table-empty">No leads yet</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Commissions Tab -->
+    <div id="commissions" class="tab-content">
+        <div class="commissions-summary">
+            <div class="summary-card">
+                <h3>Total Commissions</h3>
+                <p class="value">₹{{ "{:,.0f}".format(employee.total_commission) }}</p>
+            </div>
+            <div class="summary-card">
+                <h3>Paid</h3>
+                <p class="value">₹{{ "{:,.0f}".format(employee.paid_commission) }}</p>
+            </div>
+            <div class="summary-card">
+                <h3>Pending</h3>
+                <p class="value">₹{{ "{:,.0f}".format(employee.pending_commission) }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Tab -->
+    <div id="performance" class="tab-content">
+        <div class="performance-charts">
+            <div class="chart-section">
+                <h3>Monthly Commission Trend</h3>
+                <div class="chart-placeholder">📊 Commission trend chart</div>
+            </div>
+            <div class="chart-section">
+                <h3>Lead Conversion Rate</h3>
+                <div class="chart-placeholder">📈 Conversion rate chart</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Documents Tab -->
+    <div id="documents" class="tab-content">
+        <div class="documents-section">
+            <div class="documents-list">
+                {% for doc in employee.documents %}
+                <div class="doc-item">
+                    <strong>{{ doc.name }}</strong>
+                    <small>{{ doc.uploaded_at.strftime('%d %b %Y') }}</small>
+                    <a href="#" class="doc-link">Download</a>
+                </div>
+                {% else %}
+                <p class="empty">No documents</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="actions">
+        <a href="{{ url_for('employees.edit_employee', employee_id=employee.id) }}" class="btn btn-primary">✏️ Edit</a>
+        <button class="btn btn-secondary" onclick="deactivateEmployee({{ employee.id }})">🔒 Deactivate</button>
+        <a href="{{ url_for('employees.list_employees') }}" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+
+<style>
+.employee-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.detail-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.back-link {
+    color: #576cbe;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.detail-header h1 {
+    color: #1f4788;
+    margin: 0;
+    flex: 1;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: #1f4788;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.profile-section,
+.performance-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.profile-header {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #d9e0e8;
+}
+
+.profile-avatar-large {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 2rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.profile-meta h2 {
+    color: #1f4788;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.profile-meta .role {
+    color: #748390;
+    margin: 0.25rem 0 0.5rem 0;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-active {
+    background: #c8e6c9;
+    color: #1b5e20;
+}
+
+.status-inactive {
+    background: #ffcccc;
+    color: #b71c1c;
+}
+
+.info-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.info-item {
+    padding: 0.75rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: inset 2px 2px 5px #d9e0e8, inset -2px -2px 5px #ffffff;
+}
+
+.info-item label {
+    display: block;
+    color: #2d3e50;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.info-item p {
+    color: #1f4788;
+    margin: 0;
+}
+
+.performance-section h2 {
+    color: #1f4788;
+    margin: 0 0 1rem 0;
+}
+
+.metric-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 0.75rem;
+    box-shadow: inset 2px 2px 5px #d9e0e8, inset -2px -2px 5px #ffffff;
+    text-align: center;
+}
+
+.metric-label {
+    color: #748390;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.metric-value {
+    color: #1f4788;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+.metric-card small {
+    color: #748390;
+    font-size: 0.75rem;
+}
+
+.tabs {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 2px solid #d9e0e8;
+    margin: 2rem 0 1rem 0;
+    flex-wrap: wrap;
+}
+
+.tab-button {
+    padding: 1rem 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #748390;
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab-button.active {
+    color: #1f4788;
+    border-bottom-color: #764ba2;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.leads-table {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.table-header,
+.table-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1.5fr 1fr 1.5fr;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.table-header {
+    border-bottom: 2px solid #d9e0e8;
+    font-weight: 600;
+    color: #1f4788;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.table-row {
+    border-bottom: 1px solid #d9e0e8;
+    align-items: center;
+}
+
+.table-empty {
+    text-align: center;
+    color: #748390;
+    padding: 2rem;
+}
+
+.commissions-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.summary-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.summary-card h3 {
+    color: #2d3e50;
+    margin: 0 0 0.5rem 0;
+}
+
+.summary-card .value {
+    color: #1f4788;
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.performance-charts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.chart-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.chart-section h3 {
+    color: #1f4788;
+    margin: 0 0 1rem 0;
+}
+
+.chart-placeholder {
+    height: 250px;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #748390;
+    font-size: 1.25rem;
+}
+
+.documents-list {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+}
+
+.doc-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.doc-link {
+    color: #576cbe;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.actions .btn {
+    flex: 1;
+    min-width: 150px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .performance-charts {
+        grid-template-columns: 1fr;
+    }
+
+    .commissions-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .info-group {
+        grid-template-columns: 1fr;
+    }
+
+    .actions .btn {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+function showTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+    
+    document.getElementById(tabName).classList.add('active');
+    event.target.classList.add('active');
+}
+
+function deactivateEmployee(employeeId) {
+    if (confirm('Are you sure you want to deactivate this employee?')) {
+        console.log('Deactivating employee:', employeeId);
+    }
+}
+</script>
+{% endblock %}

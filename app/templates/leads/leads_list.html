@@ -1,0 +1,481 @@
+{% extends "base.html" %}
+
+{% block title %}Leads Management - DSA CRM{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <div>
+            <h1>Leads Management</h1>
+            <p class="page-subtitle">Manage all loan leads and customer information</p>
+        </div>
+        <a href="/leads/create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> New Lead
+        </a>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filter-card">
+        <form method="GET" class="filter-form" id="filterForm">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Search</label>
+                    <input 
+                        type="text" 
+                        name="search" 
+                        placeholder="Customer name, phone, email..." 
+                        class="form-input"
+                        value="{{ search_query or '' }}"
+                    >
+                </div>
+                
+               <div class="filter-group">
+                    <label>Status</label>
+                    <select name="status" class="form-input">
+                        <option value="">All Status</option>
+                        <option value="new_lead">New Lead</option>
+                        <option value="contacted">Contacted</option>
+                        <option value="documents_pending">Documents Pending</option>
+                        <option value="documents_received">Documents Received</option>
+                        <option value="bank_login_done">Bank Login Done</option>
+                        <option value="sanctioned">Sanctioned</option>
+                        <option value="disbursed">Disbursed</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Bank</label>
+                    <select name="bank" class="form-input">
+                        <option value="">All Banks</option>
+                        <option value="hdfc">HDFC Bank</option>
+                        <option value="icici">ICICI Bank</option>
+                        <option value="axis">Axis Bank</option>
+                        <option value="sbi">SBI</option>
+                        <option value="kotak">Kotak Mahindra</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Loan Type</label>
+                    <select name="loan_type" class="form-input">
+                        <option value="">All Types</option>
+                        <option value="personal_loan">Personal Loan</option>
+                        <option value="business_loan">Business Loan</option>
+                        <option value="home_loan">Home Loan</option>
+                        <option value="mortgage_loan">Mortgage Loan</option>
+                        <option value="lap">LAP</option>
+                        <option value="credit_card">Credit Card</option>
+                        <option value="vehicle_loan">Vehicle Loan</option>
+                    </select>
+                </div>
+                
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fas fa-search"></i> Apply Filters
+                    </button>
+                    <a href="/leads" class="btn btn-outline">
+                        <i class="fas fa-redo"></i> Reset
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Leads Table -->
+    <div class="table-card">
+        <div class="table-header">
+            <h3>All Leads ({{ leads.total }})</h3>
+            <a href="/leads/kanban" class="btn btn-sm btn-outline">
+                <i class="fas fa-columns"></i> Kanban View
+            </a>
+        </div>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Lead ID</th>
+                    <th>Customer Name</th>
+                    <th>Mobile</th>
+                    <th>Loan Type</th>
+                    <th>Amount</th>
+                    <th>Bank</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                    <th>Created</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if leads.items %}
+                    {% for lead in leads.items %}
+                    <tr>
+                        <td><strong>{{ lead.lead_id }}</strong></td>
+                        <td>{{ lead.customer_full_name }}</td>
+                        <td>
+                            <a href="tel:{{ lead.mobile_number }}">{{ lead.mobile_number }}</a>
+                        </td>
+                        <td><span class="badge badge-info">{{ lead.loan_type }}</span></td>
+                        <td class="text-right">₹ {{ "{:,.0f}".format(lead.loan_amount_applied) }}</td>
+                        <td>{{ lead.bank_financer }}</td>
+                        <td>
+                            {% if lead.current_status %}
+                                <span class="status-badge status-{{ lead.current_status.status }}">
+                                    {{ lead.current_status.status.replace('_', ' ').title() }}
+                                </span>
+                            {% else %}
+                                <span class="status-badge status-new">New</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if lead.assigned_executive %}
+                                {{ lead.assigned_executive.full_name }}
+                            {% else %}
+                                <span class="text-muted">Unassigned</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ lead.created_at.strftime('%d %b %Y') }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="/leads/{{ lead.id }}" class="btn btn-sm btn-info" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="/leads/{{ lead.id }}/edit" class="btn btn-sm btn-warning" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="10" class="text-center text-muted">
+                            <i class="fas fa-inbox"></i> No leads found
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if leads.pages > 1 %}
+    <div class="pagination">
+        {% if leads.has_prev %}
+            <a href="{{ url_for('leads.list_leads', page=leads.prev_num, search=search_query) }}" class="page-link">
+                <i class="fas fa-chevron-left"></i> Previous
+            </a>
+        {% endif %}
+        
+        <!-- Page Numbers -->
+        {% for page_num in leads.iter_pages(left_edge=1, left_margin=1, right_margin=1, right_edge=1) %}
+            {% if page_num %}
+                {% if page_num == leads.page %}
+                    <span class="page-link active">{{ page_num }}</span>
+                {% else %}
+                    <a href="{{ url_for('leads.list_leads', page=page_num, search=search_query) }}" class="page-link">
+                        {{ page_num }}
+                    </a>
+                {% endif %}
+            {% else %}
+                <span class="page-link disabled">...</span>
+            {% endif %}
+        {% endfor %}
+        
+        {% if leads.has_next %}
+            <a href="{{ url_for('leads.list_leads', page=leads.next_num, search=search_query) }}" class="page-link">
+                Next <i class="fas fa-chevron-right"></i>
+            </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .page-header h1 {
+        margin: 0;
+        color: #2c3e50;
+    }
+    
+    .page-subtitle {
+        color: #7f8c8d;
+        margin: 0.5rem 0 0 0;
+    }
+    
+    .filter-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .filter-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .filter-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        align-items: flex-end;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .filter-group label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-input {
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        transition: border-color 0.3s;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .filter-actions {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    
+    .table-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .table-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .table-header h3 {
+        margin: 0;
+        color: #2c3e50;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .data-table thead {
+        background: #f8f9fa;
+    }
+    
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #555;
+        border-bottom: 2px solid #e0e0e0;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+        color: #555;
+    }
+    
+    .data-table tbody tr:hover {
+        background: #f8f9fa;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .badge-info {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .status-new { background: #fff3cd; color: #856404; }
+    .status-contacted { background: #d1ecf1; color: #0c5460; }
+    .status-documents_pending { background: #f8d7da; color: #721c24; }
+    .status-documents_received { background: #d4edda; color: #155724; }
+    .status-bank_login_done { background: #cfe2ff; color: #084298; }
+    .status-sanctioned { background: #d4edda; color: #155724; }
+    .status-disbursed { background: #d1e7dd; color: #0f5132; }
+    .status-rejected { background: #f8d7da; color: #721c24; }
+    .status-closed { background: #e2e3e5; color: #383d41; }
+    
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-secondary {
+        background: #667eea;
+        color: white;
+    }
+    
+    .btn-outline {
+        background: transparent;
+        border: 1px solid #ddd;
+        color: #555;
+    }
+    
+    .btn-outline:hover {
+        border-color: #667eea;
+        color: #667eea;
+    }
+    
+    .btn-sm {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.8rem;
+    }
+    
+    .btn-info {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+    
+    .btn-warning {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    .text-muted { color: #999; }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+    
+    .page-link {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #667eea;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .page-link:hover {
+        background: #667eea;
+        color: white;
+    }
+    
+    .page-link.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+    
+    .page-link.disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+    
+    @media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+        }
+        
+        .data-table {
+            font-size: 0.85rem;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 0.75rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .btn-sm {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

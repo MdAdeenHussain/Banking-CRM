@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}2FA Setup - Banking CRM{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Enable 2-Factor Authentication</h1>
+            <p>Secure your account with an extra layer of protection</p>
+        </div>
+
+        <div class="setup-steps">
+            <div class="step active" id="step1">
+                <div class="step-number">1</div>
+                <h3>Setup Your Authenticator</h3>
+                <p>Install Google Authenticator, Authy, or Microsoft Authenticator on your phone</p>
+                <div class="qr-code-container">
+                    <img src="https://via.placeholder.com/200x200?text=QR+Code" alt="QR Code">
+                </div>
+            </div>
+
+            <div class="step" id="step2">
+                <div class="step-number">2</div>
+                <h3>Verify Your Code</h3>
+                <form method="POST" id="verify2faForm">
+                    <div class="form-group">
+                        <label for="verification_code">Enter 6-digit code</label>
+                        <input type="text" id="verification_code" name="verification_code" maxlength="6" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Verify & Enable</button>
+                </form>
+            </div>
+
+            <div class="step" id="step3">
+                <div class="step-number">✓</div>
+                <h3>2FA Enabled</h3>
+                <p>Your account is now protected with two-factor authentication</p>
+                <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary">Go to Dashboard</a>
+            </div>
+        </div>
+
+        <div class="backup-codes">
+            <h4>⚠️ Save Your Backup Codes</h4>
+            <div class="codes-list">
+                <code>123456789</code>
+                <code>987654321</code>
+                <code>555666777</code>
+                <code>333444555</code>
+            </div>
+            <p>Keep these codes in a safe place. You can use them if you lose access to your authenticator.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.setup-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.step {
+    background: rgba(255, 255, 255, 0.5);
+    padding: 1.5rem;
+    border-radius: 15px;
+    border: 2px solid #e0e6ed;
+    display: none;
+}
+
+.step.active {
+    display: block;
+}
+
+.step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.step h3 {
+    color: #1f4788;
+    margin: 0.5rem 0;
+}
+
+.step p {
+    color: #748390;
+    margin: 0.5rem 0;
+}
+
+.qr-code-container {
+    text-align: center;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #f5f7fa;
+    border-radius: 10px;
+}
+
+.qr-code-container img {
+    max-width: 200px;
+}
+
+.backup-codes {
+    background: #fffacd;
+    padding: 1.5rem;
+    border-radius: 15px;
+    border-left: 4px solid #ffc107;
+}
+
+.codes-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 1rem 0;
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+
+.codes-list code {
+    background: white;
+    padding: 0.75rem;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #ffc107;
+}
+
+@media (max-width: 768px) {
+    .setup-steps {
+        gap: 1rem;
+    }
+
+    .codes-list {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
