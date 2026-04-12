@@ -1,0 +1,47 @@
+/* ═══════════════════════════════════════════════════════
+   LoanAxis CRM — Dark Mode Overrides
+   Activated via [data-theme="dark"] on <html>
+   ═══════════════════════════════════════════════════════ */
+
+[data-theme="dark"] {
+    --bg-primary: #0F1117;
+    --bg-surface: #1A1D2E;
+    --bg-elevated: #242838;
+    --text-primary: #E2E8F0;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
+    --border-color: #2D3348;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+    --shadow-neu: 6px 6px 12px rgba(0,0,0,0.4), -6px -6px 12px rgba(255,255,255,0.03);
+}
+
+[data-theme="dark"] body { background: var(--bg-primary); color: var(--text-primary); }
+[data-theme="dark"] .sidebar { background: var(--bg-surface); border-color: var(--border-color); }
+[data-theme="dark"] .top-navbar { background: var(--bg-surface); border-color: var(--border-color); }
+[data-theme="dark"] .card-neu { background: var(--bg-surface); border-color: var(--border-color); }
+[data-theme="dark"] .kpi-card { background: var(--bg-surface); border-color: var(--border-color); }
+[data-theme="dark"] .form-control {
+    background: var(--bg-elevated);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+[data-theme="dark"] .search-input {
+    background: var(--bg-elevated);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+[data-theme="dark"] .data-table thead th { background: var(--bg-elevated); }
+[data-theme="dark"] .data-table tbody tr:hover { background: rgba(var(--primary-rgb), 0.08); }
+[data-theme="dark"] .toast { background: var(--bg-surface); border-color: var(--border-color); }
+[data-theme="dark"] .notif-dropdown { background: var(--bg-surface); border-color: var(--border-color); }
+[data-theme="dark"] .user-dropdown { background: var(--bg-surface); border-color: var(--border-color); }
+[data-theme="dark"] .auth-card { background: var(--bg-surface); }
+[data-theme="dark"] .badge-gray { background: #334155; color: #CBD5E1; }
+
+/* Dark mode toggle icon swap */
+[data-theme="dark"] .dark-icon { display: none !important; }
+[data-theme="dark"] .light-icon { display: block !important; }
+[data-theme="light"] .dark-icon { display: block; }
+[data-theme="light"] .light-icon { display: none; }

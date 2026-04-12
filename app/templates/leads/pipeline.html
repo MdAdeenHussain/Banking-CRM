@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Pipeline — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Lead Pipeline</h1>
+        <p class="page-subtitle">Drag and drop leads between stages</p>
+    </div>
+    <div class="flex gap-2">
+        <a href="{{ url_for('leads.index') }}" class="btn-secondary">
+            <i data-lucide="list" class="w-4 h-4"></i> List View
+        </a>
+        <a href="{{ url_for('leads.new') }}" class="btn-primary btn-ripple">
+            <i data-lucide="plus" class="w-4 h-4"></i> New Lead
+        </a>
+    </div>
+</div>
+
+<div class="flex gap-4 overflow-x-auto pb-4" style="min-height:60vh;">
+    {% for stage in pipeline_stages %}
+    <div class="kanban-column flex-shrink-0" style="width:280px;">
+        <div class="card-neu p-3" style="background:rgba(var(--primary-rgb),0.03);">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-semibold">{{ stage }}</h3>
+                <span class="badge-pill badge-gray">{{ pipeline[stage]|length }}</span>
+            </div>
+            <div class="kanban-column-body space-y-2" data-stage="{{ stage }}" style="min-height:200px;">
+                {% for lead in pipeline[stage] %}
+                <div class="kanban-card card-neu p-3 cursor-grab" data-lead-id="{{ lead.id }}" style="padding:0.75rem;">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="font-mono text-xs text-gray-400">{{ lead.lead_number }}</span>
+                        <span class="priority-dot priority-{{ lead.priority_tag|lower }}"></span>
+                    </div>
+                    <div class="font-medium text-sm mb-1">{{ lead.customer_name }}</div>
+                    <div class="flex items-center justify-between">
+                        <span class="badge-pill badge-indigo text-xs">{{ lead.loan_type }}</span>
+                        <span class="text-xs font-mono">₹{{ "{:,.0f}".format(lead.loan_amount_applied or 0) }}</span>
+                    </div>
+                    {% if lead.cibil_score %}
+                    <div class="mt-1">
+                        <span class="badge-pill badge-{{ lead.cibil_color }} text-xs">CIBIL: {{ lead.cibil_score }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/pipeline.js') }}"></script>
+{% endblock %}

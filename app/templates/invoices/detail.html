@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}{{ invoice.invoice_number }} — Invoice{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ invoice.invoice_number }}</h1>
+        <p class="page-subtitle">{{ invoice.party_name }}</p>
+    </div>
+    <div class="flex gap-2">
+        <a href="{{ url_for('invoices.download_pdf', invoice_id=invoice.id) }}" class="btn-primary btn-ripple">
+            <i data-lucide="download" class="w-4 h-4"></i> Download PDF
+        </a>
+        <a href="{{ url_for('invoices.index') }}" class="btn-secondary"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</a>
+    </div>
+</div>
+
+<div class="card-neu max-w-3xl">
+    <div class="flex justify-between mb-6">
+        <div>
+            <h2 class="font-bold text-xl" style="color:var(--primary);">LoanAxis CRM</h2>
+            <p class="text-sm text-gray-500">Tax Invoice</p>
+        </div>
+        <div class="text-right">
+            <div class="text-sm"><strong>Invoice:</strong> {{ invoice.invoice_number }}</div>
+            <div class="text-sm"><strong>Date:</strong> {{ invoice.invoice_date.strftime('%d %b %Y') if invoice.invoice_date else '-' }}</div>
+            {% if invoice.due_date %}
+            <div class="text-sm"><strong>Due:</strong> {{ invoice.due_date.strftime('%d %b %Y') }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mb-6 p-3 rounded-lg" style="background:rgba(0,0,0,0.02);">
+        <div class="text-sm font-semibold">Bill To:</div>
+        <div class="font-medium">{{ invoice.party_name }}</div>
+        {% if invoice.party_address %}<div class="text-sm text-gray-500">{{ invoice.party_address }}</div>{% endif %}
+        {% if invoice.party_gstin %}<div class="text-sm text-gray-500">GSTIN: {{ invoice.party_gstin }}</div>{% endif %}
+    </div>
+
+    {% if invoice.line_items %}
+    <table class="data-table mb-4">
+        <thead><tr><th>#</th><th>Description</th><th>HSN/SAC</th><th>Qty</th><th>Rate</th><th class="text-right">Amount</th></tr></thead>
+        <tbody>
+            {% for item in invoice.line_items %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ item.get('description', '') }}</td>
+                <td>{{ item.get('hsn_sac', '') }}</td>
+                <td>{{ item.get('qty', 1) }}</td>
+                <td>₹{{ "{:,.2f}".format(item.get('rate', 0)) }}</td>
+                <td class="text-right font-mono">₹{{ "{:,.2f}".format(item.get('amount', 0)) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    <div class="flex justify-end">
+        <div class="w-64 space-y-2 text-sm">
+            <div class="flex justify-between"><span>Subtotal</span><span class="font-mono">₹{{ "{:,.2f}".format(invoice.subtotal or 0) }}</span></div>
+            {% if invoice.cgst_amount %}<div class="flex justify-between"><span>CGST ({{ invoice.cgst_rate }}%)</span><span class="font-mono">₹{{ "{:,.2f}".format(invoice.cgst_amount) }}</span></div>{% endif %}
+            {% if invoice.sgst_amount %}<div class="flex justify-between"><span>SGST ({{ invoice.sgst_rate }}%)</span><span class="font-mono">₹{{ "{:,.2f}".format(invoice.sgst_amount) }}</span></div>{% endif %}
+            {% if invoice.igst_amount %}<div class="flex justify-between"><span>IGST ({{ invoice.igst_rate }}%)</span><span class="font-mono">₹{{ "{:,.2f}".format(invoice.igst_amount) }}</span></div>{% endif %}
+            <hr class="opacity-20">
+            <div class="flex justify-between font-bold text-base"><span>Total</span><span class="font-mono">₹{{ "{:,.2f}".format(invoice.total_amount or 0) }}</span></div>
+        </div>
+    </div>
+
+    {% if invoice.amount_in_words %}
+    <div class="mt-4 p-2 text-sm italic text-gray-500">Amount in words: {{ invoice.amount_in_words }}</div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<!-- Greeting Bar -->
+<div class="greeting-bar fade-in-up">
+    <div class="greeting-text">
+        <h2>{{ greeting }}, {{ current_user.full_name.split(' ')[0] }}! 👋</h2>
+        <p>{{ role_display }} • {{ current_year }}</p>
+    </div>
+    <div class="quick-actions">
+        <a href="{{ url_for('leads.new') }}" class="btn-primary btn-ripple">
+            <i data-lucide="plus" class="w-4 h-4"></i> New Lead
+        </a>
+        {% if current_user.role in ('super_admin', 'admin') %}
+        <a href="{{ url_for('employees.new') }}" class="btn-secondary">
+            <i data-lucide="user-plus" class="w-4 h-4"></i> Add Employee
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- KPI Bento Grid -->
+<div class="bento-grid stagger-children">
+    <!-- KPI 1: Total Leads -->
+    <div class="kpi-card primary card-hover-lift bento-kpi1">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="kpi-label">Total Leads</div>
+                <div class="kpi-value" data-count-to="{{ kpi.total_leads }}">0</div>
+            </div>
+            <div class="kpi-icon" style="background:linear-gradient(135deg,#6C63FF,#4F46E5);">
+                <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+        </div>
+        <div class="kpi-trend {{ 'up' if kpi.lead_growth_pct >= 0 else 'down' }}">
+            <i data-lucide="{{ 'trending-up' if kpi.lead_growth_pct >= 0 else 'trending-down' }}" class="w-4 h-4"></i>
+            {{ kpi.lead_growth_pct }}% this month
+        </div>
+    </div>
+
+    <!-- KPI 2: Today's Leads -->
+    <div class="kpi-card accent card-hover-lift bento-kpi2">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="kpi-label">Today's Leads</div>
+                <div class="kpi-value" data-count-to="{{ kpi.todays_leads }}">0</div>
+            </div>
+            <div class="kpi-icon" style="background:linear-gradient(135deg,#FF6B9D,#E5527F);">
+                <i data-lucide="zap" class="w-5 h-5"></i>
+            </div>
+        </div>
+        <div class="kpi-trend up">
+            <i data-lucide="clock" class="w-4 h-4"></i> As of now
+        </div>
+    </div>
+
+    <!-- KPI 3: Converted -->
+    <div class="kpi-card success card-hover-lift bento-kpi3">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="kpi-label">Disbursed</div>
+                <div class="kpi-value" data-count-to="{{ kpi.converted_leads }}">0</div>
+            </div>
+            <div class="kpi-icon" style="background:linear-gradient(135deg,#22C55E,#16A34A);">
+                <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+            </div>
+        </div>
+        <div class="kpi-trend up">
+            <i data-lucide="trophy" class="w-4 h-4"></i> Total conversions
+        </div>
+    </div>
+
+    <!-- KPI 4: Pending Payout -->
+    <div class="kpi-card warning card-hover-lift bento-kpi4">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="kpi-label">Pending Payout</div>
+                <div class="kpi-value" data-count-to="{{ kpi.pending_payout }}" data-prefix="₹">₹0</div>
+            </div>
+            <div class="kpi-icon" style="background:linear-gradient(135deg,#F59E0B,#D97706);">
+                <i data-lucide="indian-rupee" class="w-5 h-5"></i>
+            </div>
+        </div>
+        <div class="kpi-trend">
+            <i data-lucide="wallet" class="w-4 h-4"></i> Awaiting settlement
+        </div>
+    </div>
+
+    <!-- Monthly Leads Chart -->
+    <div class="card-neu bento-chart1">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-semibold">Monthly Lead Trend</h3>
+            <span class="badge-pill badge-blue">12 Months</span>
+        </div>
+        <div class="chart-container">
+            <canvas id="monthlyLeadsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Pipeline Funnel -->
+    <div class="card-neu bento-funnel">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-semibold">Pipeline Funnel</h3>
+            <a href="{{ url_for('leads.pipeline') }}" class="text-sm font-medium" style="color:var(--primary);">
+                View Kanban →
+            </a>
+        </div>
+        <div class="chart-container">
+            <canvas id="pipelineFunnelChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Commission Summary -->
+    <div class="card-neu bento-comm">
+        <h3 class="text-base font-semibold mb-3">Commission Summary</h3>
+        <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500">Total Commission</span>
+                <span class="font-semibold">₹{{ "{:,.0f}".format(kpi.total_commission) }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500">Disbursed Amount</span>
+                <span class="font-semibold">₹{{ "{:,.0f}".format(kpi.disbursed_amount) }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500">Pending Payout</span>
+                <span class="font-semibold text-amber-600">₹{{ "{:,.0f}".format(kpi.pending_payout) }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tasks Due Today -->
+    <div class="card-neu bento-exec">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-semibold">Tasks Due Today</h3>
+            <span class="badge-pill badge-amber">{{ tasks_due|length }}</span>
+        </div>
+        {% if tasks_due %}
+        <div class="space-y-2">
+            {% for task in tasks_due[:5] %}
+            <div class="flex items-center gap-3 p-2 rounded-lg" style="background:rgba(0,0,0,0.02);">
+                <div class="priority-dot priority-{{ task.priority|lower }}"></div>
+                <div class="flex-1 min-w-0">
+                    <div class="text-sm font-medium truncate">{{ task.title }}</div>
+                    <div class="text-xs text-gray-400">{{ task.task_type }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state py-4">
+            <i data-lucide="check-circle" class="w-8 h-8 mx-auto mb-2" style="color:var(--success);"></i>
+            <p class="text-sm">All caught up! 🎉</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Notifications -->
+    <div class="card-neu bento-notifs">
+        <h3 class="text-base font-semibold mb-3">Pipeline Distribution</h3>
+        <div class="space-y-2">
+            {% for stage, count in pipeline_summary.items() %}
+            {% if count > 0 %}
+            <div class="flex items-center justify-between">
+                <span class="text-sm">{{ stage }}</span>
+                <span class="badge-pill badge-gray">{{ count }}</span>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent Leads -->
+    <div class="card-neu bento-recent">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-semibold">Recent Leads</h3>
+            <a href="{{ url_for('leads.index') }}" class="text-sm font-medium" style="color:var(--primary);">
+                View All →
+            </a>
+        </div>
+        {% if recent_leads %}
+        <div class="overflow-x-auto">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Lead #</th>
+                        <th>Customer</th>
+                        <th>Mobile</th>
+                        <th>Loan Type</th>
+                        <th>Amount</th>
+                        <th>Stage</th>
+                        <th>Priority</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lead in recent_leads %}
+                    <tr class="cursor-pointer" onclick="window.location='{{ url_for('leads.detail', lead_id=lead.id) }}'">
+                        <td class="font-mono text-xs">{{ lead.lead_number }}</td>
+                        <td class="font-medium">{{ lead.customer_name }}</td>
+                        <td class="text-sm">{{ lead.mobile_primary }}</td>
+                        <td><span class="badge-pill badge-indigo">{{ lead.loan_type }}</span></td>
+                        <td class="font-mono">₹{{ "{:,.0f}".format(lead.loan_amount_applied or 0) }}</td>
+                        <td><span class="badge-pill badge-blue">{{ lead.pipeline_stage }}</span></td>
+                        <td>
+                            <span class="priority-dot priority-{{ lead.priority_tag|lower }}"></span>
+                            {{ lead.priority_tag }}
+                        </td>
+                        <td class="text-xs text-gray-400">{{ lead.created_at.strftime('%d %b %Y') if lead.created_at else '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2"></i>
+            <p>No leads yet. <a href="{{ url_for('leads.new') }}">Create your first lead →</a></p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

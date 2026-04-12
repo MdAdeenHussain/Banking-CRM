@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Create Account — Banking DSA CRM{% endblock %}
+
+{% block auth_content %}
+<div class="auth-card animate__animated animate__fadeIn">
+    <div class="auth-logo">
+        <div class="logo-icon mx-auto mb-3" style="width:56px;height:56px;border-radius:16px;">
+            <i data-lucide="landmark" class="w-8 h-8"></i>
+        </div>
+        <h1>LoanAxis CRM</h1>
+        <p>Set up your Super Admin account</p>
+    </div>
+
+    <div class="p-3 mb-4 rounded-lg text-sm" style="background:rgba(108,99,255,0.08);color:var(--primary);">
+        <i data-lucide="info" class="w-4 h-4 inline"></i>
+        <strong>First-time setup:</strong> This account will be the Super Admin with full access.
+    </div>
+
+    <form method="POST" action="{{ url_for('auth.register') }}" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            <label class="form-label" for="full_name">Full Name</label>
+            <input type="text" name="full_name" id="full_name"
+                class="form-control {{ 'is-invalid' if form.full_name.errors }}"
+                value="{{ form.full_name.data or '' }}" placeholder="John Doe" autofocus required>
+            {% for error in form.full_name.errors %}
+            <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="email">Email Address</label>
+            <input type="email" name="email" id="email"
+                class="form-control {{ 'is-invalid' if form.email.errors }}"
+                value="{{ form.email.data or '' }}" placeholder="admin@company.com" required>
+            {% for error in form.email.errors %}
+            <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="mobile">Mobile Number</label>
+            <input type="tel" name="mobile" id="mobile"
+                class="form-control {{ 'is-invalid' if form.mobile.errors }}"
+                value="{{ form.mobile.data or '' }}" placeholder="9876543210" required>
+            {% for error in form.mobile.errors %}
+            <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" name="password" id="password"
+                    class="form-control {{ 'is-invalid' if form.password.errors }}" placeholder="Min 8 characters"
+                    required>
+                {% for error in form.password.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="confirm_password">Confirm Password</label>
+                <input type="password" name="confirm_password" id="confirm_password"
+                    class="form-control {{ 'is-invalid' if form.confirm_password.errors }}" placeholder="Re-enter"
+                    required>
+                {% for error in form.confirm_password.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary w-full justify-center py-3 text-base btn-ripple mt-2">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+            Create Super Admin Account
+        </button>
+    </form>
+</div>
+{% endblock %}

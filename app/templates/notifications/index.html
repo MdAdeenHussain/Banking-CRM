@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Notifications — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Notifications</h1>
+    <button class="btn-secondary" id="mark-all-btn" onclick="fetch('/notifications/mark-all-read',{method:'POST'}).then(()=>location.reload())">
+        <i data-lucide="check-check" class="w-4 h-4"></i> Mark All Read
+    </button>
+</div>
+
+{% if notifications %}
+<div class="space-y-2 stagger-children">
+    {% for notif in notifications %}
+    <div class="card-neu flex items-start gap-3 {{ 'opacity-60' if notif.is_read }}" style="padding:1rem;">
+        <div class="p-2 rounded-lg flex-shrink-0" style="background:rgba(var(--primary-rgb),0.1);">
+            <i data-lucide="{{ notif.icon_name }}" class="w-5 h-5" style="color:var(--primary);"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+            <div class="font-medium text-sm">{{ notif.title }}</div>
+            {% if notif.body %}<div class="text-xs text-gray-500 mt-0.5">{{ notif.body }}</div>{% endif %}
+            <div class="text-xs text-gray-400 mt-1">{{ notif.created_at.strftime('%d %b %Y, %I:%M %p') if notif.created_at else '' }}</div>
+        </div>
+        {% if not notif.is_read %}
+        <div class="w-2 h-2 rounded-full flex-shrink-0 mt-2" style="background:var(--primary);"></div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+{% if pagination.pages > 1 %}
+<div class="pagination">
+    {% for p in pagination.iter_pages() %}{% if p %}
+    <a href="{{ url_for('notifications.index', page=p) }}" class="{{ 'active' if p == pagination.page }}">{{ p }}</a>
+    {% endif %}{% endfor %}
+</div>
+{% endif %}
+{% else %}
+<div class="card-neu empty-state py-8">
+    <i data-lucide="bell-off" class="w-10 h-10 mx-auto mb-2"></i>
+    <p>No notifications yet</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,345 @@
+/* ═══════════════════════════════════════════════════════
+   LoanAxis CRM — Component Styles
+   Cards, badges, buttons, tables, forms, pills, toasts.
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Cards ────────────────────────────────────────── */
+.card-neu {
+    background: var(--bg-surface);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-neu);
+    padding: 1.5rem;
+    border: 1px solid rgba(0,0,0,0.03);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+.card-neu:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* KPI Card */
+.kpi-card {
+    background: var(--bg-surface);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-neu);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border: 1px solid rgba(0,0,0,0.03);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    border-radius: 4px 0 0 4px;
+}
+.kpi-card.primary::before { background: var(--primary); }
+.kpi-card.accent::before { background: var(--accent); }
+.kpi-card.success::before { background: var(--success); }
+.kpi-card.warning::before { background: var(--warning); }
+.kpi-card.danger::before { background: var(--danger); }
+.kpi-card.info::before { background: var(--info); }
+
+.kpi-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.kpi-value {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+.kpi-trend {
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.kpi-trend.up { color: var(--success); }
+.kpi-trend.down { color: var(--danger); }
+.kpi-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+/* ── Badges / Pills ───────────────────────────────── */
+.badge-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.65rem;
+    border-radius: 50px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+.badge-gray { background: #F1F5F9; color: #475569; }
+.badge-blue { background: #DBEAFE; color: #1D4ED8; }
+.badge-amber { background: #FEF3C7; color: #B45309; }
+.badge-indigo { background: #E0E7FF; color: #4338CA; }
+.badge-purple { background: #F3E8FF; color: #7C3AED; }
+.badge-teal { background: #CCFBF1; color: #0F766E; }
+.badge-green { background: #DCFCE7; color: #15803D; }
+.badge-red { background: #FEE2E2; color: #DC2626; }
+.badge-dark { background: #1E293B; color: #F1F5F9; }
+
+/* Priority dots */
+.priority-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.priority-hot { background: #EF4444; }
+.priority-warm { background: #F59E0B; }
+.priority-cold { background: #22C55E; }
+
+/* ── Buttons ──────────────────────────────────────── */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.4);
+    color: white;
+}
+.btn-secondary {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.6rem 1.5rem;
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.btn-secondary:hover {
+    background: var(--bg-primary);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+.btn-danger {
+    background: var(--danger);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: var(--border-radius-sm);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+.btn-sm { padding: 0.35rem 0.9rem; font-size: 0.8rem; }
+.btn-icon {
+    width: 36px; height: 36px;
+    border-radius: var(--border-radius-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    background: var(--bg-surface);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+.btn-icon:hover { background: var(--bg-primary); border-color: var(--primary); }
+
+/* ── Tables ───────────────────────────────────────── */
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.875rem;
+}
+.data-table thead th {
+    background: var(--bg-primary);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 2px solid var(--border-color);
+}
+.data-table tbody tr {
+    transition: background var(--transition-fast);
+    border-bottom: 1px solid var(--border-color);
+}
+.data-table tbody tr:hover { background: rgba(var(--primary-rgb), 0.03); }
+.data-table tbody tr:nth-child(even) { background: rgba(0,0,0,0.01); }
+.data-table tbody td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+}
+
+/* ── Forms ────────────────────────────────────────── */
+.form-group { margin-bottom: 1.25rem; }
+.form-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+}
+.form-control {
+    width: 100%;
+    padding: 0.65rem 1rem;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
+}
+.form-control.is-invalid { border-color: var(--danger); }
+.invalid-feedback { color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem; }
+select.form-control { appearance: none; background-image: url("data:image/svg+xml,..."); }
+
+/* ── Toasts ───────────────────────────────────────── */
+.toast-container {
+    position: fixed;
+    top: calc(var(--navbar-height) + 12px);
+    right: 16px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 380px;
+}
+.toast {
+    padding: 0.85rem 1.1rem;
+    border-radius: var(--border-radius-sm);
+    background: var(--bg-surface);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-left: 4px solid;
+    animation-duration: 0.4s;
+}
+.toast-success { border-left-color: var(--success); }
+.toast-danger { border-left-color: var(--danger); }
+.toast-warning { border-left-color: var(--warning); }
+.toast-info { border-left-color: var(--info); }
+.toast-body { display: flex; align-items: center; gap: 0.6rem; font-size: 0.875rem; }
+.toast-close {
+    background: none; border: none; font-size: 1.25rem;
+    color: var(--text-muted); cursor: pointer; padding: 0 0.25rem;
+}
+
+/* ── Pagination ───────────────────────────────────── */
+.pagination {
+    display: flex;
+    gap: 4px;
+    list-style: none;
+    margin: 1.5rem 0;
+    justify-content: center;
+}
+.pagination a, .pagination span {
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--border-radius-xs);
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+}
+.pagination a:hover { background: var(--primary); color: white; border-color: var(--primary); }
+.pagination .active { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* ── Page Header ──────────────────────────────────── */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.page-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+.page-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* ── Empty State ──────────────────────────────────── */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+}
+.empty-state i { margin-bottom: 1rem; opacity: 0.5; }
+
+/* ── Timeline ─────────────────────────────────────── */
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: var(--border-color);
+}
+.timeline-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+    padding-left: 1.5rem;
+}
+.timeline-dot {
+    position: absolute;
+    left: -1.55rem;
+    top: 0.25rem;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid;
+    background: var(--bg-surface);
+}
+.timeline-dot.blue { border-color: var(--info); }
+.timeline-dot.purple { border-color: #7C3AED; }
+.timeline-dot.indigo { border-color: #4F46E5; }
+.timeline-dot.green { border-color: var(--success); }
+.timeline-title { font-weight: 600; font-size: 0.9rem; }
+.timeline-meta { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem; }
+.timeline-desc { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.35rem; }

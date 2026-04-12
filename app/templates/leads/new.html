@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% block title %}New Lead — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Create New Lead</h1>
+        <p class="page-subtitle">Enter customer details and loan requirements</p>
+    </div>
+    <a href="{{ url_for('leads.index') }}" class="btn-secondary">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Leads
+    </a>
+</div>
+
+<form method="POST" action="{{ url_for('leads.new') }}" novalidate>
+    {{ form.hidden_tag() }}
+
+    <!-- Duplicate Warning -->
+    <div id="duplicate-warning" style="display:none;" class="mb-4"></div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Column 1: Personal Information -->
+        <div class="card-neu">
+            <h3 class="text-base font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="user" class="w-5 h-5" style="color:var(--primary);"></i>
+                Personal Information
+            </h3>
+
+            <div class="form-group">
+                <label class="form-label" for="customer_name">Customer Name *</label>
+                <input type="text" name="customer_name" id="customer_name"
+                    class="form-control {{ 'is-invalid' if form.customer_name.errors }}"
+                    value="{{ form.customer_name.data or '' }}" placeholder="Full name" required>
+                {% for error in form.customer_name.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="form-group">
+                    <label class="form-label" for="mobile_primary">Primary Mobile *</label>
+                    <input type="tel" name="mobile_primary" id="mobile_primary"
+                        class="form-control {{ 'is-invalid' if form.mobile_primary.errors }}"
+                        value="{{ form.mobile_primary.data or '' }}" placeholder="9876543210" required>
+                    {% for error in form.mobile_primary.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="mobile_alternate">Alternate Mobile</label>
+                    <input type="tel" name="mobile_alternate" id="mobile_alternate" class="form-control"
+                        value="{{ form.mobile_alternate.data or '' }}" placeholder="Optional">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input type="email" name="email" id="email" class="form-control"
+                    value="{{ form.email.data or '' }}" placeholder="customer@email.com">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="form-group">
+                    <label class="form-label" for="city">City</label>
+                    <input type="text" name="city" id="city" class="form-control"
+                        value="{{ form.city.data or '' }}" placeholder="City">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="state">State</label>
+                    <input type="text" name="state" id="state" class="form-control"
+                        value="{{ form.state.data or '' }}" placeholder="State">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="pincode">Pincode</label>
+                <input type="text" name="pincode" id="pincode" class="form-control"
+                    value="{{ form.pincode.data or '' }}" placeholder="400001" maxlength="6">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="occupation">Occupation</label>
+                <input type="text" name="occupation" id="occupation" class="form-control"
+                    value="{{ form.occupation.data or '' }}" placeholder="e.g., Salaried, Self-Employed">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="employer_name">Employer Name</label>
+                <input type="text" name="employer_name" id="employer_name" class="form-control"
+                    value="{{ form.employer_name.data or '' }}" placeholder="Company name">
+            </div>
+        </div>
+
+        <!-- Column 2: Loan Details -->
+        <div class="card-neu">
+            <h3 class="text-base font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="landmark" class="w-5 h-5" style="color:var(--accent);"></i>
+                Loan Details
+            </h3>
+
+            <div class="form-group">
+                <label class="form-label" for="loan_type">Loan Type *</label>
+                <select name="loan_type" id="loan_type" class="form-control" required>
+                    {% for choice in form.loan_type.choices %}
+                    <option value="{{ choice[0] }}" {{ 'selected' if form.loan_type.data == choice[0] }}>{{ choice[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="loan_amount_applied">Loan Amount Applied (₹)</label>
+                <input type="number" name="loan_amount_applied" id="loan_amount_applied" class="form-control"
+                    value="{{ form.loan_amount_applied.data or '' }}" placeholder="e.g., 500000" step="1000">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="bank_preferred">Preferred Bank/NBFC</label>
+                <input type="text" name="bank_preferred" id="bank_preferred" class="form-control"
+                    value="{{ form.bank_preferred.data or '' }}" placeholder="e.g., HDFC Bank, SBI">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="cibil_score">CIBIL Score (300-900)</label>
+                <input type="number" name="cibil_score" id="cibil_score" class="form-control"
+                    value="{{ form.cibil_score.data or '' }}" placeholder="e.g., 750" min="300" max="900">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="form-group">
+                    <label class="form-label" for="monthly_income">Monthly Income (₹)</label>
+                    <input type="number" name="monthly_income" id="monthly_income" class="form-control"
+                        value="{{ form.monthly_income.data or '' }}" placeholder="50000" step="1000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="annual_income">Annual Income (₹)</label>
+                    <input type="number" name="annual_income" id="annual_income" class="form-control"
+                        value="{{ form.annual_income.data or '' }}" placeholder="600000" step="1000">
+                </div>
+            </div>
+
+            <hr class="my-4 opacity-20">
+
+            <div class="form-group">
+                <label class="form-label" for="lead_source">Lead Source</label>
+                <select name="lead_source" id="lead_source" class="form-control">
+                    {% for choice in form.lead_source.choices %}
+                    <option value="{{ choice[0] }}" {{ 'selected' if form.lead_source.data == choice[0] }}>{{ choice[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="priority_tag">Priority</label>
+                <select name="priority_tag" id="priority_tag" class="form-control">
+                    {% for choice in form.priority_tag.choices %}
+                    <option value="{{ choice[0] }}" {{ 'selected' if form.priority_tag.data == choice[0] }}>{{ choice[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Column 3: Assignment -->
+        <div class="card-neu">
+            <h3 class="text-base font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="user-check" class="w-5 h-5" style="color:var(--success);"></i>
+                Assignment
+            </h3>
+
+            <div class="form-group">
+                <label class="form-label" for="assigned_executive_id">Assign to Executive</label>
+                <select name="assigned_executive_id" id="assigned_executive_id" class="form-control">
+                    {% for choice in form.assigned_executive_id.choices %}
+                    <option value="{{ choice[0] }}" {{ 'selected' if form.assigned_executive_id.data == choice[0] }}>{{ choice[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="branch_id">Branch</label>
+                <select name="branch_id" id="branch_id" class="form-control">
+                    {% for choice in form.branch_id.choices %}
+                    <option value="{{ choice[0] }}" {{ 'selected' if form.branch_id.data == choice[0] }}>{{ choice[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <hr class="my-6 opacity-20">
+
+            <button type="submit" class="btn-primary w-full justify-center py-3 text-base btn-ripple">
+                <i data-lucide="save" class="w-5 h-5"></i> Save Lead
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/duplicate-check.js') }}"></script>
+{% endblock %}

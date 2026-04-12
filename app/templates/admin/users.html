@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}User Management — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">User Management</h1>
+    <a href="{{ url_for('employees.new') }}" class="btn-primary btn-ripple">
+        <i data-lucide="user-plus" class="w-4 h-4"></i> Add User
+    </a>
+</div>
+
+<div class="card-neu p-0 overflow-hidden">
+    <table class="data-table">
+        <thead>
+            <tr><th>EMP ID</th><th>Name</th><th>Email</th><th>Role</th><th>Branch</th><th>Status</th><th>Joined</th></tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr class="cursor-pointer" onclick="window.location='{{ url_for('employees.profile', user_id=user.id) }}'">
+                <td class="font-mono text-sm">{{ user.employee_id }}</td>
+                <td class="font-medium">{{ user.full_name }}</td>
+                <td class="text-sm">{{ user.email }}</td>
+                <td><span class="badge-pill badge-purple">{{ get_role_display_name(user.role) }}</span></td>
+                <td class="text-sm">{{ user.branch.name if user.branch else '-' }}</td>
+                <td>
+                    {% if user.is_active %}<span class="badge-pill badge-green">Active</span>
+                    {% else %}<span class="badge-pill badge-red">Inactive</span>{% endif %}
+                </td>
+                <td class="text-xs text-gray-400">{{ user.joining_date.strftime('%d %b %Y') if user.joining_date else '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

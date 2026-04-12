@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Upload Document — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Documents — {{ lead.customer_name }}</h1>
+        <p class="page-subtitle">Lead {{ lead.lead_number }}</p>
+    </div>
+    <a href="{{ url_for('leads.detail', lead_id=lead.id) }}" class="btn-secondary">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Lead
+    </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Upload -->
+    <div class="card-neu">
+        <h3 class="text-base font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="upload" class="w-5 h-5" style="color:var(--primary);"></i>
+            Upload New Document
+        </h3>
+        <form method="POST" action="{{ url_for('documents.upload', lead_id=lead.id) }}" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                <label class="form-label">Document Type</label>
+                <select name="document_type" class="form-control">
+                    {% for dt in document_types %}
+                    <option value="{{ dt }}">{{ dt }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Custom Label (for "Other")</label>
+                <input type="text" name="custom_label" class="form-control" placeholder="Optional label">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Select File</label>
+                <input type="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.docx" required>
+                <div class="text-xs text-gray-400 mt-1">Max 10MB. Accepted: PDF, JPG, PNG, DOCX</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Expiry Date (optional)</label>
+                <input type="date" name="expiry_date" class="form-control">
+            </div>
+            <button type="submit" class="btn-primary w-full justify-center btn-ripple">
+                <i data-lucide="upload" class="w-4 h-4"></i> Upload Document
+            </button>
+        </form>
+    </div>
+
+    <!-- Existing -->
+    <div class="card-neu">
+        <h3 class="text-base font-semibold mb-4">Uploaded Documents</h3>
+        {% if documents %}
+        <div class="space-y-3">
+            {% for doc in documents %}
+            <div class="flex items-center justify-between p-3 rounded-lg" style="background:rgba(0,0,0,0.02);">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 rounded-lg" style="background:rgba(var(--primary-rgb),0.1);">
+                        <i data-lucide="file-text" class="w-5 h-5" style="color:var(--primary);"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm font-medium">{{ doc.document_type }}{% if doc.version_number > 1 %} (v{{ doc.version_number }}){% endif %}</div>
+                        <div class="text-xs text-gray-400">{{ doc.original_filename }} • {{ doc.file_size_kb }} KB</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    {% if doc.is_verified %}
+                    <span class="badge-pill badge-green">✓ Verified</span>
+                    {% elif current_user.role != 'employee' %}
+                    <form method="POST" action="{{ url_for('documents.verify_document', doc_id=doc.id) }}" class="inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button class="btn-icon btn-sm" title="Verify">
+                            <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                    <a href="{{ url_for('documents.view_document', token=doc.access_token) }}" target="_blank" class="btn-icon btn-sm" title="View">
+                        <i data-lucide="eye" class="w-4 h-4"></i>
+                    </a>
+                    <a href="{{ url_for('documents.download_document', token=doc.access_token) }}" class="btn-icon btn-sm" title="Download">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state py-6">
+            <i data-lucide="file-x" class="w-10 h-10 mx-auto mb-2"></i>
+            <p class="text-sm">No documents uploaded yet</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

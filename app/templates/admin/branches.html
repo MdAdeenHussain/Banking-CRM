@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Branches — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Branches</h1>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="card-neu">
+        <h3 class="text-base font-semibold mb-4">Add New Branch</h3>
+        <form method="POST" action="{{ url_for('admin.branches') }}" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="form-group"><label class="form-label">Branch Name *</label><input type="text" name="name" class="form-control" required></div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="form-group"><label class="form-label">City</label><input type="text" name="city" class="form-control"></div>
+                <div class="form-group"><label class="form-label">State</label><input type="text" name="state" class="form-control"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Address</label><textarea name="address" class="form-control" rows="2"></textarea></div>
+            <div class="form-group"><label class="form-label">GSTIN</label><input type="text" name="gstin" class="form-control" placeholder="15-character GSTIN"></div>
+            <button type="submit" class="btn-primary w-full justify-center btn-ripple"><i data-lucide="building-2" class="w-4 h-4"></i> Create Branch</button>
+        </form>
+    </div>
+
+    <div class="card-neu">
+        <h3 class="text-base font-semibold mb-4">Existing Branches</h3>
+        {% if branches %}
+        <div class="space-y-3">
+            {% for branch in branches %}
+            <div class="p-3 rounded-lg" style="background:rgba(0,0,0,0.02);">
+                <div class="font-semibold">{{ branch.name }}</div>
+                <div class="text-sm text-gray-500">{{ branch.city or '' }}{% if branch.state %}, {{ branch.state }}{% endif %}</div>
+                {% if branch.gstin %}<div class="text-xs text-gray-400 font-mono">GSTIN: {{ branch.gstin }}</div>{% endif %}
+                <span class="badge-pill badge-{{ 'green' if branch.is_active else 'red' }} mt-1">{{ 'Active' if branch.is_active else 'Inactive' }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state py-6"><p class="text-sm">No branches yet</p></div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

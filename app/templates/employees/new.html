@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Add Employee — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Add Employee</h1>
+    <a href="{{ url_for('employees.index') }}" class="btn-secondary">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back
+    </a>
+</div>
+
+<div class="card-neu max-w-xl">
+    <form method="POST" action="{{ url_for('employees.new') }}" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <input type="text" name="full_name" class="form-control {{ 'is-invalid' if form.full_name.errors }}"
+                value="{{ form.full_name.data or '' }}" required>
+            {% for e in form.full_name.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input type="email" name="email" class="form-control {{ 'is-invalid' if form.email.errors }}"
+                value="{{ form.email.data or '' }}" required>
+            {% for e in form.email.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="form-group">
+            <label class="form-label">Mobile *</label>
+            <input type="tel" name="mobile" class="form-control" value="{{ form.mobile.data or '' }}" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Password *</label>
+            <input type="password" name="password" class="form-control {{ 'is-invalid' if form.password.errors }}" required>
+            {% for e in form.password.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="form-group">
+                <label class="form-label">Role *</label>
+                <select name="role" class="form-control" required>
+                    {% for c in form.role.choices %}
+                    <option value="{{ c[0] }}">{{ c[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Branch</label>
+                <select name="branch_id" class="form-control">
+                    {% for c in form.branch_id.choices %}
+                    <option value="{{ c[0] }}">{{ c[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Joining Date</label>
+            <input type="date" name="joining_date" class="form-control" value="{{ form.joining_date.data or '' }}">
+        </div>
+        <button type="submit" class="btn-primary w-full justify-center py-3 btn-ripple mt-2">
+            <i data-lucide="user-plus" class="w-5 h-5"></i> Create Employee
+        </button>
+    </form>
+</div>
+{% endblock %}

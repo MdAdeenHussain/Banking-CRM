@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Tasks — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Tasks</h1>
+        <p class="page-subtitle">Track follow-ups, calls, and appointments</p>
+    </div>
+    <a href="{{ url_for('tasks.new') }}" class="btn-primary btn-ripple">
+        <i data-lucide="plus" class="w-4 h-4"></i> New Task
+    </a>
+</div>
+
+<!-- Status Filter Tabs -->
+<div class="flex gap-2 mb-4">
+    <a href="{{ url_for('tasks.index') }}" class="btn-{{ 'primary' if not current_status else 'secondary' }} btn-sm">All</a>
+    <a href="{{ url_for('tasks.index', status='Pending') }}" class="btn-{{ 'primary' if current_status == 'Pending' else 'secondary' }} btn-sm">Pending</a>
+    <a href="{{ url_for('tasks.index', status='In Progress') }}" class="btn-{{ 'primary' if current_status == 'In Progress' else 'secondary' }} btn-sm">In Progress</a>
+    <a href="{{ url_for('tasks.index', status='Done') }}" class="btn-{{ 'primary' if current_status == 'Done' else 'secondary' }} btn-sm">Done</a>
+    <a href="{{ url_for('tasks.index', status='Overdue') }}" class="btn-{{ 'primary' if current_status == 'Overdue' else 'secondary' }} btn-sm">Overdue</a>
+</div>
+
+{% if tasks %}
+<div class="space-y-3 stagger-children">
+    {% for task in tasks %}
+    <div class="card-neu flex items-center justify-between card-hover-lift" style="padding:1rem 1.25rem;">
+        <div class="flex items-center gap-4 flex-1 min-w-0">
+            <div class="priority-dot priority-{{ task.priority|lower }}"></div>
+            <div class="min-w-0 flex-1">
+                <div class="font-medium {{ 'line-through opacity-50' if task.status == 'Done' }}">{{ task.title }}</div>
+                <div class="text-xs text-gray-400 flex items-center gap-2 mt-0.5">
+                    <span class="badge-pill badge-gray">{{ task.task_type }}</span>
+                    <span>Due: {{ task.due_date.strftime('%d %b %Y') if task.due_date else 'No date' }}</span>
+                    {% if task.assignee %}<span>→ {{ task.assignee.full_name }}</span>{% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 ml-4">
+            {% if task.status == 'Overdue' %}
+            <span class="badge-pill badge-red">Overdue</span>
+            {% elif task.status == 'Done' %}
+            <span class="badge-pill badge-green">Done</span>
+            {% else %}
+            <form method="POST" action="{{ url_for('tasks.complete', task_id=task.id) }}" class="inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-icon btn-sm" title="Mark complete">
+                    <i data-lucide="check" class="w-4 h-4" style="color:var(--success);"></i>
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if pagination.pages > 1 %}
+<div class="pagination">
+    {% for p in pagination.iter_pages() %}
+    {% if p %}
+    <a href="{{ url_for('tasks.index', page=p, status=current_status) }}"
+        class="{{ 'active' if p == pagination.page }}">{{ p }}</a>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+{% else %}
+<div class="card-neu empty-state py-8">
+    <i data-lucide="check-circle" class="w-10 h-10 mx-auto mb-2" style="color:var(--success);"></i>
+    <h3 class="text-lg font-semibold mb-1">All clear!</h3>
+    <p class="text-sm">No tasks to display.</p>
+</div>
+{% endif %}
+{% endblock %}

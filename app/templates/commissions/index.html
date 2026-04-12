@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Commissions — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Commissions</h1>
+        <p class="page-subtitle">Track payouts, TDS, and revenue splits</p>
+    </div>
+    {% if current_user.role in ('super_admin', 'admin') %}
+    <a href="{{ url_for('exports.commissions_csv') }}" class="btn-secondary">
+        <i data-lucide="download" class="w-4 h-4"></i> Export CSV
+    </a>
+    {% endif %}
+</div>
+
+<!-- Summary Cards -->
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 stagger-children">
+    <div class="kpi-card primary card-hover-lift">
+        <div class="kpi-label">This Month</div>
+        <div class="kpi-value text-lg">₹{{ "{:,.0f}".format(summary.this_month) }}</div>
+    </div>
+    <div class="kpi-card success card-hover-lift">
+        <div class="kpi-label">This Week</div>
+        <div class="kpi-value text-lg">₹{{ "{:,.0f}".format(summary.this_week) }}</div>
+    </div>
+    <div class="kpi-card accent card-hover-lift">
+        <div class="kpi-label">Today</div>
+        <div class="kpi-value text-lg">₹{{ "{:,.0f}".format(summary.today) }}</div>
+    </div>
+    <div class="kpi-card warning card-hover-lift">
+        <div class="kpi-label">Pending</div>
+        <div class="kpi-value text-lg">₹{{ "{:,.0f}".format(summary.pending) }}</div>
+    </div>
+    <div class="kpi-card info card-hover-lift">
+        <div class="kpi-label">This Year</div>
+        <div class="kpi-value text-lg">₹{{ "{:,.0f}".format(summary.this_year) }}</div>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="card-neu p-0 overflow-hidden">
+    {% if commissions %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Lead</th>
+                <th>Gross (₹)</th>
+                <th>TDS</th>
+                <th>Net (₹)</th>
+                <th>Company</th>
+                <th>Admin</th>
+                <th>Employee</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for comm in commissions %}
+            <tr class="cursor-pointer" onclick="window.location='{{ url_for('commissions.detail', commission_id=comm.id) }}'">
+                <td class="font-mono text-xs">{{ comm.lead.lead_number if comm.lead else '-' }}</td>
+                <td class="font-semibold">₹{{ "{:,.2f}".format(comm.gross_commission or 0) }}</td>
+                <td class="text-sm">{{ comm.tds_rate_pct }}%</td>
+                <td class="font-mono">₹{{ "{:,.2f}".format(comm.net_after_tds or 0) }}</td>
+                <td class="text-sm">₹{{ "{:,.0f}".format(comm.company_amount or 0) }}</td>
+                <td class="text-sm">₹{{ "{:,.0f}".format(comm.admin_amount or 0) }}</td>
+                <td class="text-sm">₹{{ "{:,.0f}".format(comm.employee_amount or 0) }}</td>
+                <td>
+                    {% if comm.payout_status == 'Paid' %}
+                    <span class="badge-pill badge-green">Paid</span>
+                    {% elif comm.payout_status == 'Pending' %}
+                    <span class="badge-pill badge-amber">Pending</span>
+                    {% else %}
+                    <span class="badge-pill badge-gray">{{ comm.payout_status }}</span>
+                    {% endif %}
+                </td>
+                <td class="text-xs text-gray-400">{{ comm.created_at.strftime('%d %b %Y') if comm.created_at else '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state py-8">
+        <i data-lucide="indian-rupee" class="w-10 h-10 mx-auto mb-2"></i>
+        <p>No commission records yet</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Audit Logs — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Audit Logs</h1>
+</div>
+
+<!-- Filters -->
+<div class="flex gap-3 mb-4">
+    <form method="GET" action="{{ url_for('admin.audit_logs') }}" class="flex gap-2">
+        <select name="table" class="form-control" style="width:200px;">
+            <option value="">All Tables</option>
+            {% for t in audited_tables %}
+            <option value="{{ t }}" {{ 'selected' if current_table == t }}>{{ t }}</option>
+            {% endfor %}
+        </select>
+        <select name="action" class="form-control" style="width:150px;">
+            <option value="">All Actions</option>
+            <option value="CREATE" {{ 'selected' if current_action == 'CREATE' }}>CREATE</option>
+            <option value="UPDATE" {{ 'selected' if current_action == 'UPDATE' }}>UPDATE</option>
+            <option value="DELETE" {{ 'selected' if current_action == 'DELETE' }}>DELETE</option>
+        </select>
+        <button type="submit" class="btn-primary btn-sm">Filter</button>
+    </form>
+</div>
+
+<div class="card-neu p-0 overflow-hidden">
+    {% if logs %}
+    <table class="data-table text-sm">
+        <thead><tr><th>Time</th><th>Action</th><th>Table</th><th>Record ID</th><th>Changed Fields</th><th>By</th><th>IP</th></tr></thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td class="text-xs font-mono whitespace-nowrap">{{ log.created_at.strftime('%d %b %Y %H:%M') if log.created_at else '-' }}</td>
+                <td>
+                    {% if log.action == 'CREATE' %}<span class="badge-pill badge-green">{{ log.action }}</span>
+                    {% elif log.action == 'UPDATE' %}<span class="badge-pill badge-blue">{{ log.action }}</span>
+                    {% else %}<span class="badge-pill badge-red">{{ log.action }}</span>{% endif %}
+                </td>
+                <td class="font-mono text-xs">{{ log.table_name }}</td>
+                <td class="font-mono text-xs" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;">{{ log.record_id }}</td>
+                <td class="text-xs" style="max-width:200px;">{{ ', '.join(log.changed_fields) if log.changed_fields else '-' }}</td>
+                <td class="text-xs">{{ log.actor.full_name if log.actor else 'System' }}</td>
+                <td class="font-mono text-xs">{{ log.ip_address or '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if pagination.pages > 1 %}
+    <div class="pagination p-4">
+        {% for p in pagination.iter_pages() %}{% if p %}
+        <a href="{{ url_for('admin.audit_logs', page=p, table=current_table, action=current_action) }}" class="{{ 'active' if p == pagination.page }}">{{ p }}</a>
+        {% endif %}{% endfor %}
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="empty-state py-8"><i data-lucide="scroll-text" class="w-10 h-10 mx-auto mb-2"></i><p>No audit logs found</p></div>
+    {% endif %}
+</div>
+{% endblock %}

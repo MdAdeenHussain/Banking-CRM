@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}{{ employee.full_name }} — Employee Profile{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ employee.full_name }}</h1>
+        <p class="page-subtitle">{{ employee.employee_id }} • {{ get_role_display_name(employee.role) }}</p>
+    </div>
+    <a href="{{ url_for('employees.index') }}" class="btn-secondary">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back
+    </a>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Profile Card -->
+    <div class="card-neu text-center">
+        <div class="user-avatar mx-auto mb-3" style="width:64px;height:64px;font-size:1.5rem;border-radius:20px;">
+            {{ employee.full_name[0] }}
+        </div>
+        <h3 class="font-semibold text-lg">{{ employee.full_name }}</h3>
+        <p class="text-sm text-gray-500">{{ employee.email }}</p>
+        <p class="text-sm text-gray-500">{{ employee.mobile }}</p>
+        <div class="mt-3">
+            {% if employee.is_active %}
+            <span class="badge-pill badge-green">Active</span>
+            {% else %}
+            <span class="badge-pill badge-red">Inactive</span>
+            {% endif %}
+        </div>
+
+        {% if employee.id != current_user.id and employee.is_active %}
+        <form method="POST" action="{{ url_for('employees.deactivate', user_id=employee.id) }}" class="mt-4"
+            onsubmit="return confirm('Are you sure you want to deactivate this employee?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn-danger btn-sm w-full justify-center">
+                <i data-lucide="user-x" class="w-4 h-4"></i> Deactivate
+            </button>
+        </form>
+        {% endif %}
+    </div>
+
+    <!-- Performance KPIs -->
+    <div class="col-span-2">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 stagger-children">
+            <div class="kpi-card primary card-hover-lift">
+                <div class="kpi-label">Total Leads</div>
+                <div class="kpi-value">{{ performance.total_leads }}</div>
+            </div>
+            <div class="kpi-card success card-hover-lift">
+                <div class="kpi-label">Disbursals</div>
+                <div class="kpi-value">{{ performance.total_disbursals }}</div>
+            </div>
+            <div class="kpi-card accent card-hover-lift">
+                <div class="kpi-label">Conversion Rate</div>
+                <div class="kpi-value">{{ performance.conversion_rate }}%</div>
+            </div>
+            <div class="kpi-card info card-hover-lift">
+                <div class="kpi-label">This Month Leads</div>
+                <div class="kpi-value">{{ performance.leads_this_month }}</div>
+            </div>
+            <div class="kpi-card warning card-hover-lift">
+                <div class="kpi-label">Commission Earned</div>
+                <div class="kpi-value">₹{{ "{:,.0f}".format(performance.total_commission) }}</div>
+            </div>
+            <div class="kpi-card danger card-hover-lift">
+                <div class="kpi-label">Pending Tasks</div>
+                <div class="kpi-value">{{ performance.pending_tasks }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

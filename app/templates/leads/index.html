@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}Leads — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Leads</h1>
+        <p class="page-subtitle">Manage and track all customer leads</p>
+    </div>
+    <div class="flex gap-2">
+        <a href="{{ url_for('leads.pipeline') }}" class="btn-secondary">
+            <i data-lucide="kanban" class="w-4 h-4"></i> Pipeline View
+        </a>
+        <a href="{{ url_for('leads.new') }}" class="btn-primary btn-ripple">
+            <i data-lucide="plus" class="w-4 h-4"></i> New Lead
+        </a>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card-neu mb-4">
+    <form method="GET" action="{{ url_for('leads.index') }}" class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <div>
+            <input type="text" name="search" class="form-control" placeholder="Search name, mobile, ID..."
+                value="{{ filters.search }}">
+        </div>
+        <div>
+            <select name="pipeline_stage" class="form-control">
+                <option value="">All Stages</option>
+                {% for stage in pipeline_stages %}
+                <option value="{{ stage }}" {{ 'selected' if filters.pipeline_stage == stage }}>{{ stage }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <select name="loan_type" class="form-control">
+                <option value="">All Loan Types</option>
+                {% for lt in loan_types %}
+                <option value="{{ lt }}" {{ 'selected' if filters.loan_type == lt }}>{{ lt }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <select name="priority_tag" class="form-control">
+                <option value="">All Priorities</option>
+                {% for pt in priority_tags %}
+                <option value="{{ pt }}" {{ 'selected' if filters.priority_tag == pt }}>{{ pt }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <select name="lead_source" class="form-control">
+                <option value="">All Sources</option>
+                {% for ls in lead_sources %}
+                <option value="{{ ls }}" {{ 'selected' if filters.lead_source == ls }}>{{ ls }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="flex gap-2">
+            <button type="submit" class="btn-primary btn-sm flex-1">
+                <i data-lucide="search" class="w-4 h-4"></i> Filter
+            </button>
+            <a href="{{ url_for('leads.index') }}" class="btn-secondary btn-sm">Clear</a>
+        </div>
+    </form>
+</div>
+
+<!-- Results -->
+<div class="card-neu p-0 overflow-hidden">
+    {% if leads %}
+    <div class="overflow-x-auto">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Lead #</th>
+                    <th>Customer</th>
+                    <th>Mobile</th>
+                    <th>Loan Type</th>
+                    <th>Amount</th>
+                    <th>CIBIL</th>
+                    <th>Stage</th>
+                    <th>Priority</th>
+                    <th>Source</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lead in leads %}
+                <tr class="cursor-pointer"
+                    onclick="window.location='{{ url_for('leads.detail', lead_id=lead.id) }}'">
+                    <td class="font-mono text-xs">{{ lead.lead_number }}</td>
+                    <td>
+                        <div class="font-medium">{{ lead.customer_name }}</div>
+                        {% if lead.is_high_value %}
+                        <span class="badge-pill badge-amber text-xs">⭐ High Value</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-sm">{{ lead.mobile_primary }}</td>
+                    <td><span class="badge-pill badge-indigo">{{ lead.loan_type }}</span></td>
+                    <td class="font-mono">₹{{ "{:,.0f}".format(lead.loan_amount_applied or 0) }}</td>
+                    <td>
+                        {% if lead.cibil_score %}
+                        <span class="badge-pill badge-{{ lead.cibil_color }}">{{ lead.cibil_score }}</span>
+                        {% else %}-{% endif %}
+                    </td>
+                    <td><span class="badge-pill badge-blue">{{ lead.pipeline_stage }}</span></td>
+                    <td>
+                        <span class="priority-dot priority-{{ lead.priority_tag|lower }}"></span>
+                        {{ lead.priority_tag }}
+                    </td>
+                    <td class="text-sm">{{ lead.lead_source or '-' }}</td>
+                    <td class="text-xs text-gray-400">
+                        {{ lead.created_at.strftime('%d %b %Y') if lead.created_at else '-' }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if pagination.pages > 1 %}
+    <div class="pagination p-4">
+        {% if pagination.has_prev %}
+        <a href="{{ url_for('leads.index', page=pagination.prev_num, **filters) }}">← Prev</a>
+        {% endif %}
+        {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+        {% if p %}
+        <a href="{{ url_for('leads.index', page=p, **filters) }}"
+            class="{{ 'active' if p == pagination.page }}">{{ p }}</a>
+        {% else %}
+        <span>...</span>
+        {% endif %}
+        {% endfor %}
+        {% if pagination.has_next %}
+        <a href="{{ url_for('leads.index', page=pagination.next_num, **filters) }}">Next →</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state py-8">
+        <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-3"></i>
+        <h3 class="text-lg font-semibold mb-1">No leads found</h3>
+        <p class="text-sm mb-4">Try adjusting your filters or create a new lead.</p>
+        <a href="{{ url_for('leads.new') }}" class="btn-primary btn-ripple">
+            <i data-lucide="plus" class="w-4 h-4"></i> Create Lead
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="text-sm text-gray-400 mt-3 text-center">
+    Showing {{ leads|length }} of {{ pagination.total }} leads
+</div>
+{% endblock %}

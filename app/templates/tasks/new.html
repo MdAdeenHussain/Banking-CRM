@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}New Task — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Create Task</h1>
+    <a href="{{ url_for('tasks.index') }}" class="btn-secondary">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back
+    </a>
+</div>
+
+<div class="card-neu max-w-xl">
+    <form method="POST" action="{{ url_for('tasks.new') }}" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label class="form-label">Title *</label>
+            <input type="text" name="title" class="form-control" value="{{ form.title.data or '' }}" placeholder="Task title" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Type</label>
+            <select name="task_type" class="form-control">
+                {% for c in form.task_type.choices %}
+                <option value="{{ c[0] }}">{{ c[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3" placeholder="Optional details...">{{ form.description.data or '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Assign To *</label>
+            <select name="assigned_to" class="form-control" required>
+                {% for c in form.assigned_to.choices %}
+                <option value="{{ c[0] }}">{{ c[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="form-group">
+                <label class="form-label">Due Date *</label>
+                <input type="date" name="due_date" class="form-control" value="{{ form.due_date.data or '' }}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Priority</label>
+                <select name="priority" class="form-control">
+                    {% for c in form.priority.choices %}
+                    <option value="{{ c[0] }}" {{ 'selected' if form.priority.data == c[0] }}>{{ c[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn-primary w-full justify-center py-3 btn-ripple mt-2">
+            <i data-lucide="plus" class="w-5 h-5"></i> Create Task
+        </button>
+    </form>
+</div>
+{% endblock %}

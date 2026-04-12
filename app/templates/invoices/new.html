@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}New Invoice — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Generate Invoice</h1>
+    <a href="{{ url_for('invoices.index') }}" class="btn-secondary"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</a>
+</div>
+
+<form method="POST" action="{{ url_for('invoices.new') }}" novalidate>
+    {{ form.hidden_tag() }}
+    <input type="hidden" name="line_items_json" id="line_items_json" value="[]">
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="card-neu">
+            <h3 class="text-base font-semibold mb-4">Party Details</h3>
+            <div class="form-group"><label class="form-label">Party Name *</label><input type="text" name="party_name" class="form-control" required></div>
+            <div class="form-group"><label class="form-label">Party Address</label><textarea name="party_address" class="form-control" rows="2"></textarea></div>
+            <div class="form-group"><label class="form-label">Party GSTIN</label><input type="text" name="party_gstin" class="form-control" placeholder="e.g., 27ABCDE1234F1Z5"></div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="form-group"><label class="form-label">Invoice Date *</label><input type="date" name="invoice_date" class="form-control" required></div>
+                <div class="form-group"><label class="form-label">Due Date</label><input type="date" name="due_date" class="form-control"></div>
+            </div>
+        </div>
+
+        <div class="card-neu">
+            <h3 class="text-base font-semibold mb-4">GST & Payment</h3>
+            <div class="grid grid-cols-3 gap-3">
+                <div class="form-group"><label class="form-label">CGST %</label><input type="number" name="cgst_rate" class="form-control" value="9" step="0.5"></div>
+                <div class="form-group"><label class="form-label">SGST %</label><input type="number" name="sgst_rate" class="form-control" value="9" step="0.5"></div>
+                <div class="form-group"><label class="form-label">IGST %</label><input type="number" name="igst_rate" class="form-control" value="0" step="0.5"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Payment Status</label>
+                <select name="payment_status" class="form-control">
+                    {% for c in form.payment_status.choices %}<option value="{{ c[0] }}">{{ c[1] }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="form-group"><label class="form-label">Notes</label><textarea name="notes" class="form-control" rows="2"></textarea></div>
+        </div>
+    </div>
+
+    <!-- Line Items -->
+    <div class="card-neu mt-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold">Line Items</h3>
+            <button type="button" id="add-line-item" class="btn-secondary btn-sm"><i data-lucide="plus" class="w-4 h-4"></i> Add Item</button>
+        </div>
+        <div class="grid grid-cols-12 gap-2 mb-2 text-xs font-semibold text-gray-500 uppercase">
+            <span class="col-span-4">Description</span><span class="col-span-2">HSN/SAC</span><span class="col-span-1">Qty</span><span class="col-span-2">Rate</span><span class="col-span-2">Amount</span><span class="col-span-1"></span>
+        </div>
+        <div id="line-items-container"></div>
+        <div class="flex justify-end mt-4">
+            <div class="text-right"><span class="text-sm text-gray-500">Subtotal:</span> <span id="display-subtotal" class="font-semibold ml-2">₹0.00</span></div>
+        </div>
+    </div>
+
+    <div class="mt-6">
+        <button type="submit" class="btn-primary btn-ripple px-8 py-3"><i data-lucide="file-text" class="w-5 h-5"></i> Generate Invoice</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/invoice-builder.js') }}"></script>
+{% endblock %}

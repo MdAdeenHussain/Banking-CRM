@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Edit Lead {{ lead.lead_number }} — Banking DSA CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Edit Lead {{ lead.lead_number }}</h1>
+        <p class="page-subtitle">{{ lead.customer_name }}</p>
+    </div>
+    <a href="{{ url_for('leads.detail', lead_id=lead.id) }}" class="btn-secondary">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Detail
+    </a>
+</div>
+
+<form method="POST" action="{{ url_for('leads.edit', lead_id=lead.id) }}" novalidate>
+    {{ form.hidden_tag() }}
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="card-neu">
+            <h3 class="text-base font-semibold mb-4">Personal Information</h3>
+            {% for field in [form.customer_name, form.mobile_primary, form.mobile_alternate, form.email, form.city, form.state, form.pincode, form.occupation, form.employer_name] %}
+            <div class="form-group">
+                <label class="form-label" for="{{ field.id }}">{{ field.label.text }}</label>
+                <input type="{{ 'email' if 'email' in field.id else 'tel' if 'mobile' in field.id else 'text' }}"
+                    name="{{ field.name }}" id="{{ field.id }}" class="form-control"
+                    value="{{ field.data or '' }}">
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="card-neu">
+            <h3 class="text-base font-semibold mb-4">Loan & Assignment</h3>
+            <div class="form-group">
+                <label class="form-label">Loan Type</label>
+                <select name="loan_type" class="form-control">
+                    {% for c in form.loan_type.choices %}
+                    <option value="{{ c[0] }}" {{ 'selected' if form.loan_type.data == c[0] }}>{{ c[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Loan Amount (₹)</label>
+                <input type="number" name="loan_amount_applied" class="form-control"
+                    value="{{ form.loan_amount_applied.data or '' }}" step="1000">
+            </div>
+            <div class="form-group">
+                <label class="form-label">CIBIL Score</label>
+                <input type="number" name="cibil_score" class="form-control"
+                    value="{{ form.cibil_score.data or '' }}" min="300" max="900">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Assigned Executive</label>
+                <select name="assigned_executive_id" class="form-control">
+                    {% for c in form.assigned_executive_id.choices %}
+                    <option value="{{ c[0] }}" {{ 'selected' if form.assigned_executive_id.data == c[0] }}>{{ c[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Priority</label>
+                <select name="priority_tag" class="form-control">
+                    {% for c in form.priority_tag.choices %}
+                    <option value="{{ c[0] }}" {{ 'selected' if form.priority_tag.data == c[0] }}>{{ c[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn-primary w-full justify-center py-3 mt-4 btn-ripple">
+                <i data-lucide="save" class="w-5 h-5"></i> Update Lead
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}

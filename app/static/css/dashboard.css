@@ -1,0 +1,98 @@
+/* ═══════════════════════════════════════════════════════
+   LoanAxis CRM — Dashboard Bento Grid
+   Named CSS grid areas, 4→2→1 column responsive.
+   ═══════════════════════════════════════════════════════ */
+
+.bento-grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-areas:
+        "kpi1 kpi2 kpi3 kpi4"
+        "chart1 chart1 funnel funnel"
+        "comm comm exec notifs"
+        "recent recent recent recent";
+}
+
+.bento-kpi1 { grid-area: kpi1; }
+.bento-kpi2 { grid-area: kpi2; }
+.bento-kpi3 { grid-area: kpi3; }
+.bento-kpi4 { grid-area: kpi4; }
+.bento-chart1 { grid-area: chart1; }
+.bento-funnel { grid-area: funnel; }
+.bento-comm { grid-area: comm; }
+.bento-exec { grid-area: exec; }
+.bento-notifs { grid-area: notifs; }
+.bento-recent { grid-area: recent; }
+
+/* Greeting bar */
+.greeting-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.greeting-text h2 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+.greeting-text p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 0.15rem;
+}
+.quick-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* Chart containers */
+.chart-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+}
+.chart-container canvas {
+    max-height: 100%;
+}
+
+/* KPI extra row */
+.kpi-grid-6 {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ── Responsive ───────────────────────────────────── */
+@media (max-width: 1200px) {
+    .bento-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-areas:
+            "kpi1 kpi2"
+            "kpi3 kpi4"
+            "chart1 chart1"
+            "funnel funnel"
+            "comm exec"
+            "notifs notifs"
+            "recent recent";
+    }
+    .kpi-grid-6 { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 640px) {
+    .bento-grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "kpi1" "kpi2" "kpi3" "kpi4"
+            "chart1" "funnel"
+            "comm" "exec" "notifs"
+            "recent";
+    }
+    .kpi-grid-6 { grid-template-columns: repeat(2, 1fr); }
+    .greeting-bar { flex-direction: column; align-items: flex-start; }
+}
