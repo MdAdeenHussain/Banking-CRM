@@ -70,8 +70,11 @@ def create_employee():
         # Check if employee already exists
         existing = Employee.query.filter_by(email=request.form.get('email')).first()
         if existing:
-            return jsonify({'error': 'Employee with this email already exists'}), 400
+            from flask import flash
+            flash('Employee with this email already exists', 'error')
+            return redirect(url_for('employees.create_employee'))
         
+        # 1. Create Employee Record
         employee = Employee(
             id=uuid.uuid4(),
             employee_id=f"EMP-{datetime.now().strftime('%Y%m%d%H%M%S')}",
@@ -81,13 +84,32 @@ def create_employee():
             position=request.form.get('position'),
             department=request.form.get('department'),
             hire_date=datetime.strptime(request.form.get('hire_date'), '%Y-%m-%d').date(),
-            salary=float(request.form.get('salary', 0)) if request.form.get('salary') else None,
-            commission_percentage=float(request.form.get('commission_percentage', 5)),
-            manager_id=request.form.get('manager_id') if request.form.get('manager_id') else None,
+            reporting_manager_id=request.form.get('manager_id') if request.form.get('manager_id') else None,
             status='active'
         )
-        
         db.session.add(employee)
+        
+        # 2. Create User Record linked to this Employee
+        from app.models.role import Role
+        system_role_name = request.form.get('system_role', 'EMPLOYEE')
+        role = Role.query.filter_by(name=system_role_name).first()
+        if not role:
+            # Fallback to EMPLOYEE if somehow not found
+            role = Role.query.filter_by(name='EMPLOYEE').first()
+            
+        user_record = User(
+            id=uuid.uuid4(),
+            email=employee.email,
+            full_name=employee.full_name,
+            mobile=employee.mobile,
+            role_id=role.id,
+            employee_id=employee.id,
+            is_active=True
+        )
+        user_record.set_password(request.form.get('password'))
+        db.session.add(user_record)
+        
+        # Commit both
         db.session.commit()
         
         # Audit log
@@ -95,9 +117,9 @@ def create_employee():
         AuditService.log_action(
             user_id=user_id,
             action='CREATE',
-            resource='Employee',
+            resource='Employee/User',
             resource_id=str(employee.id),
-            details=f"Created employee: {employee.full_name}"
+            details=f"Created employee & user: {employee.full_name} as {system_role_name}"
         )
         
         return redirect(url_for('employees.list_employees'))
@@ -118,7 +140,7 @@ def employee_detail(employee_id):
     # Get employee statistics
     leads_count = Lead.query.filter_by(created_by_id=employee.id).count()
     commissions = CommissionTracker.query.filter_by(employee_id=employee.id).all()
-    total_commission = sum(c.total_commission or 0 for c in commissions)
+    total_commission = sum(c.gross_commission or 0 for c in commissions)
     
     # Calculate performance metrics
     leads_this_month = Lead.query.filter(
@@ -230,9 +252,9 @@ def employee_performance(employee_id):
     
     # Get commission data
     commissions = CommissionTracker.query.filter_by(employee_id=employee.id).all()
-    total_commission = sum(c.total_commission or 0 for c in commissions)
+    total_commission = sum(c.gross_commission or 0 for c in commissions)
     commission_this_month = sum(
-        c.total_commission or 0 for c in commissions 
+        c.gross_commission or 0 for c in commissions 
         if c.created_at.month == datetime.utcnow().month and c.created_at.year == datetime.utcnow().year
     )
     

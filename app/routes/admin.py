@@ -304,7 +304,7 @@ def admin_dashboard():
     ).count()
     
     # Financial statistics
-    total_commissions = db.session.query(func.sum(CommissionTracker.total_commission)).scalar() or 0
+    total_commissions = db.session.query(func.sum(CommissionTracker.gross_commission)).scalar() or 0
     total_invoices = db.session.query(func.sum(Invoice.amount)).scalar() or 0
     
     # Recent audit logs

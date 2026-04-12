@@ -71,7 +71,7 @@ def role_required(*allowed_roles):
                 return redirect(url_for('auth.login'))
             
             user = User.query.get(session.get('user_id'))
-            if not user or user.role not in allowed_roles:
+            if not user or not user.role or user.role.name not in allowed_roles:
                 abort(403)
             
             return f(*args, **kwargs)

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Create Employee - Banking CRM{% endblock %}
+
+{% block content %}
+<div class="management-container">
+    <div class="management-header">
+        <h1>Create New Employee & User Account</h1>
+        <a href="{{ url_for('employees.list_employees') }}" class="btn btn-secondary">← Back to List</a>
+    </div>
+
+    <div class="form-card" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 2rem;">
+        <form method="POST" action="{{ url_for('employees.create_employee') }}" class="employee-form">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <!-- Employee Details -->
+                <div class="form-section">
+                    <h3>Personal Details</h3>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="full_name" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Full Name</label>
+                        <input type="text" id="full_name" name="full_name" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="email" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Email Address</label>
+                        <input type="email" id="email" name="email" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="mobile" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Mobile Number</label>
+                        <input type="text" id="mobile" name="mobile" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="hire_date" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Hire Date</label>
+                        <input type="date" id="hire_date" name="hire_date" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                </div>
+
+                <!-- Job Details -->
+                <div class="form-section">
+                    <h3>Job & Account Details</h3>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="department" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Department</label>
+                        <input type="text" id="department" name="department" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="position" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Position</label>
+                        <input type="text" id="position" name="position" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="system_role" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">System Role</label>
+                        <select id="system_role" name="system_role" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px;">
+                            <option value="EMPLOYEE">Employee</option>
+                            <option value="ADMIN">Admin</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="password" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Temporary Login Password</label>
+                        <input type="password" id="password" name="password" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px;">
+                        <small style="color: #666; display: block; margin-top: 0.25rem;">The user will log in with this password.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions" style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1.5rem; text-align: right;">
+                <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">Save Employee & User</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

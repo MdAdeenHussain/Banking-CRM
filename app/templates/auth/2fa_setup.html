@@ -2,7 +2,7 @@
 
 {% block title %}2FA Setup - Banking CRM{% endblock %}
 
-{% block content %}
+{% block auth_content %}
 <div class="auth-container">
     <div class="auth-card">
         <div class="auth-header">
@@ -53,93 +53,9 @@
     </div>
 </div>
 
-<style>
-.setup-steps {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    margin: 2rem 0;
-}
 
-.step {
-    background: rgba(255, 255, 255, 0.5);
-    padding: 1.5rem;
-    border-radius: 15px;
-    border: 2px solid #e0e6ed;
-    display: none;
-}
+{% endblock %}
 
-.step.active {
-    display: block;
-}
-
-.step-number {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 50%;
-    font-weight: bold;
-    margin-bottom: 1rem;
-}
-
-.step h3 {
-    color: #1f4788;
-    margin: 0.5rem 0;
-}
-
-.step p {
-    color: #748390;
-    margin: 0.5rem 0;
-}
-
-.qr-code-container {
-    text-align: center;
-    margin: 1.5rem 0;
-    padding: 1rem;
-    background: #f5f7fa;
-    border-radius: 10px;
-}
-
-.qr-code-container img {
-    max-width: 200px;
-}
-
-.backup-codes {
-    background: #fffacd;
-    padding: 1.5rem;
-    border-radius: 15px;
-    border-left: 4px solid #ffc107;
-}
-
-.codes-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin: 1rem 0;
-    font-family: monospace;
-    font-size: 0.9rem;
-}
-
-.codes-list code {
-    background: white;
-    padding: 0.75rem;
-    border-radius: 8px;
-    text-align: center;
-    border: 1px solid #ffc107;
-}
-
-@media (max-width: 768px) {
-    .setup-steps {
-        gap: 1rem;
-    }
-
-    .codes-list {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth/2fa_setup.css') }}">
 {% endblock %}

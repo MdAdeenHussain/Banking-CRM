@@ -134,7 +134,7 @@ class ExportService:
             'Value': [
                 employee.total_leads,
                 employee.converted_leads,
-                f"₹ {employee.total_commission:,.2f}",
+                f"₹ {employee.gross_commission:,.2f}",
                 f"{(employee.converted_leads / employee.total_leads * 100):.2f}%" if employee.total_leads > 0 else "0%"
             ]
         }

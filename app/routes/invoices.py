@@ -325,7 +325,3 @@ def api_invoice_stats():
         ).scalar() or 0
     }
     return jsonify(stats)
-    
-    invoice = InvoiceService.mark_invoice_paid(invoice_id, payment_method)
-    
-    return jsonify({'success': True, 'invoice': invoice.to_dict()})

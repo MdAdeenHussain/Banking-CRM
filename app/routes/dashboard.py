@@ -22,11 +22,11 @@ def index():
     
     # Get dashboard data based on role
     if user.role.name == 'SUPER_ADMIN':
-        return render_template('dashboard/super_admin_dashboard.html', user=user, dashboard_data=analytics.get_super_admin_dashboard())
+        return render_template('dashboard/super_admin_dashboard.html', user=user, dashboard_data=analytics.get_dashboard_kpis())
     elif user.role.name == 'ADMIN':
-        return render_template('dashboard/admin_dashboard.html', user=user, dashboard_data=analytics.get_admin_dashboard())
+        return render_template('dashboard/admin_dashboard.html', user=user, dashboard_data=analytics.get_dashboard_kpis())
     else:
-        return render_template('dashboard/employee_dashboard.html', user=user, dashboard_data=analytics.get_employee_dashboard())
+        return render_template('dashboard/employee_dashboard.html', user=user, dashboard_data=analytics.get_dashboard_kpis())
 
 @dashboard_bp.route('/api/kpis')
 @login_required
@@ -35,5 +35,5 @@ def get_kpis():
     user_id = session.get('user_id')
     user = User.query.get(user_id)
     
-    kpis = analytics.get_kpi_data(user)
+    kpis = analytics.get_dashboard_kpis()
     return jsonify(kpis)

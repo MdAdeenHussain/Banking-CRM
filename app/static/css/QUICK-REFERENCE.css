@@ -1,0 +1,291 @@
+/* ===================================
+   DSA CRM Quick Reference
+   Design System Classes & Components
+   =================================== */
+
+/*
+┌─────────────────────────────────────────────────────────────┐
+│ CSS LOAD ORDER (in base.html)                               │
+├─────────────────────────────────────────────────────────────┤
+│ 1. design-system.css (Variables, Neumorphism, Bento Grid)   │
+│ 2. style.css (Core layouts)                                 │
+│ 3. dashboard.css (Dashboard specific)                       │
+│ 4. forms.css (Form styling)                                 │
+│ 5. components.css (Reusable components)                     │
+│ 6. responsive.css (Media queries)                           │
+└─────────────────────────────────────────────────────────────┘
+*/
+
+/*
+┌─────────────────────────────────────────────────────────────┐
+│ KEY NEUMORPHIC CLASSES                                      │
+├─────────────────────────────────────────────────────────────┤
+│ .neu-card       → Soft card with inset shadows             │
+│ .neu-btn        → Neumorphic button                         │
+│ .neu-input      → Neumorphic input/textarea/select          │
+│ .neu-badge      → Small badge with soft shadow             │
+│                                                             │
+│ Usage:                                                      │
+│ <div class="neu-card">Card content</div>                    │
+│ <button class="neu-btn primary">Click me</button>           │
+│ <input class="neu-input form-input" type="text">           │
+└─────────────────────────────────────────────────────────────┘
+*/
+
+/*
+┌─────────────────────────────────────────────────────────────┐
+│ BENTO GRID CLASSES                                          │
+├─────────────────────────────────────────────────────────────┤
+│ .bento-grid              → Main grid container              │
+│ .bento-grid.dense        → Tighter spacing                  │
+│ .bento-grid.wide         → More spacing                     │
+│ .bento-item              → Default 1 column                 │
+│ .bento-item.span-2       → Spans 2 columns                  │
+│ .bento-item.span-3       → Spans 3 columns                  │
+│                                                             │
+│ Usage:                                                      │
+│ <div class="bento-grid">                                    │
+│   <div class="bento-item"><Card></div>                      │
+│   <div class="bento-item span-2"><WideCard></div>           │
+│ </div>                                                      │
+└─────────────────────────────────────────────────────────────┘
+*/
+
+/*
+┌─────────────────────────────────────────────────────────────┐
+│ DATA UI CLASSES                                             │
+├─────────────────────────────────────────────────────────────┤
+│ .kpi-card          → KPI display card                       │
+│ .kpi-header        → KPI header area                        │
+│ .kpi-label         → Small label text                       │
+│ .kpi-icon          → Icon container                         │
+│ .kpi-value         → Large value display                    │
+│ .kpi-change        → Change indicator (up/down)             │
+│ .data-table        → Sortable/filterable table              │
+│ .stat-grid         → Statistics grid                        │
+│ .stat-item         → Individual stat                        │
+│ .chart-container   → Chart wrapper                          │
+│                                                             │
+│ Status Indicators:                                          │
+│ .kpi-change.down   → Negative change (red)                  │
+│ .status-badge.active       → Green badge                    │
+│ .status-badge.pending      → Yellow badge                   │
+│ .status-badge.rejected     → Red badge                      │
+└─────────────────────────────────────────────────────────────┘
+*/
+
+/*
+┌─────────────────────────────────────────────────────────────┐
+│ FORM CLASSES                                                │
+├─────────────────────────────────────────────────────────────┤
+│ .form-container    → Form wrapper                           │
+│ .form-card         → Form in card style                     │
+│ .form-group        → Form field group                       │
+│ .form-label        → Label with styling                     │
+│ .form-input        → Text/email inputs                      │
+│ .form-select       → Select dropdowns                       │
+│ .form-textarea     → Textarea fields                        │
+│ .form-text         → Helper text                            │
+│ .is-valid          → Valid field state                      │
+│ .is-invalid        → Invalid field state                    │
+│ .auth-card         → Auth form wrapper                      │
+│ .auth-container    → Auth page container                    │
+│ .auth-icon         → Auth form icon                         │
+│                                                             │
+│ Usage:                                                      │
+│ <div class="form-group">                                    │
+│   <label class="form-label">Email</label>                   │
+│   <input class="form-input neu-input" type="email">        │
+│ </div>                                                      │
+└─────────────────────────────────────────────────────────────┘
+*/
+
+/*
+┌─────────────────────────────────────────────────────────────┐
+│ BUTTON VARIANTS                                             │
+├─────────────────────────────────────────────────────────────┤
+│ .neu-btn              → Standard button                      │
+│ .neu-btn.primary      → Primary action (purple)             │
+│ .neu-btn.success      → Success action (green)              │
+│ .neu-btn.danger       → Danger action (red)                 │
+│                                                             │
+│ Usage:                                                      │
+│ <button class="neu-btn primary">Save</button>               │
+│ <button class="neu-btn danger">Delete</button>              │
+└─────────────────────────────────────────────────────────────┘
+*/
+
+/*
+┌─────────────────────────────────────────────────────────────┐
+│ COLOR PALETTE                                               │
+├─────────────────────────────────────────────────────────────┤
+│ CSS Variable Name          │ Color      │ Usage              │
+│ ──────────────────────────┼────────────┼───────────────────  │
+│ --primary-01               │ #667eea    │ Primary actions    │
+│ --primary-02               │ #764ba2    │ Gradients          │
+│ --primary-03               │ #f093fb    │ Accents            │
+│ --success                  │ #10b981    │ Success/positive   │
+│ --warning                  │ #f59e0b    │ Warnings           │
+│ --danger                   │ #ef4444    │ Errors/danger      │
+│ --info                     │ #3b82f6    │ Information        │
+│ --neutral-50 to --neutral-900          │ Grayscale range    │
+│                                                             │
+│ Usage in CSS:                                               │
+│ color: var(--primary-01);                                   │
+│ background: linear-gradient(135deg, var(--primary-01) 0%,   │
+│                             var(--primary-02) 100%);        │
+└─────────────────────────────────────────────────────────────┘
+*/
+
+/*
+┌─────────────────────────────────────────────────────────────┐
+│ SHADOW TOKENS                                               │
+├─────────────────────────────────────────────────────────────┤
+│ --shadow-xs  │ Light shadow for subtle effects              │
+│ --shadow-sm  │ Small shadow                                 │
+│ --shadow-md  │ Medium shadow (default for cards)            │
+│ --shadow-lg  │ Large shadow (hover state)                   │
+│ --shadow-xl  │ Extra large shadow                           │
+│                                                             │
+│ Usage:                                                      │
+│ box-shadow: var(--shadow-md);                               │
+└─────────────────────────────────────────────────────────────┘
+*/
+
+/*
+┌─────────────────────────────────────────────────────────────┐
+│ SPACING TOKENS (CSS Custom Properties)                      │
+├─────────────────────────────────────────────────────────────┤
+│ --space-xs   │ 0.25rem                                       │
+│ --space-sm   │ 0.5rem                                        │
+│ --space-md   │ 1rem     (standard)                           │
+│ --space-lg   │ 1.5rem                                        │
+│ --space-xl   │ 2rem                                          │
+│ --space-2xl  │ 3rem                                          │
+│ --space-3xl  │ 4rem                                          │
+│                                                             │
+│ Usage:                                                      │
+│ padding: var(--space-lg);                                   │
+│ gap: var(--space-md);                                       │
+└─────────────────────────────────────────────────────────────┘
+*/
+
+/*
+┌─────────────────────────────────────────────────────────────┐
+│ ANIMATION & TRANSITIONS                                     │
+├─────────────────────────────────────────────────────────────┤
+│ --transition-fast  │ 0.15s ease-in-out                      │
+│ --transition-base  │ 0.25s ease-in-out                      │
+│ --transition-slow  │ 0.35s ease-in-out                      │
+│                                                             │
+│ Keyframe Animations:                                        │
+│ @keyframes fadeIn         │ Fade in from bottom             │
+│ @keyframes slideInLeft    │ Slide from left                 │
+│ @keyframes slideInRight   │ Slide from right                │
+│                                                             │
+│ Usage:                                                      │
+│ transition: all var(--transition-base);                     │
+│ animation: fadeIn var(--transition-base);                   │
+│ class="animate-fade-in"   (utility class)                   │
+└─────────────────────────────────────────────────────────────┘
+*/
+
+/*
+┌─────────────────────────────────────────────────────────────┐
+│ RESPONSIVE BREAKPOINTS                                      │
+├─────────────────────────────────────────────────────────────┤
+│ Mobile:   < 480px                                           │
+│ Tablet:   480px - 768px                                     │
+│ Desktop:  768px - 1024px                                    │
+│ Large:    > 1024px                                          │
+│ Wide:     > 1920px                                          │
+│                                                             │
+│ Utility Classes:                                            │
+│ .hidden-mobile      │ Hide on mobile                        │
+│ .visible-tablet     │ Show on tablet and up                 │
+│ .show-desktop       │ Show only on desktop                  │
+│ .flex-responsive    │ Stack on mobile                       │
+│ .grid-tablet-2      │ 2 columns on tablet                   │
+│ .grid-desktop-3     │ 3 columns on desktop                  │
+└─────────────────────────────────────────────────────────────┘
+*/
+
+/*
+┌─────────────────────────────────────────────────────────────┐
+│ JAVASCRIPT INTEGRATION                                      │
+├─────────────────────────────────────────────────────────────┤
+│ Data Attributes for JS:                                     │
+│ data-table              │ Initialize DataTable module       │
+│ data-table-search       │ Table search input                 │
+│ data-column             │ Sortable column                    │
+│ data-kpi                │ KPI value element                  │
+│ data-modal              │ Modal trigger                      │
+│ data-sidebar            │ Sidebar element                    │
+│ data-sidebar-toggle     │ Sidebar toggle button              │
+│                                                             │
+│ Example:                                                    │
+│ <table data-table data-sort-column="name">...</table>       │
+│ <input data-table-search type="text">                       │
+└─────────────────────────────────────────────────────────────┘
+*/
+
+/*
+┌─────────────────────────────────────────────────────────────┐
+│ COMMON PATTERNS                                             │
+├─────────────────────────────────────────────────────────────┤
+
+DASHBOARD LAYOUT:
+<div class="dashboard-container">
+  <div class="dashboard-header">Content</div>
+  <section class="dashboard-section">
+    <h2 class="section-title">Section</h2>
+    <div class="kpi-grid">KPI Cards</div>
+  </section>
+</div>
+
+KPI CARD:
+<div class="kpi-card neu-card">
+  <div class="kpi-header">
+    <span class="kpi-label">Label</span>
+    <div class="kpi-icon">📊</div>
+  </div>
+  <p class="kpi-value">1,234</p>
+  <span class="kpi-change">+12% this month</span>
+</div>
+
+DATA TABLE:
+<table class="data-table" data-table>
+  <thead>
+    <tr>
+      <th data-column="name" data-sortable>Name</th>
+    </tr>
+  </thead>
+  <tbody>...</tbody>
+</table>
+
+FORM FIELD:
+<div class="form-group">
+  <label class="form-label">Field Label</label>
+  <input type="text" class="form-input neu-input">
+</div>
+
+BUTTON:
+<button class="neu-btn primary">Save</button>
+
+└─────────────────────────────────────────────────────────────┘
+*/
+
+/*
+┌─────────────────────────────────────────────────────────────┐
+│ DEBUGGING TIPS                                              │
+├─────────────────────────────────────────────────────────────┤
+│ • Check CSS load order in base.html                         │
+│ • Verify data attributes match JS selectors                 │
+│ • Test responsive design at 480px, 768px breakpoints        │
+│ • Check browser console for JS errors                       │
+│ • Use browser DevTools to inspect computed styles           │
+│ • Test keyboard navigation (Tab key)                        │
+│ • Verify color contrast (WCAG AA standard)                  │
+│ • Check form validation in browser console                  │
+└─────────────────────────────────────────────────────────────┘
+*/

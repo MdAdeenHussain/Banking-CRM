@@ -23,9 +23,9 @@ class AnalyticsService:
         approved_leads = Lead.query.filter_by(status='approved').count()
         
         # Commission statistics
-        total_commission = db.session.query(func.sum(CommissionTracker.total_commission)).scalar() or 0
+        total_commission = db.session.query(func.sum(CommissionTracker.gross_commission)).scalar() or 0
         period_commission = db.session.query(
-            func.sum(CommissionTracker.total_commission)
+            func.sum(CommissionTracker.gross_commission)
         ).filter(CommissionTracker.created_at >= start_date).scalar() or 0
         
         # Invoice statistics
@@ -91,7 +91,7 @@ class AnalyticsService:
             date_end = date.replace(hour=23, minute=59, second=59)
             
             amount = db.session.query(
-                func.sum(CommissionTracker.total_commission)
+                func.sum(CommissionTracker.gross_commission)
             ).filter(
                 CommissionTracker.created_at >= date_start,
                 CommissionTracker.created_at <= date_end
@@ -120,14 +120,14 @@ class AnalyticsService:
         top_employees = db.session.query(
             Employee.full_name,
             func.count(Lead.id).label('leads_count'),
-            func.sum(CommissionTracker.employee_cut).label('total_earned'),
-            func.avg(CommissionTracker.employee_cut).label('avg_commission')
+            func.sum(CommissionTracker.employee_share).label('total_earned'),
+            func.avg(CommissionTracker.employee_share).label('avg_commission')
         ).outerjoin(Lead, Lead.created_by_id == Employee.id).outerjoin(
             CommissionTracker, CommissionTracker.employee_id == Employee.id
         ).filter(Employee.status == 'active').group_by(
             Employee.id, Employee.full_name
         ).order_by(
-            func.sum(CommissionTracker.employee_cut).desc()
+            func.sum(CommissionTracker.employee_share).desc()
         ).limit(limit).all()
         
         return [{
@@ -158,7 +158,7 @@ class AnalyticsService:
             ).count()
             
             commissions = db.session.query(
-                func.sum(CommissionTracker.total_commission)
+                func.sum(CommissionTracker.gross_commission)
             ).filter(
                 CommissionTracker.created_at >= month_start,
                 CommissionTracker.created_at < month_end
@@ -171,5 +171,3 @@ class AnalyticsService:
             })
         
         return monthly_data
-        
-        return funnel_data

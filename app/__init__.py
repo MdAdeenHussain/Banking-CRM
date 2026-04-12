@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
 from app.config import config
-from app.models.user import db
+from app.extensions import db
 
 migrate = Migrate()
 
@@ -18,7 +18,7 @@ def create_app(config_name='development'):
     CORS(app, supports_credentials=True)
     
     # Register Blueprints
-    from app.routes import auth_bp, dashboard_bp, leads_bp, employees_bp, commissions_bp, tasks_bp, documents_bp, analytics_bp, invoices_bp, exports_bp, admin_bp
+    from app.routes import auth_bp, dashboard_bp, leads_bp, employees_bp, commissions_bp, tasks_bp, documents_bp, analytics_bp, invoices_bp, exports_bp, admin_bp, notifications_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -31,6 +31,15 @@ def create_app(config_name='development'):
     app.register_blueprint(invoices_bp)
     app.register_blueprint(exports_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(notifications_bp)
+    
+    # Root URL redirect — auto-redirect to login if not logged in
+    @app.route('/')
+    def index():
+        from flask import session, redirect, url_for
+        if 'user_id' in session:
+            return redirect(url_for('dashboard.index'))
+        return redirect(url_for('auth.login'))
     
     # Context Processors - Make variables available in templates
     @app.context_processor
@@ -48,6 +57,14 @@ def create_app(config_name='development'):
     
     # Create Tables
     with app.app_context():
+        # Import ALL models so SQLAlchemy registers them before create_all
+        from app.models import (
+            User, Role, Lead, Employee,
+            CommissionTracker, Document, Task,
+            ActivityLog, AuditLog, Notification,
+            OTP, LeadStatus, BankApplication,
+            ClientFinancial, Invoice, Reminder
+        )
         db.create_all()
         _init_roles()
     

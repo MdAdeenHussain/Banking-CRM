@@ -91,7 +91,7 @@ class CommissionService:
             
             commission.status = 'paid'
             commission.paid_date = datetime.utcnow()
-            commission.paid_amount = paid_amount or commission.total_commission
+            commission.paid_amount = paid_amount or commission.gross_commission
             db.session.commit()
             
             return True
@@ -114,4 +114,4 @@ class CommissionService:
     def get_total_commission_earned(employee_id):
         """Get total commission earned by employee"""
         commissions = CommissionService.get_employee_commissions(employee_id)
-        return sum(c.employee_cut for c in commissions if c.employee_cut)
+        return sum(c.employee_share for c in commissions if c.employee_share)

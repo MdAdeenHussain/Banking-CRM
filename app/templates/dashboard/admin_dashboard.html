@@ -5,199 +5,106 @@
 {% block content %}
 <div class="dashboard-container">
     <div class="dashboard-header">
-        <h1>Admin Dashboard</h1>
-        <p>Welcome back, {{ current_user.full_name }}</p>
-    </div>
-
-    <!-- KPI Cards -->
-    <div class="kpi-grid">
-        <div class="kpi-card">
-            <div class="kpi-icon">👥</div>
-            <h3>Total Users</h3>
-            <p class="kpi-value">{{ total_users }}</p>
-            <span class="kpi-change">{{ new_users_this_month }} new this month</span>
-        </div>
-
-        <div class="kpi-card">
-            <div class="kpi-icon">📊</div>
-            <h3>Total Leads</h3>
-            <p class="kpi-value">{{ total_leads }}</p>
-            <span class="kpi-change">{{ leads_this_month }} this month</span>
-        </div>
-
-        <div class="kpi-card">
-            <div class="kpi-icon">💰</div>
-            <h3>Commissions</h3>
-            <p class="kpi-value">₹{{ "{:,.0f}".format(total_commissions) }}</p>
-            <span class="kpi-change">Pending: ₹{{ "{:,.0f}".format(pending_commissions) }}</span>
-        </div>
-
-        <div class="kpi-card">
-            <div class="kpi-icon">👨‍💼</div>
-            <h3>Active Employees</h3>
-            <p class="kpi-value">{{ total_employees }}</p>
-            <span class="kpi-change">{{ active_employees }} active</span>
+        <div>
+            <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+            <p>Welcome back, {{ current_user.full_name }}</p>
         </div>
     </div>
+
+    <!-- KPI Cards - Bento Grid Layout -->
+    <section class="dashboard-section">
+        <h2 class="section-title">Key Performance Indicators</h2>
+        <div class="kpi-grid">
+            <div class="kpi-card neu-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Total Users</span>
+                    <div class="kpi-icon">👥</div>
+                </div>
+                <p class="kpi-value">{{ dashboard_data.total_users|default(0) }}</p>
+                <span class="kpi-change">{{ dashboard_data.new_users_this_month|default(0) }} new this month</span>
+            </div>
+
+            <div class="kpi-card neu-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Total Leads</span>
+                    <div class="kpi-icon">📊</div>
+                </div>
+                <p class="kpi-value">{{ dashboard_data.total_leads|default(0) }}</p>
+                <span class="kpi-change">{{ dashboard_data.leads_this_month|default(0) }} this month</span>
+            </div>
+
+            <div class="kpi-card neu-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Commissions</span>
+                    <div class="kpi-icon">💰</div>
+                </div>
+                <p class="kpi-value">₹{{ "{:,.0f}".format(dashboard_data.total_commissions|default(0)) }}</p>
+                <span class="kpi-change down">Pending: ₹{{ "{:,.0f}".format(dashboard_data.pending_commissions|default(0)) }}</span>
+            </div>
+
+            <div class="kpi-card neu-card">
+                <div class="kpi-header">
+                    <span class="kpi-label">Active Employees</span>
+                    <div class="kpi-icon">👨‍💼</div>
+                </div>
+                <p class="kpi-value">{{ dashboard_data.total_employees|default(0) }}</p>
+                <span class="kpi-change">{{ dashboard_data.active_employees|default(0) }} active</span>
+            </div>
+        </div>
+    </section>
 
     <!-- Quick Actions -->
-    <div class="quick-actions">
-        <h2>Quick Actions</h2>
+    <section class="dashboard-section">
+        <h2 class="section-title">Quick Actions</h2>
         <div class="action-grid">
-            <a href="{{ url_for('admin.manage_users') }}" class="action-card">
+            <a href="{{ url_for('admin.manage_users') }}" class="action-card neu-card">
                 <span class="icon">🔑</span>
                 <span>Manage Users</span>
             </a>
-            <a href="{{ url_for('employees.list_employees') }}" class="action-card">
+            <a href="{{ url_for('employees.list_employees') }}" class="action-card neu-card">
                 <span class="icon">👔</span>
                 <span>Employees</span>
             </a>
-            <a href="{{ url_for('admin.manage_roles') }}" class="action-card">
-                <span class="icon">⚙️</span>
-                <span>Roles & Permissions</span>
+            <a href="{{ url_for('leads.list_leads') }}" class="action-card neu-card">
+                <span class="icon">🎯</span>
+                <span>Leads</span>
             </a>
-            <a href="{{ url_for('admin.view_audit_logs') }}" class="action-card">
+            <a href="{{ url_for('admin.view_audit_logs') }}" class="action-card neu-card">
                 <span class="icon">📋</span>
                 <span>Audit Logs</span>
             </a>
         </div>
-    </div>
+    </section>
 
     <!-- Recent Activity -->
-    <div class="activity-section">
-        <h2>Recent Activity</h2>
-        <div class="activity-list">
-            {% for log in recent_logs %}
-            <div class="activity-item">
-                <span class="activity-badge {{ log.action|lower }}">{{ log.action }}</span>
-                <div class="activity-details">
-                    <p><strong>{{ log.resource }}</strong> - {{ log.details }}</p>
-                    <small>{{ log.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
-                </div>
+    <section class="dashboard-section">
+        <h2 class="section-title">Recent Activity</h2>
+        <div class="activity-section neu-card">
+            <div class="activity-list">
+                {% if recent_logs %}
+                    {% for log in recent_logs %}
+                    <div class="activity-item">
+                        <span class="activity-badge {{ log.action|lower if log.action else 'default' }}">
+                            {{ log.action|upper if log.action else 'ACTION' }}
+                        </span>
+                        <div class="activity-details">
+                            <p><strong>{{ log.resource|default('System') }}</strong> - {{ log.details|default('Activity logged') }}</p>
+                            <small>{{ log.created_at.strftime('%Y-%m-%d %H:%M') if log.created_at else 'N/A' }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="activity-item">
+                        <p class="text-center opacity-50">No recent activity</p>
+                    </div>
+                {% endif %}
             </div>
-            {% endfor %}
         </div>
-    </div>
+    </section>
 </div>
 
-<style>
-.dashboard-header {
-    margin-bottom: 2rem;
-}
 
-.dashboard-header h1 {
-    font-size: 2rem;
-    color: #1f4788;
-    margin: 0;
-}
-
-.dashboard-header p {
-    color: #748390;
-    margin: 0.5rem 0 0 0;
-}
-
-.kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin: 2rem 0;
-}
-
-.kpi-card {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    padding: 1.5rem;
-    border-radius: 15px;
-    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
-    transition: all 0.3s ease;
-    border-left: 4px solid #576cbe;
-}
-
-.kpi-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 12px 12px 20px #bebebe, -8px -8px 20px #ffffff;
-}
-
-.kpi-icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-}
-
-.kpi-card h3 {
-    color: #2d3e50;
-    font-size: 0.9rem;
-    margin: 0.5rem 0;
-    text-transform: uppercase;
-}
-
-.kpi-value {
-    font-size: 1.75rem;
-    font-weight: bold;
-    color: #1f4788;
-    margin: 0.5rem 0;
-}
-
-.kpi-change {
-    font-size: 0.75rem;
-    color: #748390;
-    display: block;
-}
-
-.quick-actions {
-    margin: 3rem 0;
-}
-
-.quick-actions h2 {
-    color: #1f4788;
-    margin-bottom: 1rem;
-}
-
-.action-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-}
-
-.action-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1.5rem;
-    border-radius: 12px;
-    text-decoration: none;
-    text-align: center;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.action-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-}
-
-.action-card .icon {
-    font-size: 2rem;
-}
-
-.activity-section {
-    margin: 3rem 0;
-}
-
-.activity-section h2 {
-    color: #1f4788;
-    margin-bottom: 1rem;
-}
-
-.activity-list {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    border-radius: 15px;
-    padding: 1.5rem;
-    box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
-}
-
-.activity-item {
-    display: flex;
+{% endblock %}
     gap: 1rem;
     padding: 1rem 0;
     border-bottom: 1px solid rgba(0,0,0,0.05);
@@ -252,4 +159,8 @@
     }
 }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard/admin_dashboard.js') }}"></script>
 {% endblock %}

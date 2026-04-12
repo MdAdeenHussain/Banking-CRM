@@ -1,9 +1,11 @@
 /**
  * Dashboard Functions
  * Handles dashboard interactions, data loading, and updates
+ * Implements Neumorphism + Bento Grid + Data UI
  */
 
 let dashboardCharts = {};
+let autoRefreshInterval = null;
 
 /**
  * Initialize dashboard
@@ -14,6 +16,17 @@ function initializeDashboard() {
     loadDashboardData();
     setUpDashboardEventListeners();
     attachRefreshHandlers();
+    setupAutoRefresh();
+    animateDashboardCards();
+}
+
+/**
+ * Setup auto-refresh of dashboard data
+ */
+function setupAutoRefresh() {
+    autoRefreshInterval = setInterval(() => {
+        loadDashboardData();
+    }, 30000); // Refresh every 30 seconds
 }
 
 /**
@@ -21,7 +34,7 @@ function initializeDashboard() {
  */
 async function loadDashboardData() {
     try {
-        const response = await apiGet('/api/dashboard/data');
+        const response = await fetch('/dashboard/api/kpis').then(res => res.json());
         updateDashboardUI(response);
     } catch (error) {
         console.error('Failed to load dashboard data:', error);
@@ -33,8 +46,8 @@ async function loadDashboardData() {
  * Update dashboard UI with data
  */
 function updateDashboardUI(data) {
-    updateKPICards(data.kpis);
-    updateActivityFeed(data.activities);
+    updateKPICards(data.kpis || {});
+    updateActivityFeed(data.activities || []);
     updateCharts(data);
 }
 
@@ -197,6 +210,19 @@ function showTab(tabId) {
     if (tabContent) {
         tabContent.classList.add('active', 'show');
     }
+}
+
+/**
+ * Animate dashboard cards on load
+ */
+function animateDashboardCards() {
+    const cards = document.querySelectorAll('.kpi-card, .neu-card');
+    cards.forEach((card, index) => {
+        card.style.animation = `none`;
+        setTimeout(() => {
+            card.classList.add('animate-fade-in');
+        }, index * 50);
+    });
 }
 
 /**

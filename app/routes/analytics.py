@@ -105,32 +105,32 @@ def commissions_analytics():
     start_date = datetime.utcnow() - timedelta(days=time_period)
     
     # Commission statistics
-    total_commission = db.session.query(func.sum(CommissionTracker.total_commission)).scalar() or 0
+    total_commission = db.session.query(func.sum(CommissionTracker.gross_commission)).scalar() or 0
     period_commission = db.session.query(
-        func.sum(CommissionTracker.total_commission)
+        func.sum(CommissionTracker.gross_commission)
     ).filter(CommissionTracker.created_at >= start_date).scalar() or 0
     
     # Commission by status
     commission_by_status = db.session.query(
         CommissionTracker.status,
         func.count(CommissionTracker.id).label('count'),
-        func.sum(CommissionTracker.total_commission).label('amount')
+        func.sum(CommissionTracker.gross_commission).label('amount')
     ).group_by(CommissionTracker.status).all()
     
     # Top commission earners
     top_earners = db.session.query(
         Employee.full_name,
-        func.sum(CommissionTracker.employee_cut).label('total_cut')
+        func.sum(CommissionTracker.employee_share).label('total_cut')
     ).join(CommissionTracker).filter(
         CommissionTracker.created_at >= start_date
     ).group_by(Employee.id, Employee.full_name).order_by(
-        func.sum(CommissionTracker.employee_cut).desc()
+        func.sum(CommissionTracker.employee_share).desc()
     ).limit(10).all()
     
     # Commission split analysis
-    total_employee_cut = db.session.query(func.sum(CommissionTracker.employee_cut)).scalar() or 0
-    total_admin_cut = db.session.query(func.sum(CommissionTracker.admin_cut)).scalar() or 0
-    total_company_cut = db.session.query(func.sum(CommissionTracker.company_cut)).scalar() or 0
+    total_employee_cut = db.session.query(func.sum(CommissionTracker.employee_share)).scalar() or 0
+    total_admin_cut = db.session.query(func.sum(CommissionTracker.admin_share)).scalar() or 0
+    total_company_cut = db.session.query(func.sum(CommissionTracker.company_share)).scalar() or 0
     
     return render_template(
         'analytics/commissions.html',
@@ -164,7 +164,7 @@ def employees_analytics():
         Employee.position,
         func.count(Lead.id).label('leads_count'),
         func.sum(Lead.loan_amount_applied).label('total_loan_amount'),
-        func.sum(CommissionTracker.employee_cut).label('total_commission')
+        func.sum(CommissionTracker.employee_share).label('total_commission')
     ).outerjoin(Lead, Lead.created_by_id == Employee.id).outerjoin(
         CommissionTracker, CommissionTracker.employee_id == Employee.id
     ).filter(

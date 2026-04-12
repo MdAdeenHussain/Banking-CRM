@@ -48,8 +48,8 @@ def list_commissions():
     employees = Employee.query.filter_by(status='active').all()
     
     # Statistics
-    total_commissions = db.session.query(func.sum(CommissionTracker.total_commission)).scalar() or 0
-    pending_commissions = db.session.query(func.sum(CommissionTracker.total_commission)).filter(
+    total_commissions = db.session.query(func.sum(CommissionTracker.gross_commission)).scalar() or 0
+    pending_commissions = db.session.query(func.sum(CommissionTracker.gross_commission)).filter(
         CommissionTracker.status == 'pending'
     ).scalar() or 0
     
@@ -105,7 +105,7 @@ def edit_commission(commission_id):
         
         if request.form.get('status') == 'paid':
             commission.paid_date = datetime.utcnow()
-            commission.paid_amount = commission.total_commission
+            commission.paid_amount = commission.gross_commission
         
         db.session.commit()
         
@@ -183,7 +183,7 @@ def approve_commission(commission_id):
             action='APPROVE',
             resource='Commission',
             resource_id=str(commission.id),
-            details=f"Approved commission: {commission.total_commission}"
+            details=f"Approved commission: {commission.gross_commission}"
         )
         
         return jsonify({'success': True, 'message': 'Commission approved'})
@@ -208,7 +208,7 @@ def mark_commissions_paid():
         for commission in commissions:
             commission.status = 'paid'
             commission.paid_date = paid_date
-            commission.paid_amount = commission.total_commission
+            commission.paid_amount = commission.gross_commission
         
         db.session.commit()
         
@@ -274,10 +274,10 @@ def export_commissions():
                 employee.full_name if employee else 'N/A',
                 commission.lead_amount,
                 commission.commission_percentage,
-                commission.total_commission,
-                commission.employee_cut,
-                commission.admin_cut,
-                commission.company_cut,
+                commission.gross_commission,
+                commission.employee_share,
+                commission.admin_share,
+                commission.company_share,
                 commission.status,
                 commission.created_at.strftime('%Y-%m-%d'),
                 commission.paid_date.strftime('%Y-%m-%d') if commission.paid_date else 'N/A'
@@ -322,11 +322,11 @@ def employee_commissions(employee_id):
     commissions = query.order_by(CommissionTracker.created_at.desc()).paginate(page=page, per_page=25)
     
     # Statistics for this employee
-    total_earned = db.session.query(func.sum(CommissionTracker.employee_cut)).filter(
+    total_earned = db.session.query(func.sum(CommissionTracker.employee_share)).filter(
         CommissionTracker.employee_id == employee_id
     ).scalar() or 0
     
-    pending_amount = db.session.query(func.sum(CommissionTracker.employee_cut)).filter(
+    pending_amount = db.session.query(func.sum(CommissionTracker.employee_share)).filter(
         CommissionTracker.employee_id == employee_id,
         CommissionTracker.status == 'pending'
     ).scalar() or 0
@@ -348,7 +348,7 @@ def employee_commissions(employee_id):
 def api_commission_stats():
     """API endpoint for commission statistics"""
     stats = {
-        'total_commissions': db.session.query(func.sum(CommissionTracker.total_commission)).scalar() or 0,
+        'total_commissions': db.session.query(func.sum(CommissionTracker.gross_commission)).scalar() or 0,
         'pending': db.session.query(func.count(CommissionTracker.id)).filter(
             CommissionTracker.status == 'pending'
         ).scalar() or 0,

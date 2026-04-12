@@ -1,0 +1,52 @@
+.verify-otp-page .auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 100px);
+}
+
+.otp-card {
+    max-width: 400px;
+}
+
+.otp-input-group {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.otp-input {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #2d3e50;
+    box-shadow: inset 2px 2px 5px #d9e0e8, inset -2px -2px 5px #ffffff;
+    transition: all 0.3s ease;
+}
+
+.otp-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(87, 108, 190, 0.3);
+}
+
+@media (max-width: 768px) {
+    .otp-card {
+        margin: 2rem;
+    }
+
+    .otp-input {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+
+    .otp-input-group {
+        gap: 0.5rem;
+    }
+}
+

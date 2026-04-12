@@ -1,14 +1,20 @@
 import os
 from datetime import timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Config:
     """Base Configuration"""
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///crm_dsa.db')
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        'DATABASE_URL',
+        'postgresql://postgres:postgres@localhost:5432/banking_crm_db'
+    )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
     
     # Security
-    SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
+    SECRET_KEY = os.getenv('SECRET_KEY', 'a3f8b2c1d4e5f6071829304a5b6c7d8e9f0a1b2c3d4e5f60718293a4b5c6d7e8')
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
@@ -40,6 +46,7 @@ class DevelopmentConfig(Config):
     """Development Configuration"""
     DEBUG = True
     SQLALCHEMY_ECHO = True
+    SESSION_COOKIE_SECURE = False
 
 class ProductionConfig(Config):
     """Production Configuration"""
@@ -49,7 +56,10 @@ class ProductionConfig(Config):
 class TestingConfig(Config):
     """Testing Configuration"""
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        'TEST_DATABASE_URL',
+        'postgresql://postgres:postgres@localhost:5432/banking_crm_test_db'
+    )
     WTF_CSRF_ENABLED = False
 
 config = {

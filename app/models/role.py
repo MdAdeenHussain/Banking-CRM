@@ -1,6 +1,8 @@
 """Role Model for RBAC"""
 from app.extensions import db
-from datetime import datetime
+from sqlalchemy.dialects.postgresql import UUID as PGUUID, JSONB
+from sqlalchemy import DateTime
+from sqlalchemy.sql import func
 import uuid
 
 
@@ -8,12 +10,12 @@ class Role(db.Model):
     """Role Model for RBAC"""
     __tablename__ = 'roles'
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = db.Column(PGUUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
     name = db.Column(db.String(50), unique=True, nullable=False, index=True)  # SUPER_ADMIN, ADMIN, EMPLOYEE
     description = db.Column(db.Text, nullable=True)
-    permissions = db.Column(db.JSON, default={})  # JSON array of permissions
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    permissions = db.Column(JSONB, default={})  # JSON array of permissions
+    created_at = db.Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = db.Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=True)
     
     # Default Permissions Structure
     SUPER_ADMIN_PERMS = {

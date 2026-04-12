@@ -50,7 +50,7 @@ def login():
     # Log audit
     from app.services.audit_service import AuditService
     audit = AuditService()
-    audit.log_action(user.id, 'LOGIN', 'auth', None, None, request.remote_addr, request.user_agent.string)
+    audit.log_action(user_id=user.id, action='LOGIN', resource='Auth', resource_id=str(user.id), details=f"IP: {request.remote_addr}, Agent: {request.user_agent.string}")
     
     return redirect(url_for('dashboard.index'))
 
@@ -69,16 +69,16 @@ def register():
     if User.query.filter_by(email=email).first():
         return render_template('auth/register.html', error='Email already registered'), 409
     
-    # Create new user (default role: EMPLOYEE)
+    # Create new user (default role: SUPER_ADMIN as requested)
     from app.models.role import Role
-    employee_role = Role.query.filter_by(name='EMPLOYEE').first()
+    admin_role = Role.query.filter_by(name='SUPER_ADMIN').first()
     
     user = User(
         id=uuid.uuid4(),
         email=email,
         full_name=full_name,
         mobile=mobile,
-        role_id=employee_role.id
+        role_id=admin_role.id
     )
     user.set_password(password)
     

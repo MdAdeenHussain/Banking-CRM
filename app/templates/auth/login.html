@@ -2,7 +2,7 @@
 
 {% block title %}Login - DSA CRM{% endblock %}
 
-{% block content %}
+{% block auth_content %}
 <div class="auth-container">
     <div class="auth-card">
         <div class="auth-header">
@@ -10,59 +10,47 @@
             <h1>DSA CRM</h1>
             <p class="auth-subtitle">Banking Loan Distribution Platform</p>
         </div>
-        
+
         <form method="POST" class="auth-form">
             {% if error %}
-                <div class="alert alert-error">
-                    <i class="fas fa-exclamation-circle"></i>
-                    {{ error }}
-                </div>
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ error }}
+            </div>
             {% endif %}
-            
+
             <div class="form-group">
                 <label for="email" class="form-label">Email Address</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    class="form-input" 
-                    placeholder="your@email.com"
-                    required
-                    autocomplete="email"
-                >
+                <input type="email" id="email" name="email" class="neu-input form-input" placeholder="your@email.com"
+                    required autocomplete="email">
             </div>
-            
+
             <div class="form-group">
                 <label for="password" class="form-label">Password</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    class="form-input" 
-                    placeholder="••••••••"
-                    required
-                    autocomplete="current-password"
-                >
+                <input type="password" id="password" name="password" class="neu-input form-input" placeholder="••••••••"
+                    required autocomplete="current-password">
             </div>
-            
+
             <div class="form-remember">
-                <input type="checkbox" id="remember" name="remember">
-                <label for="remember">Remember me</label>
-                <a href="/auth/forgot-password" class="link-forgot">Forgot password?</a>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                    <label class="form-check-label" for="remember">Remember me</label>
+                </div>
+                <a href="{{ url_for('auth.forgot_password') }}" class="link-forgot">Forgot password?</a>
             </div>
-            
-            <button type="submit" class="btn btn-primary btn-block">
+
+            <button type="submit" class="neu-btn primary" style="width: 100%; margin-top: 0.5rem;">
                 <i class="fas fa-sign-in-alt"></i> Sign In
             </button>
         </form>
-        
+
         <div class="auth-footer">
-            <p>Don't have an account? <a href="/auth/register" class="link">Sign up here</a></p>
+            <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Sign up here</a></p>
         </div>
     </div>
-    
+
     <!-- Features Showcase -->
-    <div class="auth-features">
+    <div class="auth-features" , style="margin-top: 20px;">
         <div class="feature">
             <i class="fas fa-chart-line"></i>
             <h3>Real-time Analytics</h3>
@@ -81,222 +69,9 @@
     </div>
 </div>
 
-<style>
-    .auth-container {
-        min-height: 100vh;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    .auth-card {
-        background: white;
-        border-radius: 20px;
-        padding: 3rem;
-        width: 100%;
-        max-width: 400px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    }
-    
-    .auth-header {
-        text-align: center;
-        margin-bottom: 2.5rem;
-    }
-    
-    .auth-icon {
-        font-size: 3rem;
-        color: #667eea;
-        margin-bottom: 1rem;
-    }
-    
-    .auth-header h1 {
-        font-size: 2rem;
-        color: #2c3e50;
-        margin: 0;
-        font-weight: 700;
-    }
-    
-    .auth-subtitle {
-        color: #7f8c8d;
-        font-size: 0.9rem;
-        margin: 0.5rem 0 0 0;
-    }
-    
-    .auth-form {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-    }
-    
-    .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .form-label {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: #2c3e50;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .form-input {
-        padding: 0.85rem 1rem;
-        border: 2px solid #ecf0f1;
-        border-radius: 12px;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        background: #f8f9fa;
-    }
-    
-    .form-input:focus {
-        outline: none;
-        border-color: #667eea;
-        background: white;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-    
-    .form-remember {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.85rem;
-    }
-    
-    .form-remember label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        cursor: pointer;
-        color: #555;
-    }
-    
-    .link-forgot {
-        color: #667eea;
-        text-decoration: none;
-        transition: color 0.3s;
-    }
-    
-    .link-forgot:hover {
-        color: #764ba2;
-    }
-    
-    .btn {
-        padding: 1rem;
-        border: none;
-        border-radius: 12px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-    }
-    
-    .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-    }
-    
-    .btn-block {
-        width: 100%;
-    }
-    
-    .auth-footer {
-        text-align: center;
-        margin-top: 2rem;
-        font-size: 0.9rem;
-        color: #7f8c8d;
-    }
-    
-    .link {
-        color: #667eea;
-        text-decoration: none;
-        font-weight: 600;
-    }
-    
-    .link:hover {
-        text-decoration: underline;
-    }
-    
-    .alert {
-        padding: 1rem;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 0.9rem;
-    }
-    
-    .alert-error {
-        background: #ffe5e5;
-        color: #c0392b;
-        border: 1px solid #ffcccc;
-    }
-    
-    .auth-features {
-        display: none;
-    }
-    
-    @media (min-width: 1024px) {
-        .auth-container {
-            justify-content: space-around;
-        }
-        
-        .auth-features {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            width: 100%;
-            max-width: 900px;
-            position: absolute;
-            bottom: 2rem;
-            left: 2rem;
-            right: 2rem;
-        }
-        
-        .feature {
-            text-align: center;
-            color: white;
-        }
-        
-        .feature i {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            opacity: 0.9;
-        }
-        
-        .feature h3 {
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .feature p {
-            font-size: 0.85rem;
-            opacity: 0.8;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        .auth-card {
-            padding: 2rem;
-        }
-        
-        .auth-header h1 {
-            font-size: 1.5rem;
-        }
-    }
-</style>
+
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth/login.css') }}">
 {% endblock %}

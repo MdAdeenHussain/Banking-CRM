@@ -215,10 +215,10 @@ def export_commissions_csv():
                 employee.full_name if employee else 'N/A',
                 commission.lead_amount,
                 commission.commission_percentage,
-                commission.total_commission,
-                commission.employee_cut,
-                commission.admin_cut,
-                commission.company_cut,
+                commission.gross_commission,
+                commission.employee_share,
+                commission.admin_share,
+                commission.company_share,
                 commission.status,
                 commission.created_at.strftime('%Y-%m-%d'),
                 commission.paid_date.strftime('%Y-%m-%d') if commission.paid_date else 'N/A'
@@ -380,13 +380,6 @@ def export_employees_csv():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 400
-
-    
-    return send_file(
-        BytesIO(csv_data.encode()),
-        mimetype='text/csv',
-        attachment_filename=f'commissions_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
-    )
 
 @exports_bp.route('/employee-report/<employee_id>')
 @login_required

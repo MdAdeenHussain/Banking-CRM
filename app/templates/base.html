@@ -7,9 +7,11 @@
     <title>{% block title %}DSA CRM - Banking Loan Distribution{% endblock %}</title>
     
     <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-system.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
     
     <!-- Chart.js for Analytics -->
@@ -21,8 +23,8 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Navigation Bar -->
     {% if 'user_id' in session %}
+        <!-- Navigation Bar -->
         {% include 'layouts/navbar.html' %}
         <div class="main-container">
             <!-- Sidebar -->
@@ -50,7 +52,7 @@
         {% include 'layouts/footer.html' %}
     {% else %}
         <!-- Auth Pages (No Sidebar/Navbar) -->
-        {% block content %}{% endblock %}
+        {% block auth_content %}{% endblock %}
     {% endif %}
     
     <!-- JavaScripts -->
@@ -58,6 +60,9 @@
     <script src="{{ url_for('static', filename='js/forms.js') }}"></script>
     <script src="{{ url_for('static', filename='js/api.js') }}"></script>
     <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tables.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
     
     {% block extra_js %}{% endblock %}
 </body>
