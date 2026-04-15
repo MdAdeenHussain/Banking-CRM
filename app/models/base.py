@@ -1,73 +1,62 @@
-"""
-LoanAxis CRM — Base Model Mixin
-
-Provides UUID primary key, timestamps, and soft-delete functionality
-inherited by all domain models.
-"""
-
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Column, Boolean, DateTime, String
-from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+from sqlalchemy import Boolean, DateTime
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
+from sqlalchemy.sql import func
+
 from app.extensions import db
-
-
-def generate_uuid():
-    """Generate a new UUID4 string for use as primary key."""
-    return str(uuid.uuid4())
 
 
 class BaseModel(db.Model):
     """
-    Abstract base model providing:
-    - UUID primary key (string-based for SQLite compatibility)
-    - created_at / updated_at timestamps
-    - Soft delete (is_deleted + deleted_at)
+    Abstract base model. Provides UUID PK, timestamps,
+    and soft-delete for all child models.
+    Uses PostgreSQL-native UUID and TIMESTAMPTZ.
     """
 
     __abstract__ = True
 
-    id = Column(
-        String(36),
+    id = db.Column(
+        PGUUID(as_uuid=True),
         primary_key=True,
-        default=generate_uuid,
+        default=uuid.uuid4,
         nullable=False,
     )
-    created_at = Column(
+    created_at = db.Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        server_default=func.now(),
         nullable=False,
     )
-    updated_at = Column(
+    updated_at = db.Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=True,
+    )
+    is_deleted = db.Column(
+        Boolean,
+        default=False,
         nullable=False,
     )
-    is_deleted = Column(Boolean, default=False, nullable=False)
-    deleted_at = Column(DateTime(timezone=True), nullable=True)
+    deleted_at = db.Column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
 
     def soft_delete(self):
-        """Mark record as deleted without removing from database."""
+        """Mark record as deleted without removing from DB."""
         self.is_deleted = True
         self.deleted_at = datetime.now(timezone.utc)
 
-    def restore(self):
-        """Restore a soft-deleted record."""
-        self.is_deleted = False
-        self.deleted_at = None
-
     def to_dict(self) -> dict:
-        """
-        Base dictionary representation.
-        Subclasses should override and extend this.
-        """
-        return {
-            "id": self.id,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
-        }
-
-    def __repr__(self):
-        return f"<{self.__class__.__name__} {self.id}>"
+        """Return serializable dict of all columns."""
+        result = {}
+        for col in self.__table__.columns:
+            val = getattr(self, col.name)
+            if isinstance(val, uuid.UUID):
+                val = str(val)
+            elif isinstance(val, datetime):
+                val = val.isoformat()
+            result[col.name] = val
+        return result

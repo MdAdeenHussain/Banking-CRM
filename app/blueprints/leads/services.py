@@ -79,6 +79,8 @@ def create_lead(data: dict, created_by_user: User) -> Tuple[Lead, Optional[str]]
         lead.is_high_value = True
 
     db.session.add(lead)
+    # Ensure lead.id is populated before we create dependent rows (UUID PK may be assigned on flush).
+    db.session.flush()
 
     # Create initial status history
     history = LeadStatusHistory(

@@ -1,23 +1,24 @@
-"""
-LoanAxis CRM — Notification Model
-
-In-app notifications for lead assignments, status changes,
-task reminders, payout updates, etc.
-"""
-
 from datetime import datetime, timezone
 
-from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, Text
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
 
+from app.extensions import db
 from app.models.base import BaseModel
 
 
 NOTIFICATION_TYPES = [
-    "lead_assigned", "lead_status_changed", "document_uploaded",
-    "task_due_today", "task_overdue", "payout_received",
-    "payout_pending", "commission_credited",
-    "new_employee_joined", "login_from_new_device",
-    "system", "info",
+    "lead_assigned",
+    "lead_status_changed",
+    "document_uploaded",
+    "task_due_today",
+    "task_overdue",
+    "payout_received",
+    "payout_pending",
+    "commission_credited",
+    "new_employee_joined",
+    "login_from_new_device",
+    "system",
+    "info",
 ]
 
 
@@ -26,29 +27,30 @@ class Notification(BaseModel):
 
     __tablename__ = "notifications"
 
-    user_id = Column(String(36), ForeignKey("users.id"), nullable=False, index=True)
-
-    # ── Content ─────────────────────────────────────────────
-    type = Column(String(40), nullable=False, default="info")
-    title = Column(String(300), nullable=False)
-    body = Column(Text, nullable=True)
-
-    # ── Related Entity ──────────────────────────────────────
-    related_model = Column(String(50), nullable=True)  # e.g., "lead", "task"
-    related_id = Column(String(36), nullable=True)
-
-    # ── Read State ──────────────────────────────────────────
-    is_read = Column(Boolean, default=False, nullable=False)
-    read_at = Column(DateTime(timezone=True), nullable=True)
+    user_id = db.Column(
+        PGUUID(as_uuid=True),
+        db.ForeignKey("users.id"),
+        nullable=False,
+        index=True,
+    )
+    type = db.Column(
+        db.Enum(*NOTIFICATION_TYPES, name="notif_type_enum"),
+        nullable=False,
+        default="info",
+    )
+    title = db.Column(db.String(300), nullable=False)
+    body = db.Column(db.Text, nullable=True)
+    related_model = db.Column(db.String(50), nullable=True)
+    related_id = db.Column(PGUUID(as_uuid=True), nullable=True)
+    is_read = db.Column(db.Boolean, default=False, nullable=False)
+    read_at = db.Column(db.DateTime(timezone=True), nullable=True)
 
     def mark_read(self) -> None:
-        """Mark notification as read."""
         self.is_read = True
         self.read_at = datetime.now(timezone.utc)
 
     @property
     def icon(self) -> str:
-        """Return Lucide icon name for notification type."""
         icons = {
             "lead_assigned": "user-plus",
             "lead_status_changed": "git-branch",
@@ -67,14 +69,16 @@ class Notification(BaseModel):
 
     def to_dict(self) -> dict:
         base = super().to_dict()
-        base.update({
-            "user_id": self.user_id,
-            "type": self.type,
-            "title": self.title,
-            "body": self.body,
-            "related_model": self.related_model,
-            "related_id": self.related_id,
-            "is_read": self.is_read,
-            "icon": self.icon,
-        })
+        base.update(
+            {
+                "user_id": str(self.user_id),
+                "type": self.type,
+                "title": self.title,
+                "body": self.body,
+                "related_model": self.related_model,
+                "related_id": str(self.related_id) if self.related_id else None,
+                "is_read": self.is_read,
+                "icon": self.icon,
+            }
+        )
         return base

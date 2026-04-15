@@ -1,15 +1,7 @@
-"""
-LoanAxis CRM — Invoice Model
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
 
-GST-compliant invoice generation for commission payouts.
-Line items stored as JSON for flexible schema.
-"""
-
-from datetime import datetime, timezone
-
-from sqlalchemy import Column, String, Float, DateTime, ForeignKey, Text, JSON
-from sqlalchemy.orm import relationship
-
+from app.extensions import db
 from app.models.base import BaseModel
 
 
@@ -21,55 +13,44 @@ class Invoice(BaseModel):
 
     __tablename__ = "invoices"
 
-    # ── Invoice Identity ────────────────────────────────────
-    invoice_number = Column(String(30), unique=True, nullable=False)
-    invoice_date = Column(DateTime(timezone=True), nullable=False)
-    due_date = Column(DateTime(timezone=True), nullable=True)
+    invoice_number = db.Column(db.String(30), unique=True, nullable=False)
+    invoice_date = db.Column(db.DateTime(timezone=True), nullable=False)
+    due_date = db.Column(db.DateTime(timezone=True), nullable=True)
+    party_name = db.Column(db.String(200), nullable=False)
+    party_address = db.Column(db.Text, nullable=True)
+    party_gstin = db.Column(db.String(15), nullable=True)
+    line_items = db.Column(JSONB, nullable=False, default=list)
+    subtotal = db.Column(db.Float, nullable=False, default=0.0)
+    cgst_rate = db.Column(db.Float, nullable=True, default=9.0)
+    cgst_amount = db.Column(db.Float, nullable=True, default=0.0)
+    sgst_rate = db.Column(db.Float, nullable=True, default=9.0)
+    sgst_amount = db.Column(db.Float, nullable=True, default=0.0)
+    igst_rate = db.Column(db.Float, nullable=True, default=0.0)
+    igst_amount = db.Column(db.Float, nullable=True, default=0.0)
+    total_amount = db.Column(db.Float, nullable=False, default=0.0)
+    amount_in_words = db.Column(db.String(500), nullable=True)
+    payment_status = db.Column(
+        db.Enum(*PAYMENT_STATUSES, name="payment_status_enum"),
+        nullable=False,
+        default="Unpaid",
+    )
+    payment_method = db.Column(db.String(50), nullable=True)
+    payment_reference = db.Column(db.String(200), nullable=True)
+    paid_date = db.Column(db.DateTime(timezone=True), nullable=True)
+    notes = db.Column(db.Text, nullable=True)
+    generated_by = db.Column(
+        PGUUID(as_uuid=True),
+        db.ForeignKey("users.id"),
+        nullable=True,
+    )
+    commission_id = db.Column(PGUUID(as_uuid=True), nullable=True)
+    pdf_path = db.Column(db.String(500), nullable=True)
 
-    # ── Party Details ───────────────────────────────────────
-    party_name = Column(String(200), nullable=False)
-    party_address = Column(Text, nullable=True)
-    party_gstin = Column(String(15), nullable=True)
-
-    # ── Line Items (JSONB) ──────────────────────────────────
-    # Format: [{"description": str, "hsn_sac": str, "qty": int,
-    #           "rate": float, "amount": float}]
-    line_items = Column(JSON, nullable=False, default=list)
-
-    # ── Totals ──────────────────────────────────────────────
-    subtotal = Column(Float, nullable=False, default=0.0)
-    cgst_rate = Column(Float, nullable=True, default=9.0)
-    cgst_amount = Column(Float, nullable=True, default=0.0)
-    sgst_rate = Column(Float, nullable=True, default=9.0)
-    sgst_amount = Column(Float, nullable=True, default=0.0)
-    igst_rate = Column(Float, nullable=True, default=0.0)
-    igst_amount = Column(Float, nullable=True, default=0.0)
-    total_amount = Column(Float, nullable=False, default=0.0)
-    amount_in_words = Column(String(500), nullable=True)
-
-    # ── Payment ─────────────────────────────────────────────
-    payment_status = Column(String(20), nullable=False, default="Unpaid")
-    payment_method = Column(String(50), nullable=True)
-    payment_reference = Column(String(200), nullable=True)
-    paid_date = Column(DateTime(timezone=True), nullable=True)
-
-    # ── Notes ───────────────────────────────────────────────
-    notes = Column(Text, nullable=True)
-
-    # ── Meta ────────────────────────────────────────────────
-    generated_by = Column(String(36), ForeignKey("users.id"), nullable=True)
-    commission_id = Column(String(36), nullable=True)  # Not FK to avoid circular
-    pdf_path = Column(String(500), nullable=True)
-
-    # ── Relationships ───────────────────────────────────────
-    generator = relationship("User", foreign_keys=[generated_by])
+    generator = db.relationship("User", foreign_keys=[generated_by])
 
     def calculate_totals(self) -> None:
-        """Calculate subtotal and GST amounts from line items."""
         items = self.line_items or []
         self.subtotal = round(sum(item.get("amount", 0) for item in items), 2)
-
-        # Determine GST type (CGST+SGST for intra-state, IGST for inter-state)
         if self.igst_rate and self.igst_rate > 0:
             self.igst_amount = round(self.subtotal * self.igst_rate / 100, 2)
             self.cgst_amount = 0.0
@@ -80,20 +61,25 @@ class Invoice(BaseModel):
             self.sgst_amount = round(self.subtotal * (self.sgst_rate or 0) / 100, 2)
             self.igst_amount = 0.0
             self.total_amount = round(
-                self.subtotal + self.cgst_amount + self.sgst_amount, 2
+                self.subtotal + self.cgst_amount + self.sgst_amount,
+                2,
             )
 
     def to_dict(self) -> dict:
         base = super().to_dict()
-        base.update({
-            "invoice_number": self.invoice_number,
-            "invoice_date": self.invoice_date.isoformat() if self.invoice_date else None,
-            "due_date": self.due_date.isoformat() if self.due_date else None,
-            "party_name": self.party_name,
-            "party_gstin": self.party_gstin,
-            "subtotal": self.subtotal,
-            "total_amount": self.total_amount,
-            "payment_status": self.payment_status,
-            "line_items": self.line_items,
-        })
+        base.update(
+            {
+                "invoice_number": self.invoice_number,
+                "invoice_date": self.invoice_date.isoformat()
+                if self.invoice_date
+                else None,
+                "due_date": self.due_date.isoformat() if self.due_date else None,
+                "party_name": self.party_name,
+                "party_gstin": self.party_gstin,
+                "subtotal": self.subtotal,
+                "total_amount": self.total_amount,
+                "payment_status": self.payment_status,
+                "line_items": self.line_items,
+            }
+        )
         return base

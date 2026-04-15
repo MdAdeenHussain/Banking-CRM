@@ -22,7 +22,7 @@ def index():
 @login_required
 def new():
     form = TaskForm()
-    users = User.query.filter_by(is_deleted=False, is_active=True).all()
+    users = User.query.filter_by(is_deleted=False, is_active_flag=True).all()
     form.assigned_to.choices = [(u.id, f"{u.full_name} ({u.employee_id})") for u in users]
 
     if form.validate_on_submit():

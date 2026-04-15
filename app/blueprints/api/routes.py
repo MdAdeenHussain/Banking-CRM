@@ -1,6 +1,8 @@
 """LoanAxis CRM — REST API Routes (JWT-protected)"""
+import uuid
+from datetime import datetime, timedelta, timezone
+
 import jwt
-from datetime import datetime, timezone
 from functools import wraps
 from flask import request, jsonify, current_app
 from app.blueprints.api import api_bp
@@ -21,14 +23,18 @@ def jwt_required(f):
         if not token:
             return jsonify({"error": "Token required"}), 401
         try:
-            payload = jwt.decode(token, current_app.config["JWT_SECRET_KEY"], algorithms=["HS256"])
-            user = User.query.get(payload["sub"])
+            payload = jwt.decode(
+                token,
+                current_app.config["JWT_SECRET_KEY"],
+                algorithms=["HS256"],
+            )
+            user = User.query.get(uuid.UUID(payload["sub"]))
             if not user or not user.is_active:
                 return jsonify({"error": "Invalid token"}), 401
             request.api_user = user
         except jwt.ExpiredSignatureError:
             return jsonify({"error": "Token expired"}), 401
-        except jwt.InvalidTokenError:
+        except (jwt.InvalidTokenError, ValueError, TypeError):
             return jsonify({"error": "Invalid token"}), 401
         return f(*args, **kwargs)
     return decorated
@@ -44,15 +50,15 @@ def get_token():
     if not user or not user.check_password(data.get("password", "")):
         return jsonify({"error": "Invalid credentials"}), 401
 
-    expires = current_app.config["JWT_ACCESS_TOKEN_EXPIRES"]
+    expires = int(current_app.config["JWT_ACCESS_TOKEN_EXPIRES"])
     payload = {
-        "sub": user.id, "role": user.role,
-        "exp": datetime.now(timezone.utc) + expires,
+        "sub": str(user.id), "role": user.role,
+        "exp": datetime.now(timezone.utc) + timedelta(seconds=expires),
         "iat": datetime.now(timezone.utc),
     }
     token = jwt.encode(payload, current_app.config["JWT_SECRET_KEY"], algorithm="HS256")
     return jsonify({"access_token": token, "token_type": "bearer",
-                    "expires_in": int(expires.total_seconds())})
+                    "expires_in": expires})
 
 
 @api_bp.route("/leads", methods=["GET"])

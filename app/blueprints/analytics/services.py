@@ -63,7 +63,11 @@ def commission_trend_data(months=12):
 
 def employee_performance_data():
     """Employee performance matrix for radar/bubble chart."""
-    employees = User.query.filter_by(role="employee", is_deleted=False, is_active=True).all()
+    employees = User.query.filter_by(
+        role="employee",
+        is_deleted=False,
+        is_active_flag=True,
+    ).all()
     data = []
     for emp in employees:
         leads_count = Lead.query.filter_by(assigned_executive_id=emp.id, is_deleted=False).count()

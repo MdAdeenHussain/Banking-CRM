@@ -7,7 +7,7 @@ def lead_to_dict(lead):
 
 def user_to_dict(user):
     return {
-        "id": user.id, "employee_id": user.employee_id,
+        "id": str(user.id), "employee_id": user.employee_id,
         "full_name": user.full_name, "email": user.email,
         "role": user.role, "is_active": user.is_active,
     }

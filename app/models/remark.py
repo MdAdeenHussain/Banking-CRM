@@ -1,22 +1,21 @@
-"""
-LoanAxis CRM — Remark Model
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
 
-Call notes, follow-up remarks, WhatsApp logs, and visit notes
-attached to leads.
-"""
-
-from sqlalchemy import Column, String, Integer, ForeignKey, Text
-from sqlalchemy.orm import relationship
-
+from app.extensions import db
 from app.models.base import BaseModel
 
 
 REMARK_TYPES = ["General", "Call", "WhatsApp", "Email", "Visit"]
 
 CALL_OUTCOMES = [
-    "Connected", "No Answer", "Busy", "Switched Off",
-    "Wrong Number", "Call Back Later", "Interested",
-    "Not Interested", "Converted",
+    "Connected",
+    "No Answer",
+    "Busy",
+    "Switched Off",
+    "Wrong Number",
+    "Call Back Later",
+    "Interested",
+    "Not Interested",
+    "Converted",
 ]
 
 
@@ -25,30 +24,38 @@ class Remark(BaseModel):
 
     __tablename__ = "remarks"
 
-    lead_id = Column(String(36), ForeignKey("leads.id"), nullable=False, index=True)
+    lead_id = db.Column(
+        PGUUID(as_uuid=True),
+        db.ForeignKey("leads.id"),
+        nullable=False,
+        index=True,
+    )
+    remark_type = db.Column(
+        db.Enum(*REMARK_TYPES, name="remark_type_enum"),
+        nullable=False,
+        default="General",
+    )
+    content = db.Column(db.Text, nullable=False)
+    call_duration_min = db.Column(db.Integer, nullable=True)
+    call_outcome = db.Column(db.String(30), nullable=True)
+    created_by = db.Column(
+        PGUUID(as_uuid=True),
+        db.ForeignKey("users.id"),
+        nullable=True,
+    )
 
-    # ── Content ─────────────────────────────────────────────
-    remark_type = Column(String(20), nullable=False, default="General")
-    content = Column(Text, nullable=False)
-
-    # ── Call-specific fields ────────────────────────────────
-    call_duration_min = Column(Integer, nullable=True)
-    call_outcome = Column(String(30), nullable=True)
-
-    # ── Author ──────────────────────────────────────────────
-    created_by = Column(String(36), ForeignKey("users.id"), nullable=True)
-
-    # ── Relationships ───────────────────────────────────────
-    author = relationship("User", foreign_keys=[created_by])
+    author = db.relationship("User", foreign_keys=[created_by])
 
     def to_dict(self) -> dict:
         base = super().to_dict()
-        base.update({
-            "lead_id": self.lead_id,
-            "remark_type": self.remark_type,
-            "content": self.content,
-            "call_duration_min": self.call_duration_min,
-            "call_outcome": self.call_outcome,
-            "created_by": self.created_by,
-        })
+        base.update(
+            {
+                "lead_id": str(self.lead_id),
+                "remark_type": self.remark_type,
+                "content": self.content,
+                "call_duration_min": self.call_duration_min,
+                "call_outcome": self.call_outcome,
+                "created_by": str(self.created_by) if self.created_by else None,
+            }
+        )
         return base

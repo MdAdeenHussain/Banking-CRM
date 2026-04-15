@@ -44,7 +44,8 @@ def index():
 
     # Get executives for filter dropdown
     executives = User.query.filter_by(
-        is_deleted=False, is_active=True
+        is_deleted=False,
+        is_active_flag=True,
     ).order_by(User.full_name).all()
 
     return render_template(
@@ -82,7 +83,10 @@ def new():
     form = LeadForm()
 
     # Populate executive and branch dropdowns
-    executives = User.query.filter_by(is_deleted=False, is_active=True).all()
+    executives = User.query.filter_by(
+        is_deleted=False,
+        is_active_flag=True,
+    ).all()
     form.assigned_executive_id.choices = [("", "Auto-assign")] + [
         (u.id, f"{u.full_name} ({u.employee_id})") for u in executives
     ]
@@ -165,7 +169,10 @@ def edit(lead_id):
     form = LeadForm(obj=lead)
 
     # Populate dropdowns
-    executives = User.query.filter_by(is_deleted=False, is_active=True).all()
+    executives = User.query.filter_by(
+        is_deleted=False,
+        is_active_flag=True,
+    ).all()
     form.assigned_executive_id.choices = [("", "Unassigned")] + [
         (u.id, f"{u.full_name} ({u.employee_id})") for u in executives
     ]

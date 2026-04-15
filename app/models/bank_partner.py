@@ -1,22 +1,27 @@
-"""
-LoanAxis CRM — Bank Partner Model
-
-Represents banks, NBFCs, and corporate partners that the DSA works with.
-"""
-
-from sqlalchemy import Column, String, Boolean, Float, ForeignKey, Table
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
 
 from app.extensions import db
 from app.models.base import BaseModel
 
 
-# ── Association table for User ↔ BankPartner (M2M) ──────────────
-user_bank_partners = Table(
-    "user_bank_partners",
-    db.metadata,
-    Column("user_id", String(36), ForeignKey("users.id"), primary_key=True),
-    Column("bank_partner_id", String(36), ForeignKey("bank_partners.id"), primary_key=True),
-)
+BANK_TYPES = ["Bank", "NBFC", "Corporate"]
+
+
+class UserBankPartner(db.Model):
+    __tablename__ = "user_bank_partners"
+
+    user_id = db.Column(
+        PGUUID(as_uuid=True),
+        db.ForeignKey("users.id"),
+        primary_key=True,
+        nullable=False,
+    )
+    bank_partner_id = db.Column(
+        PGUUID(as_uuid=True),
+        db.ForeignKey("bank_partners.id"),
+        primary_key=True,
+        nullable=False,
+    )
 
 
 class BankPartner(BaseModel):
@@ -24,22 +29,29 @@ class BankPartner(BaseModel):
 
     __tablename__ = "bank_partners"
 
-    name = Column(String(150), nullable=False, unique=True)
-    type = Column(String(20), nullable=False, default="Bank")  # Bank | NBFC | Corporate
-    contact_person = Column(String(150), nullable=True)
-    contact_mobile = Column(String(15), nullable=True)
-    contact_email = Column(String(255), nullable=True)
-    commission_rate_default_pct = Column(Float, default=0.0, nullable=False)
-    is_active = Column(Boolean, default=True, nullable=False)
+    name = db.Column(db.String(150), nullable=False, unique=True)
+    type = db.Column(
+        db.Enum(*BANK_TYPES, name="bank_type_enum"),
+        nullable=False,
+        default="Bank",
+    )
+    contact_person = db.Column(db.String(150), nullable=True)
+    contact_mobile = db.Column(db.String(15), nullable=True)
+    contact_email = db.Column(db.String(255), nullable=True)
+    commission_rate_default_pct = db.Column(db.Float, default=0.0, nullable=False)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
 
     def to_dict(self) -> dict:
         base = super().to_dict()
-        base.update({
-            "name": self.name,
-            "type": self.type,
-            "contact_person": self.contact_person,
-            "contact_mobile": self.contact_mobile,
-            "commission_rate_default_pct": self.commission_rate_default_pct,
-            "is_active": self.is_active,
-        })
+        base.update(
+            {
+                "name": self.name,
+                "type": self.type,
+                "contact_person": self.contact_person,
+                "contact_mobile": self.contact_mobile,
+                "contact_email": self.contact_email,
+                "commission_rate_default_pct": self.commission_rate_default_pct,
+                "is_active": self.is_active,
+            }
+        )
         return base

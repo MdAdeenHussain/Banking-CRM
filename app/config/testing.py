@@ -1,34 +1,10 @@
-"""
-LoanAxis CRM — Testing Configuration
-"""
-
-from app.config.base import BaseConfig
+from .base import Config
 
 
-class TestingConfig(BaseConfig):
-    """Testing-specific overrides."""
-
-    DEBUG = True
+class TestingConfig(Config):
     TESTING = True
-
-    # In-memory SQLite for fast tests
-    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
-
-    # Disable CSRF for test forms
+    SQLALCHEMY_DATABASE_URI = (
+        "postgresql://postgres@localhost:5432/banking_dsa_crm_test"
+    )
     WTF_CSRF_ENABLED = False
-
-    # Don't send emails
-    MAIL_SUPPRESS_SEND = True
-
-    # Fast bcrypt for tests
-    BCRYPT_LOG_ROUNDS = 4
-
-    # No rate limiting in tests
-    RATELIMIT_ENABLED = False
-    RATELIMIT_STORAGE_URI = "memory://"
-
-    # Disable login protection for easier test setup
-    LOGIN_DISABLED = False
-
-    # Small upload for tests
-    MAX_CONTENT_LENGTH = 1 * 1024 * 1024
+    SQLALCHEMY_ECHO = False
